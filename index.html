@@ -7,110 +7,447 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="page-shell">
+    <div class="app-shell">
       <aside class="sidebar">
-        <div>
-          <p class="kicker">Venue OS</p>
+        <div class="brand-block">
+          <p class="eyebrow">Venue Management</p>
           <h1>Celebration Lawn Command</h1>
           <p class="sidebar-copy">
-            One workspace for bookings, ceremonies, vendors, guests, operations, and payments.
+            Bookings, operations, vendors, collections, and event execution in one workspace.
           </p>
         </div>
 
-        <nav class="nav-list" aria-label="Sections">
-          <a href="#requirements">Requirements</a>
-          <a href="#dashboard">Dashboard</a>
-          <a href="#calendar">Calendar</a>
-          <a href="#clients">Clients</a>
-          <a href="#finance">Finance</a>
+        <nav class="nav-list" aria-label="Primary navigation">
+          <button class="nav-link active" data-view="dashboard">Dashboard</button>
+          <button class="nav-link" data-view="bookings">Bookings</button>
+          <button class="nav-link" data-view="calendar">Calendar</button>
+          <button class="nav-link" data-view="clients">Clients</button>
+          <button class="nav-link" data-view="vendors">Vendors</button>
+          <button class="nav-link" data-view="finance">Finance</button>
+          <button class="nav-link" data-view="settings">Settings</button>
         </nav>
 
-        <div class="sidebar-card">
-          <p class="sidebar-label">Today on site</p>
-          <strong>2 weddings + 1 reception</strong>
-          <span>All vendors checked in. Main lawn setup begins at 4:00 PM.</span>
-        </div>
+        <div class="sidebar-card" id="sidebarCard"></div>
       </aside>
 
       <main class="main-content">
-        <section class="hero" id="dashboard">
-          <div class="hero-copy">
-            <p class="kicker">Front-end prototype</p>
-            <h2>Run a celebration lawn like a coordinated event business.</h2>
-            <p>
-              This app is designed for venue owners who need booking control, package management,
-              client communication, vendor coordination, event-day execution, and finance tracking
-              in one place.
-            </p>
-            <div class="hero-actions">
-              <button class="primary-btn" id="bookingBtn">Start booking flow</button>
-              <button class="ghost-btn" id="opsBtn">Open operations view</button>
-            </div>
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Live Workspace</p>
+            <h2 id="viewTitle">Dashboard</h2>
           </div>
-
-          <div class="hero-board">
-            <p class="panel-label">Live venue pulse</p>
-            <div class="stats-grid" id="statsGrid"></div>
+          <div class="topbar-actions">
+            <label class="topbar-search">
+              <span class="sr-only">Global booking search</span>
+              <input id="globalSearch" placeholder="Search bookings or clients" />
+            </label>
+            <button class="ghost-btn" id="seedBtn">Reset demo data</button>
+            <button class="primary-btn" id="quickAddBtn">New booking</button>
           </div>
-        </section>
+        </header>
 
-        <section class="panel full-width" id="requirements">
-          <div class="section-heading">
-            <div>
-              <p class="kicker">Application Scope</p>
-              <h3>Everything the owner will require in detail</h3>
-            </div>
-            <span class="badge">Backend-ready module map</span>
-          </div>
-          <div class="requirements-grid" id="requirementsGrid"></div>
-        </section>
-
-        <section class="content-grid">
-          <article class="panel" id="calendar">
-            <div class="section-heading">
-              <div>
-                <p class="kicker">Operations board</p>
-                <h3>Today’s events and execution plan</h3>
+        <section class="view active" data-view-panel="dashboard">
+          <div class="summary-grid">
+            <article class="hero-card">
+              <p class="eyebrow">Executive View</p>
+              <h3>Operate the venue like a serious events business.</h3>
+              <p>
+                Stay on top of sales pipeline, upcoming ceremonies, client commitments, vendor
+                readiness, operational tasks, and money collection without losing context.
+              </p>
+              <div class="hero-actions">
+                <button class="primary-btn" id="heroBookingBtn">Create booking</button>
+                <button class="ghost-btn" data-goto="finance">Open collections</button>
               </div>
-            </div>
-            <div class="timeline-list" id="timelineList"></div>
-          </article>
+            </article>
 
-          <article class="panel" id="clients">
-            <div class="section-heading">
-              <div>
-                <p class="kicker">Client pipeline</p>
-                <h3>Leads, bookings, and follow-ups</h3>
+            <article class="panel">
+              <div class="section-heading compact-heading">
+                <div>
+                  <p class="eyebrow">Business Pulse</p>
+                  <h3>Core metrics</h3>
+                </div>
               </div>
-            </div>
-            <div class="stack-list" id="clientsList"></div>
-          </article>
+              <div class="stats-grid" id="statsGrid"></div>
+            </article>
+          </div>
+
+          <div class="content-grid">
+            <article class="panel">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">Operations</p>
+                  <h3>Today’s event board</h3>
+                </div>
+                <button class="ghost-btn small-btn" data-goto="calendar">Open calendar</button>
+              </div>
+              <div class="card-list" id="todayList"></div>
+            </article>
+
+            <article class="panel">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">Collections</p>
+                  <h3>Revenue and risk</h3>
+                </div>
+              </div>
+              <div class="finance-highlight" id="dashboardFinanceHighlight"></div>
+              <div class="mini-list" id="collectionsList"></div>
+            </article>
+          </div>
+
+          <div class="content-grid">
+            <article class="panel">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">Tasks</p>
+                  <h3>Operational checklist</h3>
+                </div>
+              </div>
+              <div class="card-list" id="tasksList"></div>
+            </article>
+
+            <article class="panel">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">Recent activity</p>
+                  <h3>What changed recently</h3>
+                </div>
+              </div>
+              <div class="mini-list" id="activityList"></div>
+            </article>
+          </div>
         </section>
 
-        <section class="content-grid">
+        <section class="view" data-view-panel="bookings">
+          <div class="bookings-layout">
+            <article class="panel">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">Booking Management</p>
+                  <h3>Pipeline, confirmations, and event records</h3>
+                </div>
+              </div>
+
+              <div class="table-toolbar">
+                <input id="bookingSearch" placeholder="Search by client, event type, or package" />
+                <div class="filter-group" id="bookingFilters">
+                  <button class="filter-chip active" data-filter="All">All</button>
+                  <button class="filter-chip" data-filter="Inquiry">Inquiry</button>
+                  <button class="filter-chip" data-filter="Upcoming">Upcoming</button>
+                  <button class="filter-chip" data-filter="Confirmed">Confirmed</button>
+                </div>
+              </div>
+
+              <div class="table-shell">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Booking</th>
+                      <th>Date</th>
+                      <th>Guests</th>
+                      <th>Package</th>
+                      <th>Advance</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="bookingsTableBody"></tbody>
+                </table>
+              </div>
+            </article>
+
+            <aside class="detail-stack">
+              <article class="panel sticky-panel">
+                <div class="section-heading compact-heading">
+                  <div>
+                    <p class="eyebrow">Selected Booking</p>
+                    <h3>Detail panel</h3>
+                  </div>
+                </div>
+                <div id="bookingDetail"></div>
+              </article>
+
+              <article class="panel">
+                <div class="section-heading compact-heading">
+                  <div>
+                    <p class="eyebrow">New Booking</p>
+                    <h3>Create record</h3>
+                  </div>
+                </div>
+                <form id="bookingForm" class="app-form">
+                  <label>
+                    Client name
+                    <input name="clientName" required placeholder="Aarav Sharma" />
+                  </label>
+                  <label>
+                    Event type
+                    <select name="eventType" required>
+                      <option value="Wedding">Wedding</option>
+                      <option value="Reception">Reception</option>
+                      <option value="Engagement">Engagement</option>
+                      <option value="Birthday">Birthday</option>
+                      <option value="Corporate">Corporate</option>
+                    </select>
+                  </label>
+                  <label>
+                    Event date
+                    <input name="eventDate" type="date" required />
+                  </label>
+                  <label>
+                    Guests
+                    <input name="guestCount" type="number" min="10" required placeholder="350" />
+                  </label>
+                  <label>
+                    Package
+                    <select name="packageName" required>
+                      <option value="Silver">Silver</option>
+                      <option value="Gold">Gold</option>
+                      <option value="Premium">Premium</option>
+                      <option value="Custom Luxury">Custom Luxury</option>
+                    </select>
+                  </label>
+                  <label>
+                    Advance amount
+                    <input name="advancePaid" type="number" min="0" required placeholder="1500" />
+                  </label>
+                  <label class="full-span">
+                    Notes
+                    <textarea name="notes" rows="4" placeholder="Decor, catering, VIP requirements, timing notes"></textarea>
+                  </label>
+                  <button class="primary-btn full-width" type="submit">Save booking</button>
+                </form>
+              </article>
+            </aside>
+          </div>
+        </section>
+
+        <section class="view" data-view-panel="calendar">
           <article class="panel">
             <div class="section-heading">
               <div>
-                <p class="kicker">Vendors and services</p>
-                <h3>Decor, catering, sound, lights</h3>
+                <p class="eyebrow">Venue Calendar</p>
+                <h3>Upcoming schedule and load planning</h3>
               </div>
             </div>
-            <div class="stack-list" id="vendorsList"></div>
+            <div class="calendar-board" id="calendarBoard"></div>
           </article>
+        </section>
 
-          <article class="panel" id="finance">
+        <section class="view" data-view-panel="clients">
+          <div class="section-grid">
+            <article class="panel">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">Client CRM</p>
+                  <h3>Profiles, stages, and preferences</h3>
+                </div>
+              </div>
+              <div class="table-shell">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Phone</th>
+                      <th>Email</th>
+                      <th>Stage</th>
+                      <th>Preferences</th>
+                    </tr>
+                  </thead>
+                  <tbody id="clientsTableBody"></tbody>
+                </table>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="section-heading compact-heading">
+                <div>
+                  <p class="eyebrow">Add Client</p>
+                  <h3>New CRM record</h3>
+                </div>
+              </div>
+              <form id="clientForm" class="app-form">
+                <label>
+                  Full name
+                  <input name="name" required placeholder="Neha Kapoor" />
+                </label>
+                <label>
+                  Phone
+                  <input name="phone" required placeholder="+91 98xxxxxx12" />
+                </label>
+                <label>
+                  Email
+                  <input name="email" type="email" required placeholder="client@example.com" />
+                </label>
+                <label>
+                  Lead stage
+                  <select name="stage" required>
+                    <option value="Inquiry">Inquiry</option>
+                    <option value="Site Visit">Site Visit</option>
+                    <option value="Quoted">Quoted</option>
+                    <option value="Booked">Booked</option>
+                  </select>
+                </label>
+                <label class="full-span">
+                  Preferences
+                  <textarea name="preferences" rows="4" placeholder="Theme, catering notes, parking, VIP seating"></textarea>
+                </label>
+                <button class="primary-btn full-width" type="submit">Save client</button>
+              </form>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" data-view-panel="vendors">
+          <div class="section-grid">
+            <article class="panel">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">Vendor Directory</p>
+                  <h3>Service partners and fallback options</h3>
+                </div>
+              </div>
+              <div class="table-shell">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Vendor</th>
+                      <th>Category</th>
+                      <th>Contact</th>
+                      <th>Phone</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="vendorsTableBody"></tbody>
+                </table>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="section-heading compact-heading">
+                <div>
+                  <p class="eyebrow">Add Vendor</p>
+                  <h3>Partner record</h3>
+                </div>
+              </div>
+              <form id="vendorForm" class="app-form">
+                <label>
+                  Vendor name
+                  <input name="name" required placeholder="Royal Petals Decor" />
+                </label>
+                <label>
+                  Category
+                  <select name="category" required>
+                    <option value="Decor">Decor</option>
+                    <option value="Catering">Catering</option>
+                    <option value="Lighting">Lighting</option>
+                    <option value="Sound">Sound</option>
+                    <option value="Photography">Photography</option>
+                    <option value="Security">Security</option>
+                  </select>
+                </label>
+                <label>
+                  Contact person
+                  <input name="contactPerson" required placeholder="Rajiv" />
+                </label>
+                <label>
+                  Phone
+                  <input name="phone" required placeholder="+91 97xxxxxx00" />
+                </label>
+                <label>
+                  Status
+                  <select name="status" required>
+                    <option value="Preferred">Preferred</option>
+                    <option value="Active">Active</option>
+                    <option value="Backup">Backup</option>
+                  </select>
+                </label>
+                <label class="full-span">
+                  Notes
+                  <textarea name="notes" rows="4" placeholder="Rates, setup conditions, reliability"></textarea>
+                </label>
+                <button class="primary-btn full-width" type="submit">Save vendor</button>
+              </form>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" data-view-panel="finance">
+          <div class="section-grid">
+            <article class="panel">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">Collections</p>
+                  <h3>Payments, balances, and cash flow</h3>
+                </div>
+              </div>
+              <div class="finance-highlight" id="financeHighlight"></div>
+              <div class="table-shell">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Client</th>
+                      <th>Type</th>
+                      <th>Amount</th>
+                      <th>Status</th>
+                      <th>Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody id="paymentsTableBody"></tbody>
+                </table>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="section-heading compact-heading">
+                <div>
+                  <p class="eyebrow">Add Payment</p>
+                  <h3>Finance entry</h3>
+                </div>
+              </div>
+              <form id="paymentForm" class="app-form">
+                <label>
+                  Client name
+                  <input name="clientName" required placeholder="Aarav Sharma" />
+                </label>
+                <label>
+                  Payment type
+                  <select name="paymentType" required>
+                    <option value="Token">Token</option>
+                    <option value="Advance">Advance</option>
+                    <option value="Installment">Installment</option>
+                    <option value="Final Balance">Final Balance</option>
+                  </select>
+                </label>
+                <label>
+                  Amount
+                  <input name="amount" type="number" min="0" required placeholder="2500" />
+                </label>
+                <label>
+                  Status
+                  <select name="status" required>
+                    <option value="Received">Received</option>
+                    <option value="Pending">Pending</option>
+                  </select>
+                </label>
+                <label class="full-span">
+                  Notes
+                  <textarea name="notes" rows="4" placeholder="Reference number, due date, balance context"></textarea>
+                </label>
+                <button class="primary-btn full-width" type="submit">Save payment</button>
+              </form>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" data-view-panel="settings">
+          <article class="panel">
             <div class="section-heading">
               <div>
-                <p class="kicker">Money control</p>
-                <h3>Deposits, balances, revenue</h3>
+                <p class="eyebrow">Application Requirements</p>
+                <h3>Core modules this product must support</h3>
               </div>
             </div>
-            <div class="revenue-card">
-              <span>Collected this month</span>
-              <strong>$86,400</strong>
-              <small>Wedding season demand is driving premium package bookings.</small>
-            </div>
-            <div class="stack-list compact" id="financeList"></div>
+            <div class="requirements-grid" id="requirementsGrid"></div>
           </article>
         </section>
       </main>
