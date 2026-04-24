@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LawnFlow Ops</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div>
+          <p class="eyebrow">Lawn management suite</p>
+          <h1>LawnFlow Ops</h1>
+          <p class="sidebar-copy">
+            A field-ready control center for quotes, crews, properties, equipment, and billing.
+          </p>
+        </div>
+
+        <nav class="nav-list" aria-label="Primary">
+          <a href="#overview">Overview</a>
+          <a href="#jobs">Jobs</a>
+          <a href="#crm">Clients</a>
+          <a href="#equipment">Equipment</a>
+          <a href="#finance">Finance</a>
+        </nav>
+
+        <div class="sidebar-card">
+          <p class="sidebar-label">Today’s target</p>
+          <strong>18 properties</strong>
+          <span>Keep route density above 83% and finish before 6:30 PM.</span>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <section class="hero" id="overview">
+          <div class="hero-copy">
+            <p class="eyebrow">Business dashboard</p>
+            <h2>Run the entire lawn operation from one application.</h2>
+            <p>
+              Track jobs, recurring maintenance, crew capacity, equipment health, invoices, and
+              customer requests without switching tools.
+            </p>
+            <div class="hero-actions">
+              <button id="newLeadBtn" class="primary-btn">New client request</button>
+              <button id="optimizeBtn" class="ghost-btn">Optimize route</button>
+            </div>
+          </div>
+
+          <div class="hero-panel">
+            <p class="panel-label">Live service pulse</p>
+            <div class="pulse-grid" id="statsGrid"></div>
+          </div>
+        </section>
+
+        <section class="section-grid">
+          <article class="panel wide-panel" id="jobs">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Operations board</p>
+                <h3>Today’s mowing and maintenance schedule</h3>
+              </div>
+              <span class="badge">Realtime-ready layout</span>
+            </div>
+            <div id="jobsList" class="job-list"></div>
+          </article>
+
+          <article class="panel" id="crm">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Client pipeline</p>
+                <h3>Requests and renewals</h3>
+              </div>
+            </div>
+            <div id="clientsList" class="stack-list"></div>
+          </article>
+        </section>
+
+        <section class="section-grid">
+          <article class="panel" id="equipment">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Fleet + tools</p>
+                <h3>Equipment readiness</h3>
+              </div>
+            </div>
+            <div id="equipmentList" class="stack-list"></div>
+          </article>
+
+          <article class="panel" id="finance">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Revenue control</p>
+                <h3>Invoices and monthly plan</h3>
+              </div>
+            </div>
+            <div class="revenue-card">
+              <span>Collected this month</span>
+              <strong>$24,860</strong>
+              <small>86% of target, up 14% from last month</small>
+            </div>
+            <div id="financeList" class="stack-list compact"></div>
+          </article>
+        </section>
+
+        <section class="panel full-width">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Service catalog</p>
+              <h3>Everything required to run the lawn business</h3>
+            </div>
+          </div>
+
+          <div class="feature-grid">
+            <article>
+              <h4>Quotes and estimates</h4>
+              <p>Capture square footage, service mix, urgency, and auto-build estimate totals.</p>
+            </article>
+            <article>
+              <h4>Recurring maintenance</h4>
+              <p>Weekly, biweekly, and seasonal plans with reminders for fertilizing and cleanup.</p>
+            </article>
+            <article>
+              <h4>Crew scheduling</h4>
+              <p>Assign team members by skill, route zone, and equipment availability.</p>
+            </article>
+            <article>
+              <h4>Property notes</h4>
+              <p>Store gate codes, irrigation alerts, pet notices, and preferred service windows.</p>
+            </article>
+            <article>
+              <h4>Equipment upkeep</h4>
+              <p>Monitor hours, blade changes, repairs, and maintenance due dates.</p>
+            </article>
+            <article>
+              <h4>Payments and reporting</h4>
+              <p>Track invoice status, monthly targets, high-value clients, and overdue balances.</p>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="toast" id="toast" aria-live="polite"></div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
