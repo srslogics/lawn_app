@@ -1,7 +1,7 @@
-# Lawn App
+# Celebration Lawn App
 
-A lightweight front-end prototype for a celebration lawn venue management application.
+Front-end prototype for a celebration lawn venue management application.
 
-## Run
+## Open
 
 Open `index.html` in a browser.
