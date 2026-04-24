@@ -3,140 +3,115 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Celebration Lawn Hub</title>
+    <title>Celebration Lawn Command</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="app-shell">
+    <div class="page-shell">
       <aside class="sidebar">
         <div>
-          <p class="eyebrow">Lawn management suite</p>
-          <h1>Celebration Lawn Hub</h1>
+          <p class="kicker">Venue OS</p>
+          <h1>Celebration Lawn Command</h1>
           <p class="sidebar-copy">
-            A venue-ready control center for bookings, decor, catering, guests, and billing.
+            One workspace for bookings, ceremonies, vendors, guests, operations, and payments.
           </p>
         </div>
 
-        <nav class="nav-list" aria-label="Primary">
-          <a href="#overview">Overview</a>
-          <a href="#jobs">Events</a>
-          <a href="#crm">Clients</a>
-          <a href="#equipment">Vendors</a>
+        <nav class="nav-list" aria-label="Sections">
+          <a href="#requirements">Requirements</a>
+          <a href="#dashboard">Dashboard</a>
+          <a href="#calendar">Calendar</a>
+          <a href="#clients">Clients</a>
           <a href="#finance">Finance</a>
         </nav>
 
         <div class="sidebar-card">
-          <p class="sidebar-label">Today’s target</p>
-          <strong>3 live events</strong>
-          <span>Keep setup on time, guests flowing smoothly, and vendors fully coordinated.</span>
+          <p class="sidebar-label">Today on site</p>
+          <strong>2 weddings + 1 reception</strong>
+          <span>All vendors checked in. Main lawn setup begins at 4:00 PM.</span>
         </div>
       </aside>
 
       <main class="main-content">
-        <section class="hero" id="overview">
+        <section class="hero" id="dashboard">
           <div class="hero-copy">
-            <p class="eyebrow">Business dashboard</p>
-            <h2>Run the entire celebration lawn from one application.</h2>
+            <p class="kicker">Front-end prototype</p>
+            <h2>Run a celebration lawn like a coordinated event business.</h2>
             <p>
-              Manage bookings, event timelines, decor, catering, vendor teams, guest flow, and
-              payments without switching tools.
+              This app is designed for venue owners who need booking control, package management,
+              client communication, vendor coordination, event-day execution, and finance tracking
+              in one place.
             </p>
             <div class="hero-actions">
-              <button id="newLeadBtn" class="primary-btn">New event booking</button>
-              <button id="optimizeBtn" class="ghost-btn">View event plan</button>
+              <button class="primary-btn" id="bookingBtn">Start booking flow</button>
+              <button class="ghost-btn" id="opsBtn">Open operations view</button>
             </div>
           </div>
 
-          <div class="hero-panel">
+          <div class="hero-board">
             <p class="panel-label">Live venue pulse</p>
-            <div class="pulse-grid" id="statsGrid"></div>
+            <div class="stats-grid" id="statsGrid"></div>
           </div>
         </section>
 
-        <section class="section-grid">
-          <article class="panel wide-panel" id="jobs">
+        <section class="panel full-width" id="requirements">
+          <div class="section-heading">
+            <div>
+              <p class="kicker">Application Scope</p>
+              <h3>Everything the owner will require in detail</h3>
+            </div>
+            <span class="badge">Backend-ready module map</span>
+          </div>
+          <div class="requirements-grid" id="requirementsGrid"></div>
+        </section>
+
+        <section class="content-grid">
+          <article class="panel" id="calendar">
             <div class="section-heading">
               <div>
-                <p class="eyebrow">Events board</p>
-                <h3>Today’s celebrations and venue timeline</h3>
+                <p class="kicker">Operations board</p>
+                <h3>Today’s events and execution plan</h3>
               </div>
-              <span class="badge">Realtime-ready layout</span>
             </div>
-            <div id="jobsList" class="job-list"></div>
+            <div class="timeline-list" id="timelineList"></div>
           </article>
 
-          <article class="panel" id="crm">
+          <article class="panel" id="clients">
             <div class="section-heading">
               <div>
-                <p class="eyebrow">Client pipeline</p>
-                <h3>Inquiries and bookings</h3>
+                <p class="kicker">Client pipeline</p>
+                <h3>Leads, bookings, and follow-ups</h3>
               </div>
             </div>
-            <div id="clientsList" class="stack-list"></div>
+            <div class="stack-list" id="clientsList"></div>
           </article>
         </section>
 
-        <section class="section-grid">
-          <article class="panel" id="equipment">
+        <section class="content-grid">
+          <article class="panel">
             <div class="section-heading">
               <div>
-                <p class="eyebrow">Vendors + setup</p>
-                <h3>Partner readiness</h3>
+                <p class="kicker">Vendors and services</p>
+                <h3>Decor, catering, sound, lights</h3>
               </div>
             </div>
-            <div id="equipmentList" class="stack-list"></div>
+            <div class="stack-list" id="vendorsList"></div>
           </article>
 
           <article class="panel" id="finance">
             <div class="section-heading">
               <div>
-                <p class="eyebrow">Revenue control</p>
-                <h3>Payments and monthly plan</h3>
+                <p class="kicker">Money control</p>
+                <h3>Deposits, balances, revenue</h3>
               </div>
             </div>
             <div class="revenue-card">
               <span>Collected this month</span>
-              <strong>$84,600</strong>
-              <small>91% of target, driven by wedding and reception packages</small>
+              <strong>$86,400</strong>
+              <small>Wedding season demand is driving premium package bookings.</small>
             </div>
-            <div id="financeList" class="stack-list compact"></div>
+            <div class="stack-list compact" id="financeList"></div>
           </article>
-        </section>
-
-        <section class="panel full-width">
-          <div class="section-heading">
-            <div>
-              <p class="eyebrow">Venue modules</p>
-              <h3>Everything required to run a celebration lawn</h3>
-            </div>
-          </div>
-
-          <div class="feature-grid">
-            <article>
-              <h4>Booking and packages</h4>
-              <p>Manage wedding, birthday, reception, and corporate event packages with pricing.</p>
-            </article>
-            <article>
-              <h4>Event calendar</h4>
-              <p>Track available dates, setup windows, overlapping vendor schedules, and hold requests.</p>
-            </article>
-            <article>
-              <h4>Staff coordination</h4>
-              <p>Assign managers, decorators, catering contacts, security, and valet teams per event.</p>
-            </article>
-            <article>
-              <h4>Guest and host details</h4>
-              <p>Store host preferences, guest counts, VIP lists, stage notes, and timing requests.</p>
-            </article>
-            <article>
-              <h4>Decor and vendor tracking</h4>
-              <p>Monitor floral setup, sound, lighting, catering, photography, and backup plans.</p>
-            </article>
-            <article>
-              <h4>Payments and reporting</h4>
-              <p>Track deposits, final balances, package performance, and high-value event leads.</p>
-            </article>
-          </div>
         </section>
       </main>
     </div>
