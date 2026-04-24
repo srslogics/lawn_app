@@ -1,6 +1,6 @@
 # Lawn App
 
-A lightweight front-end prototype for a lawn management application.
+A lightweight front-end prototype for a celebration lawn venue management application.
 
 ## Run
 
