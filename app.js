@@ -1,90 +1,90 @@
 const stats = [
-  { label: "Jobs booked", value: "128", detail: "22 recurring this week" },
-  { label: "Active crews", value: "4", detail: "11 field staff assigned" },
-  { label: "Open estimates", value: "17", detail: "$9,420 potential revenue" },
-  { label: "On-time rate", value: "96%", detail: "Above monthly benchmark" },
+  { label: "Events booked", value: "28", detail: "9 premium celebrations this month" },
+  { label: "Active vendors", value: "12", detail: "Decor, catering, lighting, music" },
+  { label: "Open inquiries", value: "17", detail: "$42,000 potential revenue" },
+  { label: "On-time setup", value: "98%", detail: "Above monthly benchmark" },
 ];
 
 const jobs = [
   {
-    client: "Willow Creek Residence",
+    client: "Sharma Wedding Reception",
     status: "Scheduled",
     statusClass: "scheduled",
-    service: "Mow, edge, blow",
+    service: "Stage decor, lighting, guest seating",
     time: "08:00 AM",
-    crew: "Crew A",
-    note: "Front hedge trim requested before guests arrive.",
+    crew: "Venue Team A",
+    note: "Floral arch and bridal entry path must be ready before 5:00 PM.",
   },
   {
-    client: "Maple Grove Offices",
+    client: "Silver Oak Birthday Gala",
     status: "En Route",
     statusClass: "travel",
-    service: "Weekly grounds maintenance",
+    service: "Catering, DJ, photo booth setup",
     time: "10:30 AM",
-    crew: "Crew B",
-    note: "Irrigation line near east lawn marked for caution.",
+    crew: "Event Crew B",
+    note: "Cake table and kids zone layout approved by client this morning.",
   },
   {
-    client: "Harbor Lane Villa",
+    client: "Verma Family Engagement",
     status: "Needs attention",
     statusClass: "attention",
-    service: "Fertilizing + weed control",
+    service: "Mandap decor and live music coordination",
     time: "01:15 PM",
-    crew: "Crew C",
-    note: "Awaiting customer approval on premium treatment add-on.",
+    crew: "Coordination Team",
+    note: "Awaiting final guest count confirmation for catering upgrade.",
   },
 ];
 
 const clients = [
   {
-    name: "Samantha Reed",
-    meta: "Seasonal cleanup request for a 9,000 sq ft property.",
-    tags: ["Lead score 82", "Quote due today", "Premium plan"],
+    name: "Aarav and Meera",
+    meta: "Wedding inquiry for 450 guests with floral stage and valet parking.",
+    tags: ["Lead score 91", "Quote due today", "Premium package"],
   },
   {
-    name: "Oakview HOA",
-    meta: "Renewal window opens in 5 days for common-area maintenance.",
-    tags: ["Annual contract", "3 zones", "Auto invoice"],
+    name: "Brightstar Corporate",
+    meta: "Annual celebration booking request for an evening award function.",
+    tags: ["Corporate client", "Indoor-outdoor plan", "Advance deposit"],
   },
   {
-    name: "Jordan Patel",
-    meta: "Requested pet-safe treatment and Saturday morning service.",
-    tags: ["High retention", "Special notes", "Text reminders"],
+    name: "Neha Kapoor",
+    meta: "Birthday lawn booking with custom decor and live dessert counters.",
+    tags: ["High retention", "Special notes", "Weekend booking"],
   },
 ];
 
 const equipment = [
   {
-    name: "Toro GrandStand 48",
-    meta: "127 hours logged. Blade replacement due in 6 hours.",
-    tags: ["Ready", "Fuel full", "Maintenance soon"],
+    name: "Royal Petals Decor",
+    meta: "Main stage flowers, entry tunnel, and centerpieces confirmed for tonight.",
+    tags: ["Ready", "Premium vendor", "On schedule"],
   },
   {
-    name: "Stihl Trimmer Kit",
-    meta: "One unit checked out. Spare line inventory below threshold.",
-    tags: ["Consumables low", "Crew B", "Restock"],
+    name: "Spice Route Catering",
+    meta: "Buffet for 400 guests with live counters and dessert island locked in.",
+    tags: ["Menu approved", "Crew assigned", "Power needed"],
   },
   {
-    name: "Work Trailer 02",
-    meta: "Tire inspection flagged for next Monday before route dispatch.",
-    tags: ["Inspection due", "Road-safe", "Assigned"],
+    name: "EchoLight Productions",
+    meta: "Sound check at 4:00 PM with moving lights and LED backdrop installation.",
+    tags: ["Inspection due", "Backup system", "Assigned"],
   },
 ];
 
 const finance = [
   {
-    name: "Outstanding invoices",
-    meta: "6 unpaid invoices totaling $3,180. Oldest is 12 days overdue.",
-    tags: ["Follow-up", "Email reminders"],
+    name: "Outstanding balances",
+    meta: "4 event balances totaling $12,800. Two are due within the next 3 days.",
+    tags: ["Follow-up", "Payment reminders"],
   },
   {
-    name: "Subscription plans",
-    meta: "44 clients on recurring monthly plans. Churn risk on 3 accounts.",
-    tags: ["Stable MRR", "Renewal watch"],
+    name: "Advance deposits",
+    meta: "11 confirmed bookings have received deposits. 3 contracts await signature.",
+    tags: ["Healthy pipeline", "Contract watch"],
   },
   {
     name: "Upsell opportunities",
-    meta: "11 mowing clients match aeration and mulch add-on criteria.",
+    meta: "7 upcoming events match add-ons like premium lighting, valet, and live counters.",
     tags: ["Campaign ready", "Revenue lift"],
   },
 ];
@@ -163,11 +163,11 @@ function showToast(message) {
 
 function bindActions() {
   document.getElementById("newLeadBtn").addEventListener("click", () => {
-    showToast("New client workflow started: intake, estimate, scheduling.");
+    showToast("New booking workflow started: inquiry, package, payment, scheduling.");
   });
 
   document.getElementById("optimizeBtn").addEventListener("click", () => {
-    showToast("Route optimization suggested a 14% reduction in drive time.");
+    showToast("Event plan opened: setup slots, vendor timing, and guest flow are aligned.");
   });
 }
 
