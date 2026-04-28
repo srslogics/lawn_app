@@ -11,7 +11,7 @@
       <aside class="sidebar">
         <div class="brand-block">
           <p class="eyebrow">Venue Management</p>
-          <h1>Celebration Lawn Command</h1>
+          <h1>Celebration Lawn <span>Command</span></h1>
           <p class="sidebar-copy">
             Bookings, operations, vendors, collections, and event execution in one workspace.
           </p>
@@ -24,7 +24,7 @@
           <button class="nav-link" data-view="clients">Clients</button>
           <button class="nav-link" data-view="vendors">Vendors</button>
           <button class="nav-link" data-view="finance">Finance</button>
-          <button class="nav-link" data-view="settings">Settings</button>
+          <button class="nav-link" data-view="settings">Venue setup</button>
         </nav>
 
         <div class="sidebar-card" id="sidebarCard"></div>
@@ -41,7 +41,7 @@
               <span class="sr-only">Global booking search</span>
               <input id="globalSearch" placeholder="Search bookings or clients" />
             </label>
-            <button class="ghost-btn" id="seedBtn">Reset demo data</button>
+            <button class="ghost-btn" id="seedBtn">Restore sample data</button>
             <button class="primary-btn" id="quickAddBtn">New booking</button>
           </div>
         </header>
@@ -208,7 +208,7 @@
                   </label>
                   <label>
                     Advance amount
-                    <input name="advancePaid" type="number" min="0" required placeholder="1500" />
+                    <input name="advancePaid" type="number" min="0" required placeholder="150000" />
                   </label>
                   <label class="full-span">
                     Notes
@@ -420,7 +420,7 @@
                 </label>
                 <label>
                   Amount
-                  <input name="amount" type="number" min="0" required placeholder="2500" />
+                  <input name="amount" type="number" min="0" required placeholder="75000" />
                 </label>
                 <label>
                   Status
@@ -443,11 +443,11 @@
           <article class="panel">
             <div class="section-heading">
               <div>
-                <p class="eyebrow">Application Requirements</p>
-                <h3>Core modules this product must support</h3>
+                  <p class="eyebrow">Venue Setup</p>
+                  <h3>Configuration areas for the business</h3>
+                </div>
               </div>
-            </div>
-            <div class="requirements-grid" id="requirementsGrid"></div>
+              <div class="requirements-grid" id="requirementsGrid"></div>
           </article>
         </section>
       </main>

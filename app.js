@@ -18,9 +18,9 @@ let uiState = {
 };
 
 function money(value) {
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("en-IN", {
     style: "currency",
-    currency: "USD",
+    currency: "INR",
     maximumFractionDigits: 0
   }).format(value);
 }
@@ -88,7 +88,7 @@ function setView(view) {
     clients: "Clients",
     vendors: "Vendors",
     finance: "Finance",
-    settings: "Settings"
+    settings: "Venue setup"
   };
 
   document.getElementById("viewTitle").textContent = titleMap[view] || "Dashboard";

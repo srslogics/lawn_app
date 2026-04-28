@@ -27,6 +27,7 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
+  overflow-x: hidden;
   color: var(--ink);
   font-family: "Avenir Next", "Segoe UI", sans-serif;
   background:
@@ -113,6 +114,10 @@ textarea {
   margin-bottom: 14px;
 }
 
+.brand-block h1 span {
+  display: block;
+}
+
 .sidebar-copy,
 .sidebar-card span,
 .hero-card p,
@@ -174,6 +179,7 @@ textarea {
 .main-content {
   display: grid;
   gap: 22px;
+  min-width: 0;
 }
 
 .topbar,
@@ -184,6 +190,7 @@ textarea {
   background: var(--panel);
   box-shadow: var(--shadow);
   backdrop-filter: blur(16px);
+  min-width: 0;
 }
 
 .topbar {
@@ -229,6 +236,10 @@ textarea {
 .row-action {
   border: 0;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
 }
 
@@ -328,6 +339,7 @@ textarea {
   line-height: 0.96;
   max-width: 10ch;
   margin-bottom: 14px;
+  overflow-wrap: anywhere;
 }
 
 .section-heading {
@@ -650,15 +662,17 @@ textarea {
 
 @media (max-width: 760px) {
   .app-shell {
-    padding: 16px;
+    gap: 16px;
+    padding: 12px;
   }
 
   .sidebar,
   .topbar,
   .hero-card,
   .panel {
-    padding: 20px;
+    padding: 18px;
     border-radius: 24px;
+    max-width: 100%;
   }
 
   .topbar,
@@ -668,6 +682,27 @@ textarea {
     grid-template-columns: 1fr;
   }
 
+  .sidebar {
+    height: auto;
+  }
+
+  .brand-block h1 {
+    font-size: 1.7rem;
+    line-height: 1;
+  }
+
+  .sidebar-copy,
+  .hero-card p,
+  .mini-item p,
+  .finance-highlight p {
+    font-size: 0.98rem;
+  }
+
+  .sidebar-copy,
+  .sidebar-card span {
+    max-width: 24ch;
+  }
+
   .stats-grid,
   .app-form,
   .detail-grid {
@@ -675,15 +710,46 @@ textarea {
   }
 
   .hero-card h3 {
-    max-width: none;
+    max-width: 8ch;
+    font-size: clamp(1.65rem, 8vw, 2.2rem);
+    line-height: 1;
   }
 
   .topbar-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: stretch;
     width: 100%;
   }
 
   .topbar-search {
     width: 100%;
+    grid-column: 1 / -1;
+  }
+
+  .topbar-actions .ghost-btn,
+  .topbar-actions .primary-btn,
+  .hero-actions .ghost-btn,
+  .hero-actions .primary-btn {
+    width: 100%;
+  }
+
+  .topbar-actions .ghost-btn,
+  .topbar-actions .primary-btn {
+    min-height: 52px;
+  }
+
+  .hero-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar-card strong {
+    font-size: 1.55rem;
+  }
+
+  .nav-link {
+    padding: 13px 14px;
   }
 
   .toast {
