@@ -1,232 +1,32 @@
-const STORAGE_KEY = "celebration-lawn-command-data";
+const API_BASE = "/api";
 
-const seedData = {
-  bookings: [
-    {
-      id: "B001",
-      clientName: "Aarav Sharma",
-      eventType: "Wedding",
-      eventDate: "2026-05-10",
-      guestCount: 450,
-      packageName: "Premium",
-      advancePaid: 3200,
-      notes: "Floral tunnel, LED wall, valet, VIP seating, bridal lounge.",
-      status: "Confirmed",
-      manager: "Ritika",
-      lawnArea: "Main Lawn",
-    },
-    {
-      id: "B002",
-      clientName: "Khanna Family",
-      eventType: "Reception",
-      eventDate: "2026-05-14",
-      guestCount: 320,
-      packageName: "Gold",
-      advancePaid: 1800,
-      notes: "Live counters, elevated stage lighting, family lounge seating.",
-      status: "Upcoming",
-      manager: "Raghav",
-      lawnArea: "Sunset Deck",
-    },
-    {
-      id: "B003",
-      clientName: "Brightstar Industries",
-      eventType: "Corporate",
-      eventDate: "2026-05-21",
-      guestCount: 260,
-      packageName: "Custom Luxury",
-      advancePaid: 4000,
-      notes: "Branding wall, guest lounge, formal stage program, AV support.",
-      status: "Inquiry",
-      manager: "Mira",
-      lawnArea: "North Lawn",
-    },
-    {
-      id: "B004",
-      clientName: "Neha Kapoor",
-      eventType: "Birthday",
-      eventDate: "2026-05-24",
-      guestCount: 180,
-      packageName: "Silver",
-      advancePaid: 900,
-      notes: "Kids activity zone, dessert island, pastel decor setup.",
-      status: "Upcoming",
-      manager: "Ritika",
-      lawnArea: "Garden Court",
-    },
-  ],
-  clients: [
-    {
-      id: "C001",
-      name: "Neha Kapoor",
-      phone: "+91 9810011223",
-      email: "neha@example.com",
-      stage: "Booked",
-      preferences: "Pastel decor, dessert island, kids activity corner.",
-    },
-    {
-      id: "C002",
-      name: "Aarav Sharma",
-      phone: "+91 9822244466",
-      email: "aarav@example.com",
-      stage: "Site Visit",
-      preferences: "Bridal entry path, valet, separate VIP lounge.",
-    },
-    {
-      id: "C003",
-      name: "Brightstar Industries",
-      phone: "+91 9900099900",
-      email: "events@brightstar.com",
-      stage: "Quoted",
-      preferences: "Corporate branding, projection wall, formal seating blocks.",
-    },
-  ],
-  vendors: [
-    {
-      id: "V001",
-      name: "Royal Petals Decor",
-      category: "Decor",
-      contactPerson: "Rajiv",
-      phone: "+91 9700001122",
-      status: "Preferred",
-      notes: "Strong for weddings and stage styling.",
-    },
-    {
-      id: "V002",
-      name: "Spice Route Catering",
-      category: "Catering",
-      contactPerson: "Mahesh",
-      phone: "+91 9711100012",
-      status: "Active",
-      notes: "Large-scale buffet and live counters.",
-    },
-    {
-      id: "V003",
-      name: "EchoLight Productions",
-      category: "Lighting",
-      contactPerson: "Rohit",
-      phone: "+91 9777701010",
-      status: "Backup",
-      notes: "Night events, moving heads, LED wall setup.",
-    },
-  ],
-  payments: [
-    {
-      id: "P001",
-      clientName: "Aarav Sharma",
-      paymentType: "Advance",
-      amount: 3200,
-      status: "Received",
-      notes: "Bank transfer completed.",
-    },
-    {
-      id: "P002",
-      clientName: "Khanna Family",
-      paymentType: "Installment",
-      amount: 1200,
-      status: "Pending",
-      notes: "Due next week after menu lock.",
-    },
-    {
-      id: "P003",
-      clientName: "Brightstar Industries",
-      paymentType: "Token",
-      amount: 1500,
-      status: "Pending",
-      notes: "Waiting for finance approval from client side.",
-    },
-  ],
-  tasks: [
-    {
-      id: "T001",
-      title: "Confirm stage floral design",
-      owner: "Decor team",
-      due: "Today 1:00 PM",
-      status: "Upcoming",
-    },
-    {
-      id: "T002",
-      title: "Check valet lane flow",
-      owner: "Operations manager",
-      due: "Today 5:30 PM",
-      status: "Upcoming",
-    },
-    {
-      id: "T003",
-      title: "Collect pending installment",
-      owner: "Finance desk",
-      due: "Tomorrow",
-      status: "Risk",
-    },
-  ],
-  requirements: [
-    {
-      title: "Booking lifecycle",
-      description: "Inquiry, site visit, quote, token, contract, confirmed booking, balance tracking.",
-    },
-    {
-      title: "Venue calendar",
-      description: "Date locks, setup windows, teardown slots, conflict detection, and lawn utilization.",
-    },
-    {
-      title: "Client CRM",
-      description: "Profiles, preferences, communication history, approvals, and lead stages.",
-    },
-    {
-      title: "Vendor coordination",
-      description: "Decor, catering, lighting, sound, security, valet, and backup partner mapping.",
-    },
-    {
-      title: "Event-day operations",
-      description: "Setup status, task assignment, readiness checks, and issue escalation.",
-    },
-    {
-      title: "Finance control",
-      description: "Deposits, balances, receipts, payout visibility, and revenue reporting.",
-    },
-  ],
-  activity: [
-    "Khanna Family payment marked pending for follow-up.",
-    "Brightstar Industries quote sent with custom luxury package.",
-    "Royal Petals Decor confirmed for May premium wedding slot.",
-    "Aarav Sharma booking moved to Confirmed.",
-  ],
+let state = {
+  bookings: [],
+  clients: [],
+  vendors: [],
+  payments: [],
+  tasks: [],
+  requirements: [],
+  activity: [],
+  dashboard: null
 };
 
-let state = loadState();
 let uiState = {
-  selectedBookingId: state.bookings[0]?.id || null,
+  selectedBookingId: null,
   bookingFilter: "All",
-  globalSearch: "",
+  globalSearch: ""
 };
-
-function loadState() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : structuredClone(seedData);
-  } catch (error) {
-    return structuredClone(seedData);
-  }
-}
-
-function saveState() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-}
 
 function money(value) {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
-    maximumFractionDigits: 0,
+    maximumFractionDigits: 0
   }).format(value);
 }
 
-function nextId(prefix, list) {
-  return `${prefix}${String(list.length + 1).padStart(3, "0")}`;
-}
-
 function safeStatusClass(status) {
-  return status.toLowerCase().replace(/\s+/g, "-");
+  return String(status).toLowerCase().replace(/\s+/g, "-");
 }
 
 function showToast(message) {
@@ -237,6 +37,39 @@ function showToast(message) {
   showToast.timeoutId = setTimeout(() => {
     toast.classList.remove("visible");
   }, 2500);
+}
+
+async function api(path, options = {}) {
+  const response = await fetch(`${API_BASE}${path}`, {
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers || {})
+    },
+    ...options
+  });
+
+  if (!response.ok) {
+    let message = "Request failed";
+    try {
+      const errorPayload = await response.json();
+      message = errorPayload.error || message;
+    } catch {
+      // ignore parse failure
+    }
+    throw new Error(message);
+  }
+
+  const contentType = response.headers.get("content-type") || "";
+  if (contentType.includes("application/json")) {
+    return response.json();
+  }
+
+  return response.text();
+}
+
+async function loadBootstrap() {
+  state = await api("/bootstrap");
+  uiState.selectedBookingId = state.bookings[0]?.id || null;
 }
 
 function setView(view) {
@@ -255,14 +88,14 @@ function setView(view) {
     clients: "Clients",
     vendors: "Vendors",
     finance: "Finance",
-    settings: "Settings",
+    settings: "Settings"
   };
 
   document.getElementById("viewTitle").textContent = titleMap[view] || "Dashboard";
 }
 
 function matchGlobalSearch(text) {
-  return text.toLowerCase().includes(uiState.globalSearch.trim().toLowerCase());
+  return String(text).toLowerCase().includes(uiState.globalSearch.trim().toLowerCase());
 }
 
 function getFilteredBookings() {
@@ -279,7 +112,7 @@ function getFilteredBookings() {
     const matchesGlobal =
       !uiState.globalSearch ||
       matchGlobalSearch(
-        `${booking.clientName} ${booking.eventType} ${booking.packageName} ${booking.notes}`,
+        `${booking.clientName} ${booking.eventType} ${booking.packageName} ${booking.notes}`
       );
 
     return matchesViewFilter && matchesLocalSearch && matchesGlobal;
@@ -298,47 +131,37 @@ function getSelectedBooking() {
 }
 
 function renderSidebarCard() {
-  const confirmed = state.bookings.filter((booking) => booking.status === "Confirmed").length;
-  const pendingCollections = state.payments
-    .filter((payment) => payment.status === "Pending")
-    .reduce((sum, payment) => sum + Number(payment.amount), 0);
-
+  const metrics = state.dashboard?.metrics;
   document.getElementById("sidebarCard").innerHTML = `
     <p class="eyebrow">Today on site</p>
-    <strong>${confirmed} confirmed event${confirmed === 1 ? "" : "s"}</strong>
-    <span>${money(pendingCollections)} still pending in collections across live records.</span>
+    <strong>${metrics?.confirmedEvents || 0} confirmed event${metrics?.confirmedEvents === 1 ? "" : "s"}</strong>
+    <span>${money(metrics?.pendingCollections || 0)} still pending in collections across live records.</span>
   `;
 }
 
 function renderStats() {
-  const totalBookings = state.bookings.length;
-  const inquiries = state.bookings.filter((booking) => booking.status === "Inquiry").length;
-  const upcoming = state.bookings.filter((booking) => booking.status === "Upcoming").length;
-  const received = state.payments
-    .filter((payment) => payment.status === "Received")
-    .reduce((sum, payment) => sum + Number(payment.amount), 0);
-
+  const metrics = state.dashboard?.metrics || {};
   const stats = [
     {
       label: "Total bookings",
-      value: totalBookings,
-      detail: "All inquiry and confirmed booking records",
+      value: metrics.totalBookings || 0,
+      detail: "All inquiry and confirmed booking records"
     },
     {
       label: "Open inquiries",
-      value: inquiries,
-      detail: "Leads that still need conversion follow-up",
+      value: metrics.openInquiries || 0,
+      detail: "Leads that still need conversion follow-up"
     },
     {
       label: "Upcoming events",
-      value: upcoming,
-      detail: "Confirmed execution work scheduled next",
+      value: metrics.upcomingEvents || 0,
+      detail: "Confirmed execution work scheduled next"
     },
     {
       label: "Payments received",
-      value: money(received),
-      detail: "Tracked from token to final balance entries",
-    },
+      value: money(metrics.paymentsReceived || 0),
+      detail: "Tracked from token to final balance entries"
+    }
   ];
 
   document.getElementById("statsGrid").innerHTML = stats
@@ -349,7 +172,7 @@ function renderStats() {
           <strong>${stat.value}</strong>
           <small>${stat.detail}</small>
         </article>
-      `,
+      `
     )
     .join("");
 }
@@ -372,16 +195,16 @@ function detailCard(title, subtitle, status, tags) {
 }
 
 function renderToday() {
-  const sorted = [...state.bookings].sort((a, b) => a.eventDate.localeCompare(b.eventDate)).slice(0, 4);
+  const todayBookings = state.dashboard?.todayBookings || [];
   document.getElementById("todayList").innerHTML =
-    sorted
+    todayBookings
       .map((booking) =>
         detailCard(
           `${booking.clientName} • ${booking.eventType}`,
           `${booking.eventDate} · ${booking.guestCount} guests · ${booking.manager} managing`,
           booking.status,
-          [booking.packageName, booking.lawnArea, money(Number(booking.advancePaid))],
-        ),
+          [booking.packageName, booking.lawnArea, money(Number(booking.advancePaid))]
+        )
       )
       .join("") || `<div class="empty-state">No booking records yet.</div>`;
 }
@@ -389,23 +212,18 @@ function renderToday() {
 function renderTasks() {
   document.getElementById("tasksList").innerHTML =
     state.tasks
-      .map((task) =>
-        detailCard(task.title, `${task.owner} · ${task.due}`, task.status, [task.id]),
-      )
+      .map((task) => detailCard(task.title, `${task.owner} · ${task.due}`, task.status, [task.id]))
       .join("") || `<div class="empty-state">No tasks yet.</div>`;
 }
 
 function renderCollectionsSummary() {
-  const pendingPayments = state.payments.filter((payment) => payment.status === "Pending");
-  const totalPending = pendingPayments.reduce((sum, payment) => sum + Number(payment.amount), 0);
-  const totalReceived = state.payments
-    .filter((payment) => payment.status === "Received")
-    .reduce((sum, payment) => sum + Number(payment.amount), 0);
+  const metrics = state.dashboard?.metrics || {};
+  const pendingPayments = state.dashboard?.pendingPayments || [];
 
   const financeMarkup = `
     <span>Collection summary</span>
-    <strong>${money(totalReceived)}</strong>
-    <p>${money(totalPending)} still pending across ${pendingPayments.length} payment record${pendingPayments.length === 1 ? "" : "s"}.</p>
+    <strong>${money(metrics.paymentsReceived || 0)}</strong>
+    <p>${money(metrics.pendingCollections || 0)} still pending across ${pendingPayments.length} payment record${pendingPayments.length === 1 ? "" : "s"}.</p>
   `;
 
   document.getElementById("financeHighlight").innerHTML = financeMarkup;
@@ -419,7 +237,7 @@ function renderCollectionsSummary() {
             <strong>${payment.clientName}</strong>
             <p>${payment.paymentType} · ${money(Number(payment.amount))} · ${payment.notes}</p>
           </article>
-        `,
+        `
       )
       .join("") || `<div class="empty-state">No pending payments.</div>`;
 }
@@ -432,7 +250,7 @@ function renderActivity() {
           <strong>Activity</strong>
           <p>${item}</p>
         </article>
-      `,
+      `
     )
     .join("");
 }
@@ -456,7 +274,7 @@ function renderBookingsTable() {
             <td>${money(Number(booking.advancePaid))}</td>
             <td><span class="status-pill status-${safeStatusClass(booking.status)}">${booking.status}</span></td>
           </tr>
-        `,
+        `
       )
       .join("") || `
         <tr>
@@ -546,13 +364,17 @@ function renderBookingDetail() {
   `;
 
   detail.querySelectorAll("[data-status-action]").forEach((button) => {
-    button.addEventListener("click", () => {
-      booking.status = button.dataset.statusAction;
-      state.activity.unshift(`${booking.clientName} moved to ${booking.status}.`);
-      state.activity = state.activity.slice(0, 8);
-      saveState();
-      renderAll();
-      showToast(`Booking marked ${booking.status}.`);
+    button.addEventListener("click", async () => {
+      try {
+        await api(`/bookings/${booking.id}/status`, {
+          method: "PATCH",
+          body: JSON.stringify({ status: button.dataset.statusAction })
+        });
+        await refreshState();
+        showToast(`Booking marked ${button.dataset.statusAction}.`);
+      } catch (error) {
+        showToast(error.message);
+      }
     });
   });
 }
@@ -574,7 +396,7 @@ function renderClientsTable() {
             <td><span class="status-pill status-${safeStatusClass(client.stage)}">${client.stage}</span></td>
             <td>${client.preferences}</td>
           </tr>
-        `,
+        `
       )
       .join("") || `
         <tr>
@@ -603,7 +425,7 @@ function renderVendorsTable() {
             <td>${vendor.phone}</td>
             <td><span class="status-pill status-${safeStatusClass(vendor.status)}">${vendor.status}</span></td>
           </tr>
-        `,
+        `
       )
       .join("") || `
         <tr>
@@ -629,7 +451,7 @@ function renderPaymentsTable() {
             <td><span class="status-pill status-${safeStatusClass(payment.status)}">${payment.status}</span></td>
             <td>${payment.notes}</td>
           </tr>
-        `,
+        `
       )
       .join("") || `
         <tr>
@@ -662,11 +484,11 @@ function renderCalendar() {
                     <div>${booking.eventType} · ${booking.guestCount} guests</div>
                     <div>${booking.packageName} · ${booking.manager}</div>
                   </div>
-                `,
+                `
               )
               .join("")}
           </article>
-        `,
+        `
       )
       .join("") || `<div class="empty-state">No calendar items yet.</div>`;
 }
@@ -679,7 +501,7 @@ function renderRequirements() {
           <h4>${item.title}</h4>
           <p>${item.description}</p>
         </article>
-      `,
+      `
     )
     .join("");
 }
@@ -705,6 +527,13 @@ function renderAll() {
   renderPaymentsTable();
   renderCalendar();
   renderRequirements();
+}
+
+async function refreshState() {
+  const selectedBefore = uiState.selectedBookingId;
+  await loadBootstrap();
+  uiState.selectedBookingId = selectedBefore || state.bookings[0]?.id || null;
+  renderAll();
 }
 
 function resetForms() {
@@ -743,88 +572,104 @@ function bindFilters() {
 }
 
 function bindForms() {
-  document.getElementById("bookingForm").addEventListener("submit", (event) => {
+  document.getElementById("bookingForm").addEventListener("submit", async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const newBooking = {
-      id: nextId("B", state.bookings),
-      clientName: formData.get("clientName"),
-      eventType: formData.get("eventType"),
-      eventDate: formData.get("eventDate"),
-      guestCount: Number(formData.get("guestCount")),
-      packageName: formData.get("packageName"),
-      advancePaid: Number(formData.get("advancePaid")),
-      notes: formData.get("notes"),
-      status: "Inquiry",
-      manager: "Unassigned",
-      lawnArea: "Main Lawn",
-    };
-    state.bookings.unshift(newBooking);
-    uiState.selectedBookingId = newBooking.id;
-    state.activity.unshift(`${newBooking.clientName} booking created as Inquiry.`);
-    state.activity = state.activity.slice(0, 8);
-    saveState();
-    renderAll();
-    event.currentTarget.reset();
-    showToast("Booking saved.");
+
+    try {
+      const booking = await api("/bookings", {
+        method: "POST",
+        body: JSON.stringify({
+          clientName: formData.get("clientName"),
+          eventType: formData.get("eventType"),
+          eventDate: formData.get("eventDate"),
+          guestCount: Number(formData.get("guestCount")),
+          packageName: formData.get("packageName"),
+          advancePaid: Number(formData.get("advancePaid")),
+          notes: formData.get("notes")
+        })
+      });
+
+      uiState.selectedBookingId = booking.id;
+      await refreshState();
+      event.currentTarget.reset();
+      showToast("Booking saved.");
+    } catch (error) {
+      showToast(error.message);
+    }
   });
 
-  document.getElementById("clientForm").addEventListener("submit", (event) => {
+  document.getElementById("clientForm").addEventListener("submit", async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    state.clients.unshift({
-      id: nextId("C", state.clients),
-      name: formData.get("name"),
-      phone: formData.get("phone"),
-      email: formData.get("email"),
-      stage: formData.get("stage"),
-      preferences: formData.get("preferences"),
-    });
-    state.activity.unshift(`${formData.get("name")} added to CRM.`);
-    state.activity = state.activity.slice(0, 8);
-    saveState();
-    renderAll();
-    event.currentTarget.reset();
-    showToast("Client saved.");
+
+    try {
+      await api("/clients", {
+        method: "POST",
+        body: JSON.stringify({
+          name: formData.get("name"),
+          phone: formData.get("phone"),
+          email: formData.get("email"),
+          stage: formData.get("stage"),
+          preferences: formData.get("preferences")
+        })
+      });
+
+      await refreshState();
+      event.currentTarget.reset();
+      showToast("Client saved.");
+    } catch (error) {
+      showToast(error.message);
+    }
   });
 
-  document.getElementById("vendorForm").addEventListener("submit", (event) => {
+  document.getElementById("vendorForm").addEventListener("submit", async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    state.vendors.unshift({
-      id: nextId("V", state.vendors),
-      name: formData.get("name"),
-      category: formData.get("category"),
-      contactPerson: formData.get("contactPerson"),
-      phone: formData.get("phone"),
-      status: formData.get("status"),
-      notes: formData.get("notes"),
-    });
-    state.activity.unshift(`${formData.get("name")} vendor record added.`);
-    state.activity = state.activity.slice(0, 8);
-    saveState();
-    renderAll();
-    event.currentTarget.reset();
-    showToast("Vendor saved.");
+
+    try {
+      await api("/vendors", {
+        method: "POST",
+        body: JSON.stringify({
+          name: formData.get("name"),
+          category: formData.get("category"),
+          contactPerson: formData.get("contactPerson"),
+          phone: formData.get("phone"),
+          status: formData.get("status"),
+          notes: formData.get("notes")
+        })
+      });
+
+      await refreshState();
+      event.currentTarget.reset();
+      showToast("Vendor saved.");
+    } catch (error) {
+      showToast(error.message);
+    }
   });
 
-  document.getElementById("paymentForm").addEventListener("submit", (event) => {
+  document.getElementById("paymentForm").addEventListener("submit", async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    state.payments.unshift({
-      id: nextId("P", state.payments),
-      clientName: formData.get("clientName"),
-      paymentType: formData.get("paymentType"),
-      amount: Number(formData.get("amount")),
-      status: formData.get("status"),
-      notes: formData.get("notes"),
-    });
-    state.activity.unshift(`${formData.get("clientName")} payment entry added.`);
-    state.activity = state.activity.slice(0, 8);
-    saveState();
-    renderAll();
-    event.currentTarget.reset();
-    showToast("Payment saved.");
+
+    try {
+      await api("/payments", {
+        method: "POST",
+        body: JSON.stringify({
+          clientName: formData.get("clientName"),
+          paymentType: formData.get("paymentType"),
+          amount: Number(formData.get("amount")),
+          status: formData.get("status"),
+          notes: formData.get("notes")
+        })
+      });
+
+      await refreshState();
+      event.currentTarget.reset();
+      showToast("Payment saved.");
+    } catch (error) {
+      showToast(error.message);
+    }
   });
 }
 
@@ -839,25 +684,36 @@ function bindUtilityActions() {
     document.querySelector('#bookingForm input[name="clientName"]').focus();
   });
 
-  document.getElementById("seedBtn").addEventListener("click", () => {
-    state = structuredClone(seedData);
-    uiState = {
-      selectedBookingId: state.bookings[0]?.id || null,
-      bookingFilter: "All",
-      globalSearch: "",
-    };
-    saveState();
-    resetForms();
-    document.getElementById("bookingSearch").value = "";
-    document.getElementById("globalSearch").value = "";
-    renderAll();
-    showToast("Demo data reset.");
+  document.getElementById("seedBtn").addEventListener("click", async () => {
+    try {
+      await api("/reset", { method: "POST" });
+      uiState = {
+        selectedBookingId: null,
+        bookingFilter: "All",
+        globalSearch: ""
+      };
+      resetForms();
+      document.getElementById("bookingSearch").value = "";
+      document.getElementById("globalSearch").value = "";
+      await refreshState();
+      showToast("Demo data reset.");
+    } catch (error) {
+      showToast(error.message);
+    }
   });
 }
 
-bindNavigation();
-bindFilters();
-bindForms();
-bindUtilityActions();
-setView("dashboard");
-renderAll();
+async function init() {
+  try {
+    bindNavigation();
+    bindFilters();
+    bindForms();
+    bindUtilityActions();
+    setView("dashboard");
+    await refreshState();
+  } catch (error) {
+    showToast(`Startup failed: ${error.message}`);
+  }
+}
+
+init();

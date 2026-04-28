@@ -1,28 +1,32 @@
 # Celebration Lawn Command
 
-A real front-end application foundation for a celebration lawn business.
+A real client-server application foundation for a celebration lawn business.
 
 ## Current scope
 
-- Multi-section app shell
-- Booking creation workflow
-- Client records
-- Vendor management
-- Payment tracking
-- Operational dashboard
-- Persistent browser storage via `localStorage`
+- Python `FastAPI` backend
+- SQLite persistence via `SQLAlchemy`
+- Static asset serving from the same app
+- Booking, client, vendor, payment, task, dashboard, and reset endpoints
+- Frontend wired to live API instead of `localStorage`
 
-## Open
+## Run
 
-Open `index.html` in a browser.
+```bash
+uvicorn main:app --host 127.0.0.1 --port 4173
+```
 
-## Next
+Then open [http://127.0.0.1:4173](http://127.0.0.1:4173).
 
-Backend design can map directly to the current frontend modules:
+## API
 
-- `bookings`
-- `clients`
-- `vendors`
-- `payments`
-- `tasks`
-- `settings`
+- `GET /api/health`
+- `GET /api/bootstrap`
+- `GET /api/dashboard`
+- `GET|POST /api/bookings`
+- `PATCH /api/bookings/:id/status`
+- `GET|POST /api/clients`
+- `GET|POST /api/vendors`
+- `GET|POST /api/payments`
+- `GET|POST /api/tasks`
+- `POST /api/reset`
