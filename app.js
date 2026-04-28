@@ -14,7 +14,8 @@ let state = {
 let uiState = {
   selectedBookingId: null,
   bookingFilter: "All",
-  globalSearch: ""
+  globalSearch: "",
+  mobileNavOpen: false
 };
 
 function money(value) {
@@ -94,11 +95,26 @@ function setView(view) {
   document.getElementById("viewTitle").textContent = titleMap[view] || "Dashboard";
 
   if (window.innerWidth <= 760) {
+    uiState.mobileNavOpen = false;
+    syncMobileNav();
     document.querySelector(".main-content")?.scrollIntoView({
       behavior: "smooth",
       block: "start"
     });
   }
+}
+
+function syncMobileNav() {
+  const sidebar = document.querySelector(".sidebar");
+  const toggle = document.getElementById("mobileNavToggle");
+  if (!sidebar || !toggle) return;
+
+  const isDesktop = window.innerWidth > 760;
+  const isOpen = isDesktop || uiState.mobileNavOpen;
+
+  sidebar.classList.toggle("is-open", isOpen);
+  toggle.setAttribute("aria-expanded", String(isOpen));
+  toggle.querySelector(".mobile-nav-toggle__label").textContent = isOpen ? "Close" : "Menu";
 }
 
 function matchGlobalSearch(text) {
@@ -558,6 +574,13 @@ function bindNavigation() {
   document.querySelectorAll("[data-goto]").forEach((button) => {
     button.addEventListener("click", () => setView(button.dataset.goto));
   });
+
+  document.getElementById("mobileNavToggle")?.addEventListener("click", () => {
+    uiState.mobileNavOpen = !uiState.mobileNavOpen;
+    syncMobileNav();
+  });
+
+  window.addEventListener("resize", syncMobileNav);
 }
 
 function bindFilters() {
@@ -716,6 +739,7 @@ async function init() {
     bindFilters();
     bindForms();
     bindUtilityActions();
+    syncMobileNav();
     setView("dashboard");
     await refreshState();
   } catch (error) {

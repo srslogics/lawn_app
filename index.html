@@ -9,6 +9,9 @@
   <body>
     <div class="app-shell">
       <aside class="sidebar">
+        <button class="mobile-nav-toggle" id="mobileNavToggle" type="button" aria-expanded="false" aria-controls="primaryNav">
+          <span class="mobile-nav-toggle__label">Menu</span>
+        </button>
         <div class="brand-block">
           <img class="brand-logo" src="assets/SrSLogicsLogo.png" alt="SrSLogics logo" />
           <p class="eyebrow">Venue Management</p>
@@ -18,7 +21,7 @@
           </p>
         </div>
 
-        <nav class="nav-list" aria-label="Primary navigation">
+        <nav class="nav-list" id="primaryNav" aria-label="Primary navigation">
           <button class="nav-link active" data-view="dashboard">Dashboard</button>
           <button class="nav-link" data-view="bookings">Bookings</button>
           <button class="nav-link" data-view="calendar">Calendar</button>
