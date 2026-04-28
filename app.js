@@ -92,6 +92,13 @@ function setView(view) {
   };
 
   document.getElementById("viewTitle").textContent = titleMap[view] || "Dashboard";
+
+  if (window.innerWidth <= 760) {
+    document.querySelector(".main-content")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }
 }
 
 function matchGlobalSearch(text) {
