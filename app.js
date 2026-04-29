@@ -1,4 +1,7 @@
-const API_BASE = "/api";
+const API_BASE =
+  window.location.protocol === "file:"
+    ? "http://127.0.0.1:4173/api"
+    : `${window.location.origin}/api`;
 
 let state = {
   bookings: [],
@@ -15,7 +18,8 @@ let uiState = {
   selectedBookingId: null,
   bookingFilter: "All",
   globalSearch: "",
-  mobileNavOpen: false
+  mobileNavOpen: false,
+  currentView: "dashboard"
 };
 
 function money(value) {
@@ -53,7 +57,7 @@ async function api(path, options = {}) {
     let message = "Request failed";
     try {
       const errorPayload = await response.json();
-      message = errorPayload.error || message;
+      message = errorPayload.error || errorPayload.detail || message;
     } catch {
       // ignore parse failure
     }
@@ -70,10 +74,13 @@ async function api(path, options = {}) {
 
 async function loadBootstrap() {
   state = await api("/bootstrap");
-  uiState.selectedBookingId = state.bookings[0]?.id || null;
+  if (!state.bookings.some((booking) => booking.id === uiState.selectedBookingId)) {
+    uiState.selectedBookingId = state.bookings[0]?.id || null;
+  }
 }
 
 function setView(view) {
+  uiState.currentView = view;
   document.querySelectorAll(".nav-link").forEach((button) => {
     button.classList.toggle("active", button.dataset.view === view);
   });
@@ -97,9 +104,11 @@ function setView(view) {
   if (window.innerWidth <= 760) {
     uiState.mobileNavOpen = false;
     syncMobileNav();
-    document.querySelector(".main-content")?.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
+    window.requestAnimationFrame(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: "auto"
+      });
     });
   }
 }
@@ -266,16 +275,17 @@ function renderCollectionsSummary() {
 }
 
 function renderActivity() {
-  document.getElementById("activityList").innerHTML = state.activity
-    .map(
-      (item) => `
-        <article class="mini-item">
-          <strong>Activity</strong>
-          <p>${item}</p>
-        </article>
-      `
-    )
-    .join("");
+  document.getElementById("activityList").innerHTML =
+    state.activity
+      .map(
+        (item) => `
+          <article class="mini-item">
+            <strong>Activity</strong>
+            <p>${item}</p>
+          </article>
+        `
+      )
+      .join("") || `<div class="empty-state">No recent activity yet.</div>`;
 }
 
 function renderBookingsTable() {
@@ -553,9 +563,7 @@ function renderAll() {
 }
 
 async function refreshState() {
-  const selectedBefore = uiState.selectedBookingId;
   await loadBootstrap();
-  uiState.selectedBookingId = selectedBefore || state.bookings[0]?.id || null;
   renderAll();
 }
 
@@ -720,13 +728,16 @@ function bindUtilityActions() {
       uiState = {
         selectedBookingId: null,
         bookingFilter: "All",
-        globalSearch: ""
+        globalSearch: "",
+        mobileNavOpen: false,
+        currentView: "dashboard"
       };
       resetForms();
       document.getElementById("bookingSearch").value = "";
       document.getElementById("globalSearch").value = "";
       await refreshState();
-      showToast("Demo data reset.");
+      setView("dashboard");
+      showToast("Sample data restored.");
     } catch (error) {
       showToast(error.message);
     }
@@ -744,6 +755,8 @@ async function init() {
     await refreshState();
   } catch (error) {
     showToast(`Startup failed: ${error.message}`);
+    document.getElementById("todayList").innerHTML =
+      `<div class="empty-state">The app could not reach the backend. Start the server on 127.0.0.1:4173 and reload.</div>`;
   }
 }
 
