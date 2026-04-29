@@ -57,7 +57,7 @@ document.getElementById("enquiryForm")?.addEventListener("submit", async (event)
     });
 
     form.reset();
-    showToast("Enquiry submitted. The venue team can follow up from the backend.");
+    showToast("Your enquiry has been sent. The venue team will contact you shortly.");
   } catch (error) {
     showToast(error.message);
   }

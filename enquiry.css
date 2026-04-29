@@ -32,6 +32,33 @@ body {
   padding: 28px 0 44px;
 }
 
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.brand-lockup {
+  display: grid;
+  gap: 6px;
+}
+
+.brand-lockup strong {
+  font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  line-height: 0.95;
+}
+
+.site-header__note {
+  max-width: 36rem;
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+  text-align: right;
+}
+
 .hero-section,
 .content-section {
   display: grid;
@@ -228,6 +255,10 @@ body {
   cursor: pointer;
 }
 
+.submit-btn:hover {
+  filter: brightness(1.03);
+}
+
 .form-footnote {
   margin: 16px 0 0;
   font-size: 0.95rem;
@@ -254,11 +285,21 @@ body {
 }
 
 @media (max-width: 1024px) {
+  .site-header,
   .hero-section,
   .content-section,
   .benefit-grid,
   .enquiry-form {
     grid-template-columns: 1fr;
+  }
+
+  .site-header {
+    align-items: start;
+  }
+
+  .site-header__note {
+    max-width: none;
+    text-align: left;
   }
 }
 
@@ -282,5 +323,9 @@ body {
 
   .form-heading h2 {
     font-size: 2rem;
+  }
+
+  .site-header {
+    margin-bottom: 18px;
   }
 }
