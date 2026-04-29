@@ -59,8 +59,48 @@ body {
   text-align: right;
 }
 
+.contact-ribbon {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.contact-ribbon article,
+.gallery-card,
+.testimonial-card,
+.location-card {
+  border: 1px solid var(--line);
+  border-radius: 26px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.contact-ribbon article {
+  padding: 18px 20px;
+}
+
+.contact-ribbon span,
+.gallery-card__meta span,
+.location-card p,
+.testimonial-list cite {
+  display: block;
+  color: var(--muted);
+}
+
+.contact-ribbon strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 1.05rem;
+}
+
 .hero-section,
-.content-section {
+.content-section,
+.credibility-section,
+.showcase-section,
+.faq-section,
+.gallery-section,
+.trust-section {
   display: grid;
   gap: 24px;
 }
@@ -74,7 +114,13 @@ body {
 .hero-panel,
 .info-card,
 .benefit-card,
-.form-card {
+.form-card,
+.credibility-card,
+.showcase-card,
+.faq-card,
+.gallery-card,
+.testimonial-card,
+.location-card {
   border: 1px solid var(--line);
   border-radius: 30px;
   background: var(--panel);
@@ -84,7 +130,11 @@ body {
 .hero-copy,
 .hero-panel,
 .info-card,
-.form-card {
+.form-card,
+.credibility-card,
+.faq-card,
+.testimonial-card,
+.location-card {
   padding: 30px;
 }
 
@@ -130,7 +180,9 @@ body {
 
 .hero-points span,
 .hero-panel__stats article,
-.benefit-card {
+.benefit-card,
+.trust-strip article,
+.showcase-card {
   border-radius: 22px;
   background: var(--panel-strong);
   border: 1px solid rgba(118, 84, 35, 0.08);
@@ -178,6 +230,137 @@ body {
   font-size: 1rem;
 }
 
+.trust-strip {
+  display: grid;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.trust-strip article {
+  padding: 16px 18px;
+}
+
+.trust-strip strong,
+.showcase-card span,
+.credibility-value {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 800;
+}
+
+.trust-strip span,
+.credibility-card p,
+.showcase-card p,
+.faq-list p,
+.process-list p,
+.hero-panel__promise p {
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.hero-panel__promise {
+  padding: 18px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(240, 230, 215, 0.7));
+}
+
+.hero-panel__promise h3,
+.credibility-card--feature h2,
+.showcase-copy h2,
+.faq-card h2 {
+  margin: 0;
+  font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+  line-height: 1;
+  letter-spacing: -0.045em;
+}
+
+.hero-panel__promise h3 {
+  margin-bottom: 10px;
+  font-size: 1.7rem;
+}
+
+.gallery-section {
+  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+  align-items: start;
+  margin-bottom: 26px;
+}
+
+.gallery-copy {
+  padding: 10px 6px 0;
+}
+
+.gallery-copy h2 {
+  margin: 0 0 14px;
+  font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+  font-size: clamp(2.1rem, 3.6vw, 3.4rem);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+}
+
+.gallery-copy p {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.gallery-card {
+  overflow: hidden;
+}
+
+.gallery-card--hero {
+  grid-column: 1 / -1;
+}
+
+.gallery-card__visual {
+  min-height: 230px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 228, 181, 0.45), transparent 28%),
+    linear-gradient(135deg, rgba(44, 107, 94, 0.95), rgba(188, 133, 64, 0.84));
+}
+
+.gallery-card__visual--evening {
+  min-height: 200px;
+  background:
+    radial-gradient(circle at center, rgba(255, 230, 170, 0.35), transparent 22%),
+    linear-gradient(140deg, rgba(92, 59, 27, 0.95), rgba(44, 107, 94, 0.88));
+}
+
+.gallery-card__visual--dining {
+  min-height: 200px;
+  background:
+    linear-gradient(160deg, rgba(229, 209, 175, 0.35), transparent 32%),
+    linear-gradient(135deg, rgba(188, 133, 64, 0.9), rgba(108, 67, 31, 0.92));
+}
+
+.gallery-card__meta {
+  padding: 18px 20px 20px;
+}
+
+.gallery-card__meta strong {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.credibility-section {
+  grid-template-columns: minmax(0, 1.2fr) repeat(3, minmax(0, 0.8fr));
+  margin-bottom: 26px;
+}
+
+.credibility-card--feature h2 {
+  font-size: clamp(2rem, 3vw, 3rem);
+  margin-bottom: 12px;
+}
+
+.credibility-card {
+  display: grid;
+  align-content: start;
+}
+
 .content-section {
   grid-template-columns: minmax(0, 0.95fr) minmax(360px, 0.85fr);
   align-items: start;
@@ -197,6 +380,23 @@ body {
 .benefit-card h3 {
   margin: 0 0 10px;
   font-size: 1.1rem;
+}
+
+.process-card {
+  margin-top: 18px;
+}
+
+.process-list {
+  display: grid;
+  gap: 18px;
+  margin-top: 8px;
+}
+
+.process-list strong,
+.faq-list strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 1.03rem;
 }
 
 .form-heading {
@@ -264,6 +464,150 @@ body {
   font-size: 0.95rem;
 }
 
+.assurance-panel {
+  margin-top: 20px;
+  padding: 18px 20px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.68);
+  border: 1px solid rgba(118, 84, 35, 0.09);
+}
+
+.assurance-panel strong {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.assurance-panel ul {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.showcase-section {
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  align-items: start;
+  margin-top: 26px;
+}
+
+.showcase-copy {
+  padding: 10px 6px 0;
+}
+
+.showcase-copy h2 {
+  font-size: clamp(2.1rem, 3.5vw, 3.4rem);
+  margin-bottom: 14px;
+}
+
+.showcase-copy p {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.showcase-card {
+  padding: 22px;
+}
+
+.trust-section {
+  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+  align-items: start;
+  margin-top: 26px;
+}
+
+.testimonial-card h2,
+.location-card h2 {
+  margin: 0 0 14px;
+  font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+  font-size: clamp(2rem, 3vw, 2.9rem);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+}
+
+.testimonial-list {
+  display: grid;
+  gap: 16px;
+}
+
+.testimonial-list blockquote {
+  margin: 0;
+  padding: 18px 20px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.74);
+  border: 1px solid rgba(118, 84, 35, 0.08);
+  color: var(--ink);
+  line-height: 1.7;
+}
+
+.testimonial-list cite {
+  margin-top: 10px;
+  font-style: normal;
+}
+
+.location-map {
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
+  padding: 20px;
+  border-radius: 24px;
+  min-height: 220px;
+  align-content: center;
+  text-align: center;
+  background:
+    linear-gradient(180deg, rgba(255, 250, 242, 0.92), rgba(239, 230, 216, 0.9)),
+    linear-gradient(135deg, rgba(188, 133, 64, 0.1), rgba(44, 107, 94, 0.08));
+  border: 1px solid rgba(118, 84, 35, 0.09);
+}
+
+.location-map span {
+  color: var(--accent);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.location-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.location-actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(118, 84, 35, 0.12);
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.72);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.faq-section {
+  margin-top: 26px;
+}
+
+.faq-card h2 {
+  font-size: clamp(2rem, 3vw, 2.8rem);
+  margin-bottom: 16px;
+}
+
+.faq-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
 .toast {
   position: fixed;
   right: 24px;
@@ -286,10 +630,18 @@ body {
 
 @media (max-width: 1024px) {
   .site-header,
+  .contact-ribbon,
   .hero-section,
+  .gallery-section,
   .content-section,
+  .credibility-section,
+  .showcase-section,
+  .trust-section,
   .benefit-grid,
-  .enquiry-form {
+  .enquiry-form,
+  .showcase-grid,
+  .faq-list,
+  .gallery-grid {
     grid-template-columns: 1fr;
   }
 
@@ -312,7 +664,9 @@ body {
   .hero-copy,
   .hero-panel,
   .info-card,
-  .form-card {
+  .form-card,
+  .testimonial-card,
+  .location-card {
     padding: 22px;
     border-radius: 24px;
   }
