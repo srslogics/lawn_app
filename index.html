@@ -136,15 +136,20 @@
         <section class="view" data-view-panel="bookings">
           <div class="bookings-layout">
             <article class="panel">
-              <div class="section-heading">
-                <div>
+              <div class="section-heading bookings-heading">
+                <div class="bookings-heading__copy">
                   <p class="eyebrow">Booking Management</p>
                   <h3>Pipeline, confirmations, and event records</h3>
+                  <p class="bookings-copy">Review live bookings, shortlist upcoming events, and move records without losing context.</p>
                 </div>
+                <button class="ghost-btn small-btn" id="focusBookingFormBtn" type="button">Add booking</button>
               </div>
 
               <div class="table-toolbar">
-                <input id="bookingSearch" placeholder="Search by client, event type, or package" />
+                <label class="table-search">
+                  <span class="sr-only">Search bookings</span>
+                  <input id="bookingSearch" placeholder="Search by client, event type, or package" />
+                </label>
                 <div class="filter-group" id="bookingFilters">
                   <button class="filter-chip active" data-filter="All">All</button>
                   <button class="filter-chip" data-filter="Inquiry">Inquiry</button>
@@ -175,7 +180,7 @@
                 <div class="section-heading compact-heading">
                   <div>
                     <p class="eyebrow">Selected Booking</p>
-                    <h3>Detail panel</h3>
+                    <h3>Booking summary</h3>
                   </div>
                 </div>
                 <div id="bookingDetail"></div>
@@ -248,7 +253,7 @@
         </section>
 
         <section class="view" data-view-panel="clients">
-          <div class="section-grid">
+          <div class="section-grid entity-grid">
             <article class="panel">
               <div class="section-heading">
                 <div>
@@ -312,7 +317,7 @@
         </section>
 
         <section class="view" data-view-panel="vendors">
-          <div class="section-grid">
+          <div class="section-grid entity-grid">
             <article class="panel">
               <div class="section-heading">
                 <div>
@@ -386,7 +391,7 @@
         </section>
 
         <section class="view" data-view-panel="finance">
-          <div class="section-grid">
+          <div class="section-grid entity-grid">
             <article class="panel">
               <div class="section-heading">
                 <div>

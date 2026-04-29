@@ -299,7 +299,7 @@ function renderBookingsTable() {
           <tr class="table-row ${selected?.id === booking.id ? "active" : ""}" data-booking-id="${booking.id}">
             <td data-label="Booking">
               <div class="table-primary">${booking.clientName}</div>
-              <div class="table-secondary">${booking.eventType} · ${booking.lawnArea}</div>
+              <div class="table-secondary">${booking.eventType} · ${booking.lawnArea} · ${booking.id}</div>
             </td>
             <td data-label="Date">${booking.eventDate}</td>
             <td data-label="Guests">${booking.guestCount}</td>
@@ -349,6 +349,11 @@ function renderBookingDetail() {
           <p>${booking.eventType} · ${booking.eventDate} · ${booking.id}</p>
         </div>
         <span class="status-pill status-${safeStatusClass(booking.status)}">${booking.status}</span>
+      </div>
+
+      <div class="detail-intro">
+        <strong>${booking.packageName}</strong>
+        <span>${booking.lawnArea}</span>
       </div>
 
       <div class="detail-grid">
@@ -720,6 +725,16 @@ function bindUtilityActions() {
   document.getElementById("heroBookingBtn").addEventListener("click", () => {
     setView("bookings");
     document.querySelector('#bookingForm input[name="clientName"]').focus();
+  });
+
+  document.getElementById("focusBookingFormBtn")?.addEventListener("click", () => {
+    document.querySelector('#bookingForm input[name="clientName"]')?.focus();
+    if (window.innerWidth <= 1260) {
+      document.getElementById("bookingForm")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    }
   });
 
   document.getElementById("seedBtn").addEventListener("click", async () => {
