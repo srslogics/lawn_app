@@ -117,13 +117,13 @@ textarea {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(160deg, rgba(255, 255, 255, 0.04), transparent 22%),
+    linear-gradient(160deg, rgba(255, 255, 255, 0.03), transparent 22%),
     repeating-linear-gradient(
       120deg,
-      rgba(255, 255, 255, 0.02) 0,
-      rgba(255, 255, 255, 0.02) 1px,
+      rgba(255, 255, 255, 0.012) 0,
+      rgba(255, 255, 255, 0.012) 1px,
       transparent 1px,
-      transparent 32px
+      transparent 36px
     );
   pointer-events: none;
 }
@@ -155,35 +155,26 @@ textarea {
   font-weight: 800;
 }
 
-.brand-seal {
-  display: inline-flex;
-  align-items: center;
-  margin: 0 0 18px;
-  padding: 8px 12px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.05);
-  color: rgba(249, 244, 237, 0.88);
-  font-size: 0.74rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
 .brand-block h1,
-.topbar h2,
-.hero-card h3,
 .section-heading h3,
 .data-table th,
 .detail-card h4,
 .requirement-card h4 {
   margin: 0;
   font-family: "Avenir Next", "Trebuchet MS", sans-serif;
-  letter-spacing: -0.055em;
+  letter-spacing: -0.05em;
+}
+
+.topbar h2,
+.hero-card h3 {
+  margin: 0;
+  font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+  font-weight: 700;
+  letter-spacing: -0.06em;
 }
 
 .brand-block h1 {
-  font-size: 2.1rem;
+  font-size: 2rem;
   line-height: 0.92;
   margin-bottom: 18px;
 }
@@ -209,10 +200,10 @@ textarea {
 }
 
 .brand-line {
-  width: 82px;
+  width: 70px;
   height: 1px;
   margin-top: 22px;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.42), transparent);
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.34), transparent);
 }
 
 .nav-list {
@@ -236,7 +227,7 @@ textarea {
 
 .nav-link:hover,
 .nav-link.active {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(143, 107, 56, 0.14));
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(143, 107, 56, 0.12));
   border-color: rgba(255, 255, 255, 0.09);
   transform: translateX(4px);
 }
@@ -308,8 +299,8 @@ textarea {
 }
 
 .topbar h2 {
-  font-size: clamp(2.2rem, 3vw, 3rem);
-  line-height: 0.92;
+  font-size: clamp(2.3rem, 3vw, 3.05rem);
+  line-height: 0.9;
 }
 
 .topbar-intro {
@@ -317,30 +308,9 @@ textarea {
   gap: 8px;
 }
 
-.title-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  align-items: center;
-}
-
-.workspace-chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 8px 12px;
-  border-radius: 999px;
-  background: rgba(177, 118, 43, 0.1);
-  border: 1px solid rgba(177, 118, 43, 0.18);
-  color: var(--accent-deep);
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
 .topbar-copy {
   margin: 0;
-  max-width: 48ch;
+  max-width: 54ch;
   color: var(--muted);
 }
 
@@ -489,45 +459,18 @@ textarea {
 }
 
 .hero-card h3 {
-  font-size: clamp(2.4rem, 4.3vw, 4.55rem);
-  line-height: 0.92;
-  max-width: 9ch;
-  margin-bottom: 14px;
+  font-size: clamp(2.8rem, 4.7vw, 5rem);
+  line-height: 0.88;
+  max-width: 8ch;
+  margin-bottom: 18px;
   overflow-wrap: anywhere;
 }
 
 .hero-lead {
-  margin: 0 0 10px;
+  margin: 0 0 12px;
   color: var(--accent-deep);
   font-weight: 700;
-}
-
-.hero-band {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  margin: 22px 0 18px;
-}
-
-.hero-band__item {
-  padding: 14px 16px;
-  border-radius: 18px;
-  border: 1px solid rgba(78, 57, 26, 0.08);
-  background: rgba(255, 255, 255, 0.46);
-}
-
-.hero-band__item span {
-  display: block;
-  margin-bottom: 6px;
-  color: var(--muted);
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.hero-band__item strong {
-  display: block;
-  font-size: 1rem;
+  max-width: 42ch;
 }
 
 .section-heading {
@@ -550,7 +493,7 @@ textarea {
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  gap: 18px;
 }
 
 .stat-card,
@@ -568,6 +511,7 @@ textarea {
 .stat-card {
   position: relative;
   overflow: hidden;
+  padding-top: 22px;
 }
 
 .stat-card::after {
@@ -652,7 +596,7 @@ textarea {
   font-size: 0.86rem;
   color: #5f523f;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
 }
 
 .table-row {
@@ -898,10 +842,6 @@ textarea {
     gap: 16px;
   }
 
-  .title-row {
-    align-items: flex-start;
-  }
-
   .sidebar {
     position: fixed;
     top: 12px;
@@ -951,10 +891,6 @@ textarea {
     line-height: 0.98;
   }
 
-  .brand-seal {
-    margin-bottom: 14px;
-  }
-
   .sidebar-copy,
   .hero-card p,
   .mini-item p,
@@ -974,13 +910,9 @@ textarea {
   }
 
   .hero-card h3 {
-    max-width: 9ch;
-    font-size: clamp(2rem, 9vw, 2.7rem);
-    line-height: 0.94;
-  }
-
-  .hero-band {
-    grid-template-columns: 1fr;
+    max-width: 8ch;
+    font-size: clamp(2.2rem, 10vw, 3rem);
+    line-height: 0.9;
   }
 
   .topbar-actions {
