@@ -114,7 +114,7 @@ function syncMobileNav() {
 
   sidebar.classList.toggle("is-open", isOpen);
   toggle.setAttribute("aria-expanded", String(isOpen));
-  toggle.querySelector(".mobile-nav-toggle__label").textContent = isOpen ? "Close" : "Menu";
+  toggle.querySelector(".mobile-nav-toggle__label").textContent = isOpen ? "Close" : "Sections";
 }
 
 function matchGlobalSearch(text) {
@@ -287,15 +287,15 @@ function renderBookingsTable() {
       .map(
         (booking) => `
           <tr class="table-row ${selected?.id === booking.id ? "active" : ""}" data-booking-id="${booking.id}">
-            <td>
+            <td data-label="Booking">
               <div class="table-primary">${booking.clientName}</div>
               <div class="table-secondary">${booking.eventType} · ${booking.lawnArea}</div>
             </td>
-            <td>${booking.eventDate}</td>
-            <td>${booking.guestCount}</td>
-            <td>${booking.packageName}</td>
-            <td>${money(Number(booking.advancePaid))}</td>
-            <td><span class="status-pill status-${safeStatusClass(booking.status)}">${booking.status}</span></td>
+            <td data-label="Date">${booking.eventDate}</td>
+            <td data-label="Guests">${booking.guestCount}</td>
+            <td data-label="Package">${booking.packageName}</td>
+            <td data-label="Advance">${money(Number(booking.advancePaid))}</td>
+            <td data-label="Status"><span class="status-pill status-${safeStatusClass(booking.status)}">${booking.status}</span></td>
           </tr>
         `
       )
@@ -413,11 +413,11 @@ function renderClientsTable() {
       .map(
         (client) => `
           <tr>
-            <td class="table-primary">${client.name}</td>
-            <td>${client.phone}</td>
-            <td>${client.email}</td>
-            <td><span class="status-pill status-${safeStatusClass(client.stage)}">${client.stage}</span></td>
-            <td>${client.preferences}</td>
+            <td class="table-primary" data-label="Name">${client.name}</td>
+            <td data-label="Phone">${client.phone}</td>
+            <td data-label="Email">${client.email}</td>
+            <td data-label="Stage"><span class="status-pill status-${safeStatusClass(client.stage)}">${client.stage}</span></td>
+            <td data-label="Preferences">${client.preferences}</td>
           </tr>
         `
       )
@@ -439,14 +439,14 @@ function renderVendorsTable() {
       .map(
         (vendor) => `
           <tr>
-            <td>
+            <td data-label="Vendor">
               <div class="table-primary">${vendor.name}</div>
               <div class="table-secondary">${vendor.notes}</div>
             </td>
-            <td>${vendor.category}</td>
-            <td>${vendor.contactPerson}</td>
-            <td>${vendor.phone}</td>
-            <td><span class="status-pill status-${safeStatusClass(vendor.status)}">${vendor.status}</span></td>
+            <td data-label="Category">${vendor.category}</td>
+            <td data-label="Contact">${vendor.contactPerson}</td>
+            <td data-label="Phone">${vendor.phone}</td>
+            <td data-label="Status"><span class="status-pill status-${safeStatusClass(vendor.status)}">${vendor.status}</span></td>
           </tr>
         `
       )
@@ -468,11 +468,11 @@ function renderPaymentsTable() {
       .map(
         (payment) => `
           <tr>
-            <td class="table-primary">${payment.clientName}</td>
-            <td>${payment.paymentType}</td>
-            <td>${money(Number(payment.amount))}</td>
-            <td><span class="status-pill status-${safeStatusClass(payment.status)}">${payment.status}</span></td>
-            <td>${payment.notes}</td>
+            <td class="table-primary" data-label="Client">${payment.clientName}</td>
+            <td data-label="Type">${payment.paymentType}</td>
+            <td data-label="Amount">${money(Number(payment.amount))}</td>
+            <td data-label="Status"><span class="status-pill status-${safeStatusClass(payment.status)}">${payment.status}</span></td>
+            <td data-label="Notes">${payment.notes}</td>
           </tr>
         `
       )
