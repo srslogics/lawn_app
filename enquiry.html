@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book An Enquiry | SrSLogics Celebration Lawn</title>
+    <link rel="icon" type="image/png" href="assets/SrSLogicsLogo.png" />
+    <link rel="stylesheet" href="enquiry.css" />
+  </head>
+  <body>
+    <main class="landing-shell">
+      <section class="hero-section">
+        <div class="hero-copy">
+          <p class="eyebrow">Celebration Lawn</p>
+          <h1>Venue enquiries that feel as polished as the event itself.</h1>
+          <p class="hero-text">
+            Share your event date, guest count, and preferences. Our team will review availability,
+            package fit, and the best setup for your function.
+          </p>
+          <div class="hero-points">
+            <span>Weddings</span>
+            <span>Birthdays</span>
+            <span>Corporate events</span>
+            <span>Reception nights</span>
+          </div>
+        </div>
+
+        <div class="hero-panel">
+          <div class="hero-panel__card">
+            <span class="eyebrow">Quick overview</span>
+            <strong>Premium lawn bookings</strong>
+            <p>Share the essentials once. Our team will follow up with availability, pricing, and next steps.</p>
+          </div>
+          <div class="hero-panel__stats">
+            <article>
+              <span>Response</span>
+              <strong>Same day</strong>
+            </article>
+            <article>
+              <span>Formats</span>
+              <strong>Wedding to corporate</strong>
+            </article>
+            <article>
+              <span>Planning</span>
+              <strong>Decor, catering, logistics</strong>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <div class="info-column">
+          <article class="info-card">
+            <p class="eyebrow">Why enquire here</p>
+            <h2>Give the venue team the details they actually need.</h2>
+            <p>
+              This form is built for serious event planning. Instead of just a phone number, it captures event type,
+              date, guest volume, and budget range so the team can respond with a useful conversation.
+            </p>
+          </article>
+
+          <div class="benefit-grid">
+            <article class="benefit-card">
+              <h3>Date-first planning</h3>
+              <p>Capture availability requests before follow-up starts.</p>
+            </article>
+            <article class="benefit-card">
+              <h3>Budget-aware response</h3>
+              <p>Help the team qualify package fit from the first conversation.</p>
+            </article>
+            <article class="benefit-card">
+              <h3>Better event context</h3>
+              <p>Guest count and notes reduce repeated back-and-forth.</p>
+            </article>
+            <article class="benefit-card">
+              <h3>Stored in backend</h3>
+              <p>Every enquiry is saved in the application database, not lost in the page.</p>
+            </article>
+          </div>
+        </div>
+
+        <article class="form-card">
+          <div class="form-heading">
+            <p class="eyebrow">Enquiry Form</p>
+            <h2>Request availability</h2>
+            <p>Tell us about your event and the venue team can continue from there.</p>
+          </div>
+
+          <form id="enquiryForm" class="enquiry-form">
+            <label>
+              Full name
+              <input name="name" required placeholder="Aarav Sharma" />
+            </label>
+            <label>
+              Phone number
+              <input name="phone" required placeholder="+91 98xxxxxx12" />
+            </label>
+            <label>
+              Email
+              <input name="email" type="email" required placeholder="name@example.com" />
+            </label>
+            <label>
+              Event type
+              <select name="eventType" required>
+                <option value="Wedding">Wedding</option>
+                <option value="Reception">Reception</option>
+                <option value="Engagement">Engagement</option>
+                <option value="Birthday">Birthday</option>
+                <option value="Corporate">Corporate</option>
+              </select>
+            </label>
+            <label>
+              Preferred date
+              <input name="eventDate" type="date" required />
+            </label>
+            <label>
+              Expected guests
+              <input name="guestCount" type="number" min="10" required placeholder="350" />
+            </label>
+            <label>
+              Estimated budget
+              <input name="budget" type="number" min="0" required placeholder="350000" />
+            </label>
+            <label class="full-span">
+              Event notes
+              <textarea
+                name="message"
+                rows="5"
+                placeholder="Theme, decor style, lawn preference, valet, catering, VIP seating, or any must-have notes"
+              ></textarea>
+            </label>
+            <button class="submit-btn" type="submit">Send enquiry</button>
+          </form>
+
+          <p class="form-footnote">This enquiry is submitted directly into the application backend.</p>
+        </article>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" aria-live="polite"></div>
+    <script src="enquiry.js"></script>
+  </body>
+</html>

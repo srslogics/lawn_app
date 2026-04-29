@@ -143,6 +143,22 @@ class Activity(Base):
     created_at: Mapped[str] = mapped_column(String, nullable=False)
 
 
+class Enquiry(Base):
+    __tablename__ = "enquiries"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column(String, nullable=False)
+    phone: Mapped[str] = mapped_column(String, nullable=False)
+    email: Mapped[str] = mapped_column(String, nullable=False)
+    event_type: Mapped[str] = mapped_column(String, nullable=False)
+    event_date: Mapped[str] = mapped_column(String, nullable=False)
+    guest_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    budget: Mapped[float] = mapped_column(Float, nullable=False)
+    message: Mapped[str] = mapped_column(String, default="")
+    status: Mapped[str] = mapped_column(String, nullable=False)
+    created_at: Mapped[str] = mapped_column(String, nullable=False)
+
+
 def build_engine(database_url: str):
     engine_kwargs = {"pool_pre_ping": True}
     if database_url.startswith("sqlite"):
@@ -390,6 +406,17 @@ class TaskCreate(BaseModel):
     status: str
 
 
+class EnquiryCreate(BaseModel):
+    name: str
+    phone: str
+    email: str
+    eventType: str
+    eventDate: str
+    guestCount: int = Field(ge=1)
+    budget: float = Field(ge=0)
+    message: str = ""
+
+
 def get_db() -> Generator[Session, None, None]:
     db = SessionLocal()
     try:
@@ -399,6 +426,7 @@ def get_db() -> Generator[Session, None, None]:
 
 
 def create_seed_data(db: Session) -> None:
+    db.query(Enquiry).delete()
     db.query(Activity).delete()
     db.query(Task).delete()
     db.query(Payment).delete()
@@ -523,6 +551,22 @@ def serialize_task(row: Task) -> dict:
         "owner": row.owner,
         "due": row.due,
         "status": row.status,
+    }
+
+
+def serialize_enquiry(row: Enquiry) -> dict:
+    return {
+        "id": row.id,
+        "name": row.name,
+        "phone": row.phone,
+        "email": row.email,
+        "eventType": row.event_type,
+        "eventDate": row.event_date,
+        "guestCount": row.guest_count,
+        "budget": row.budget,
+        "message": row.message,
+        "status": row.status,
+        "createdAt": row.created_at,
     }
 
 
@@ -734,6 +778,33 @@ def create_task(payload: TaskCreate, db: Session = Depends(get_db)) -> dict:
     return serialize_task(task)
 
 
+@app.get("/api/enquiries")
+def list_enquiries(db: Session = Depends(get_db)) -> list[dict]:
+    rows = db.scalars(select(Enquiry).order_by(Enquiry.id.desc())).all()
+    return [serialize_enquiry(row) for row in rows]
+
+
+@app.post("/api/enquiries", status_code=201)
+def create_enquiry(payload: EnquiryCreate, db: Session = Depends(get_db)) -> dict:
+    enquiry = Enquiry(
+        name=payload.name,
+        phone=payload.phone,
+        email=payload.email,
+        event_type=payload.eventType,
+        event_date=payload.eventDate,
+        guest_count=payload.guestCount,
+        budget=payload.budget,
+        message=payload.message,
+        status="New",
+        created_at=datetime.utcnow().isoformat(),
+    )
+    db.add(enquiry)
+    db.commit()
+    db.refresh(enquiry)
+    add_activity(db, f"New enquiry received from {enquiry.name} for {enquiry.event_type}.")
+    return serialize_enquiry(enquiry)
+
+
 @app.post("/api/reset")
 def reset(db: Session = Depends(get_db)) -> dict:
     create_seed_data(db)
@@ -743,6 +814,11 @@ def reset(db: Session = Depends(get_db)) -> dict:
 @app.get("/")
 def root() -> FileResponse:
     return FileResponse(ROOT_DIR / "index.html")
+
+
+@app.get("/enquiry")
+def enquiry_page() -> FileResponse:
+    return FileResponse(ROOT_DIR / "enquiry.html")
 
 
 app.mount("/", StaticFiles(directory=ROOT_DIR, html=True), name="static")
