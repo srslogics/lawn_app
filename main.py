@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from contextlib import asynccontextmanager
 from datetime import datetime
 from pathlib import Path
@@ -9,15 +10,65 @@ from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, ConfigDict, Field
-from sqlalchemy import Float, Integer, String, create_engine, select
+from pydantic import BaseModel, Field
+from sqlalchemy import Float, Integer, String, create_engine, select, text
+from sqlalchemy.engine import URL
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, sessionmaker
 
 
 ROOT_DIR = Path(__file__).resolve().parent
 DATA_DIR = ROOT_DIR / "data"
-DB_PATH = DATA_DIR / "app.db"
-DATABASE_URL = f"sqlite:///{DB_PATH}"
+SQLITE_DATABASE_URL = f"sqlite:///{DATA_DIR / 'app.db'}"
+
+
+def load_env_file(path: Path) -> None:
+    if not path.exists():
+        return
+
+    for line in path.read_text().splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#") or "=" not in stripped:
+            continue
+        key, value = stripped.split("=", 1)
+        os.environ.setdefault(key.strip(), value.strip())
+
+
+def build_database_url() -> str:
+    load_env_file(ROOT_DIR / ".env")
+
+    direct_url = os.getenv("DATABASE_URL")
+    if direct_url:
+        return direct_url
+
+    host = os.getenv("DB_HOST")
+    user = os.getenv("DB_USER")
+    password = os.getenv("DB_PASSWORD")
+    name = os.getenv("DB_NAME", "postgres")
+    port = int(os.getenv("DB_PORT", "5432"))
+    sslmode = os.getenv("DB_SSLMODE", "require")
+
+    if host and user and password:
+        return str(
+            URL.create(
+                "postgresql+psycopg2",
+                username=user,
+                password=password,
+                host=host,
+                port=port,
+                database=name,
+                query={"sslmode": sslmode},
+            )
+        )
+
+    return SQLITE_DATABASE_URL
+
+
+CONFIGURED_DATABASE_URL = build_database_url()
+DATABASE_URL = CONFIGURED_DATABASE_URL
+IS_SQLITE = DATABASE_URL.startswith("sqlite")
+ACTIVE_DATABASE = "sqlite" if IS_SQLITE else "postgresql"
+DATABASE_STATUS = "pending"
+DATABASE_ERROR: str | None = None
 
 
 class Base(DeclarativeBase):
@@ -92,8 +143,24 @@ class Activity(Base):
     created_at: Mapped[str] = mapped_column(String, nullable=False)
 
 
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
-SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
+def build_engine(database_url: str):
+    engine_kwargs = {"pool_pre_ping": True}
+    if database_url.startswith("sqlite"):
+        engine_kwargs["connect_args"] = {"check_same_thread": False}
+    return create_engine(database_url, **engine_kwargs)
+
+
+def switch_database(database_url: str) -> None:
+    global DATABASE_URL, IS_SQLITE, ACTIVE_DATABASE, engine, SessionLocal
+
+    DATABASE_URL = database_url
+    IS_SQLITE = database_url.startswith("sqlite")
+    ACTIVE_DATABASE = "sqlite" if IS_SQLITE else "postgresql"
+    engine = build_engine(database_url)
+    SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, expire_on_commit=False)
+
+
+switch_database(DATABASE_URL)
 
 
 REQUIREMENTS = [
@@ -352,7 +419,8 @@ def create_seed_data(db: Session) -> None:
 
 
 def ensure_database() -> None:
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    if IS_SQLITE:
+        DATA_DIR.mkdir(parents=True, exist_ok=True)
     Base.metadata.create_all(bind=engine)
     with SessionLocal() as db:
         has_bookings = db.scalar(select(Booking.id).limit(1))
@@ -360,14 +428,33 @@ def ensure_database() -> None:
             create_seed_data(db)
 
 
+def initialize_database() -> None:
+    global DATABASE_STATUS, DATABASE_ERROR
+
+    try:
+        ensure_database()
+        DATABASE_STATUS = "connected"
+        DATABASE_ERROR = None
+    except Exception as exc:
+        if IS_SQLITE:
+            DATABASE_STATUS = "error"
+            DATABASE_ERROR = str(exc)
+            raise
+
+        DATABASE_STATUS = "fallback"
+        DATABASE_ERROR = str(exc)
+        switch_database(SQLITE_DATABASE_URL)
+        ensure_database()
+
+
 def next_prefixed_id(db: Session, model: type[Base], prefix: str) -> str:
     ids = [value for value in db.scalars(select(model.id)).all()]
     max_number = 0
     for raw_id in ids:
-      if isinstance(raw_id, str) and raw_id.startswith(prefix):
-          numeric = raw_id.removeprefix(prefix)
-          if numeric.isdigit():
-              max_number = max(max_number, int(numeric))
+        if isinstance(raw_id, str) and raw_id.startswith(prefix):
+            numeric = raw_id.removeprefix(prefix)
+            if numeric.isdigit():
+                max_number = max(max_number, int(numeric))
     return f"{prefix}{max_number + 1:03d}"
 
 
@@ -474,7 +561,7 @@ def dashboard_summary(db: Session) -> dict:
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    ensure_database()
+    initialize_database()
     yield
 
 
@@ -489,8 +576,16 @@ app.add_middleware(
 
 
 @app.get("/api/health")
-def health() -> dict:
-    return {"ok": True, "timestamp": datetime.utcnow().isoformat()}
+def health(db: Session = Depends(get_db)) -> dict:
+    db.execute(text("SELECT 1"))
+    return {
+        "ok": True,
+        "timestamp": datetime.utcnow().isoformat(),
+        "configuredDatabase": "sqlite" if CONFIGURED_DATABASE_URL.startswith("sqlite") else "postgresql",
+        "activeDatabase": ACTIVE_DATABASE,
+        "databaseStatus": DATABASE_STATUS,
+        "databaseError": DATABASE_ERROR,
+    }
 
 
 @app.get("/api/bootstrap")
