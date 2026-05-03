@@ -664,7 +664,8 @@ textarea {
 .status-confirmed,
 .status-received,
 .status-booked,
-.status-preferred {
+.status-preferred,
+.status-checked-in {
   background: rgba(41, 88, 72, 0.14);
   color: var(--green);
 }
@@ -674,13 +675,15 @@ textarea {
 .status-active,
 .status-upcoming,
 .status-site-visit,
-.status-quoted {
+.status-quoted,
+.status-reserved {
   background: rgba(167, 101, 34, 0.16);
   color: var(--accent);
 }
 
 .status-risk,
-.status-backup {
+.status-backup,
+.status-checked-out {
   background: rgba(180, 79, 51, 0.14);
   color: var(--red);
 }

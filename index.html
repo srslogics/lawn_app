@@ -8,7 +8,7 @@
     <meta property="og:title" content="SrSLogics Celebration Lawn" />
     <meta
       property="og:description"
-      content="Venue bookings, operations, vendors, collections, and event execution in one premium workspace."
+      content="Venue bookings, hotel stays, operations, vendors, collections, and event execution in one premium workspace."
     />
     <meta property="og:image" content="assets/SrSLogicsLogo.png" />
     <meta property="og:type" content="website" />
@@ -21,7 +21,7 @@
           <p class="eyebrow">Venue Management</p>
           <h1>SrSLogics <span>Celebration Lawn</span></h1>
           <p class="sidebar-copy">
-            Bookings, event flow, vendors, collections, and daily venue readiness in one place.
+            Lawn bookings, hotel stays, event flow, vendors, collections, and daily venue readiness in one place.
           </p>
           <div class="brand-line"></div>
         </div>
@@ -29,6 +29,7 @@
         <nav class="nav-list" id="primaryNav" aria-label="Primary navigation">
           <button class="nav-link active" data-view="dashboard">Dashboard</button>
           <button class="nav-link" data-view="bookings">Bookings</button>
+          <button class="nav-link" data-view="hotel">Hotel</button>
           <button class="nav-link" data-view="calendar">Calendar</button>
           <button class="nav-link" data-view="clients">Clients</button>
           <button class="nav-link" data-view="vendors">Vendors</button>
@@ -44,7 +45,7 @@
           <div class="topbar-intro">
             <p class="eyebrow">Live Workspace</p>
             <h2 id="viewTitle">Dashboard</h2>
-            <p class="topbar-copy">Bookings, calendar, vendors, payments, and daily readiness with a cleaner operational view.</p>
+            <p class="topbar-copy">Bookings, hotel stays, calendar, vendors, payments, and daily readiness with a cleaner operational view.</p>
           </div>
           <div class="topbar-actions">
             <button class="mobile-nav-toggle" id="mobileNavToggle" type="button" aria-expanded="false" aria-controls="primaryNav">
@@ -52,7 +53,7 @@
             </button>
             <label class="topbar-search">
               <span class="sr-only">Global booking search</span>
-              <input id="globalSearch" placeholder="Search bookings or clients" />
+              <input id="globalSearch" placeholder="Search bookings, guests, or clients" />
             </label>
             <button class="ghost-btn" id="seedBtn">Restore sample data</button>
             <button class="primary-btn" id="quickAddBtn">New booking</button>
@@ -71,7 +72,7 @@
               </p>
               <div class="hero-actions">
                 <button class="primary-btn" id="heroBookingBtn">Create booking</button>
-                <button class="ghost-btn" data-goto="finance">Open collections</button>
+                <button class="ghost-btn" data-goto="hotel">Open hotel stays</button>
               </div>
             </article>
 
@@ -226,6 +227,15 @@
                     </select>
                   </label>
                   <label>
+                    Lawn area
+                    <select name="lawnArea" required>
+                      <option value="Main Lawn">Main Lawn</option>
+                      <option value="Sunset Deck">Sunset Deck</option>
+                      <option value="North Lawn">North Lawn</option>
+                      <option value="Garden Court">Garden Court</option>
+                    </select>
+                  </label>
+                  <label>
                     Advance amount
                     <input name="advancePaid" type="number" min="0" required placeholder="150000" />
                   </label>
@@ -234,6 +244,130 @@
                     <textarea name="notes" rows="4" placeholder="Decor, catering, VIP requirements, timing notes"></textarea>
                   </label>
                   <button class="primary-btn full-width" type="submit">Save booking</button>
+                </form>
+              </article>
+            </aside>
+          </div>
+        </section>
+
+        <section class="view" data-view-panel="hotel">
+          <div class="section-grid hotel-grid">
+            <article class="panel">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">Hotel Stays</p>
+                  <h3>Room reservations, stays, and guest allocation</h3>
+                </div>
+              </div>
+
+              <div class="stats-grid hotel-stats" id="hotelStatsGrid"></div>
+
+              <div class="table-shell hotel-table-shell">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Guest / block</th>
+                      <th>Stay dates</th>
+                      <th>Room type</th>
+                      <th>Rooms</th>
+                      <th>Guests</th>
+                      <th>Amount</th>
+                      <th>Payment</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="hotelBookingsTableBody"></tbody>
+                </table>
+              </div>
+            </article>
+
+            <aside class="detail-stack">
+              <article class="panel">
+                <div class="section-heading compact-heading">
+                  <div>
+                    <p class="eyebrow">Stay Overview</p>
+                    <h3>Hotel operations snapshot</h3>
+                  </div>
+                </div>
+                <div id="hotelOverview"></div>
+              </article>
+
+              <article class="panel">
+                <div class="section-heading compact-heading">
+                  <div>
+                    <p class="eyebrow">New Room Booking</p>
+                    <h3>Create stay record</h3>
+                  </div>
+                </div>
+                <form id="hotelBookingForm" class="app-form">
+                  <label>
+                    Guest name / booking block
+                    <input name="guestName" required placeholder="Khanna Family Stay" />
+                  </label>
+                  <label>
+                    Phone
+                    <input name="phone" required placeholder="+91 98765 43210" />
+                  </label>
+                  <label>
+                    Room type
+                    <select name="roomType" required>
+                      <option value="Deluxe Room">Deluxe Room</option>
+                      <option value="Premium Room">Premium Room</option>
+                      <option value="Family Suite">Family Suite</option>
+                      <option value="Executive Suite">Executive Suite</option>
+                    </select>
+                  </label>
+                  <label>
+                    Booking source
+                    <select name="bookingSource" required>
+                      <option value="Wedding Block">Wedding Block</option>
+                      <option value="Reception Block">Reception Block</option>
+                      <option value="Phone Booking">Phone Booking</option>
+                      <option value="Walk-in">Walk-in</option>
+                      <option value="Corporate Event">Corporate Event</option>
+                    </select>
+                  </label>
+                  <label>
+                    Check-in
+                    <input name="checkIn" type="date" required />
+                  </label>
+                  <label>
+                    Check-out
+                    <input name="checkOut" type="date" required />
+                  </label>
+                  <label>
+                    Rooms
+                    <input name="roomsCount" type="number" min="1" required placeholder="4" />
+                  </label>
+                  <label>
+                    Guests
+                    <input name="guestsCount" type="number" min="1" required placeholder="8" />
+                  </label>
+                  <label>
+                    Amount
+                    <input name="amount" type="number" min="0" required placeholder="72000" />
+                  </label>
+                  <label>
+                    Stay status
+                    <select name="status" required>
+                      <option value="Reserved">Reserved</option>
+                      <option value="Confirmed">Confirmed</option>
+                      <option value="Checked In">Checked In</option>
+                      <option value="Checked Out">Checked Out</option>
+                    </select>
+                  </label>
+                  <label>
+                    Payment status
+                    <select name="paymentStatus" required>
+                      <option value="Pending">Pending</option>
+                      <option value="Received">Received</option>
+                    </select>
+                  </label>
+                  <label class="full-span">
+                    Notes
+                    <textarea name="notes" rows="4" placeholder="Late check-in, family block, corporate stay notes, breakfast or pickup remarks"></textarea>
+                  </label>
+                  <button class="primary-btn full-width" type="submit">Save room booking</button>
                 </form>
               </article>
             </aside>

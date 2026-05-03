@@ -5,6 +5,7 @@ const API_BASE =
 
 let state = {
   bookings: [],
+  hotelBookings: [],
   clients: [],
   vendors: [],
   payments: [],
@@ -92,6 +93,7 @@ function setView(view) {
   const titleMap = {
     dashboard: "Dashboard",
     bookings: "Bookings",
+    hotel: "Hotel",
     calendar: "Calendar",
     clients: "Clients",
     vendors: "Vendors",
@@ -166,7 +168,7 @@ function renderSidebarCard() {
   const metrics = state.dashboard?.metrics;
   document.getElementById("sidebarCard").innerHTML = `
     <p class="eyebrow">Today on site</p>
-    <strong>${metrics?.confirmedEvents || 0} confirmed event${metrics?.confirmedEvents === 1 ? "" : "s"}</strong>
+    <strong>${metrics?.confirmedEvents || 0} confirmed event${metrics?.confirmedEvents === 1 ? "" : "s"} · ${metrics?.roomsReserved || 0} room${metrics?.roomsReserved === 1 ? "" : "s"} reserved</strong>
     <span>${money(metrics?.pendingCollections || 0)} still pending in collections across live records.</span>
   `;
 }
@@ -193,6 +195,11 @@ function renderStats() {
       label: "Payments received",
       value: money(metrics.paymentsReceived || 0),
       detail: "Tracked from token to final balance entries"
+    },
+    {
+      label: "Rooms reserved",
+      value: metrics.roomsReserved || 0,
+      detail: `${metrics.hotelReservations || 0} live hotel booking record${metrics.hotelReservations === 1 ? "" : "s"}`
     }
   ];
 
@@ -473,7 +480,24 @@ function renderVendorsTable() {
 }
 
 function renderPaymentsTable() {
-  const rows = state.payments.filter((payment) => {
+  const rows = [
+    ...state.payments.map((payment) => ({
+      kind: "venue",
+      clientName: payment.clientName,
+      paymentType: payment.paymentType,
+      amount: payment.amount,
+      status: payment.status,
+      notes: payment.notes
+    })),
+    ...state.hotelBookings.map((booking) => ({
+      kind: "hotel",
+      clientName: booking.guestName,
+      paymentType: `Hotel Stay · ${booking.roomType}`,
+      amount: booking.amount,
+      status: booking.paymentStatus,
+      notes: `${booking.roomsCount} room(s) · ${booking.checkIn} to ${booking.checkOut}`
+    }))
+  ].filter((payment) => {
     if (!uiState.globalSearch) return true;
     return matchGlobalSearch(`${payment.clientName} ${payment.paymentType} ${payment.notes}`);
   });
@@ -487,7 +511,7 @@ function renderPaymentsTable() {
             <td data-label="Type">${payment.paymentType}</td>
             <td data-label="Amount">${money(Number(payment.amount))}</td>
             <td data-label="Status"><span class="status-pill status-${safeStatusClass(payment.status)}">${payment.status}</span></td>
-            <td data-label="Notes">${payment.notes}</td>
+            <td data-label="Notes">${payment.kind === "hotel" ? `${payment.notes} · Hotel collection` : payment.notes}</td>
           </tr>
         `
       )
@@ -544,6 +568,113 @@ function renderRequirements() {
     .join("");
 }
 
+function renderHotelStats() {
+  const rows = state.hotelBookings || [];
+  const activeRows = rows.filter((booking) => ["Reserved", "Confirmed", "Checked In"].includes(booking.status));
+  const checkedInRows = rows.filter((booking) => booking.status === "Checked In");
+  const roomRevenue = rows.reduce((sum, booking) => sum + Number(booking.amount || 0), 0);
+
+  document.getElementById("hotelStatsGrid").innerHTML = [
+    {
+      label: "Live bookings",
+      value: activeRows.length,
+      detail: "Reserved, confirmed, and checked-in stays"
+    },
+    {
+      label: "Rooms blocked",
+      value: activeRows.reduce((sum, booking) => sum + Number(booking.roomsCount || 0), 0),
+      detail: "Rooms currently tied to stay records"
+    },
+    {
+      label: "Guests covered",
+      value: activeRows.reduce((sum, booking) => sum + Number(booking.guestsCount || 0), 0),
+      detail: "Estimated in-house guest count"
+    },
+    {
+      label: "Room revenue",
+      value: money(roomRevenue),
+      detail: `${checkedInRows.length} booking record${checkedInRows.length === 1 ? "" : "s"} already checked in`
+    }
+  ]
+    .map(
+      (stat) => `
+        <article class="stat-card">
+          <span>${stat.label}</span>
+          <strong>${stat.value}</strong>
+          <small>${stat.detail}</small>
+        </article>
+      `
+    )
+    .join("");
+}
+
+function renderHotelBookingsTable() {
+  const rows = state.hotelBookings.filter((booking) => {
+    if (!uiState.globalSearch) return true;
+    return matchGlobalSearch(
+      `${booking.guestName} ${booking.roomType} ${booking.bookingSource} ${booking.notes}`
+    );
+  });
+
+  document.getElementById("hotelBookingsTableBody").innerHTML =
+    rows
+      .map(
+        (booking) => `
+          <tr>
+            <td data-label="Guest / block">
+              <div class="table-primary">${booking.guestName}</div>
+              <div class="table-secondary">${booking.phone} · ${booking.id}</div>
+            </td>
+            <td data-label="Stay dates">${booking.checkIn} → ${booking.checkOut}</td>
+            <td data-label="Room type">${booking.roomType}</td>
+            <td data-label="Rooms">${booking.roomsCount}</td>
+            <td data-label="Guests">${booking.guestsCount}</td>
+            <td data-label="Amount">${money(Number(booking.amount))}</td>
+            <td data-label="Payment"><span class="status-pill status-${safeStatusClass(booking.paymentStatus)}">${booking.paymentStatus}</span></td>
+            <td data-label="Status"><span class="status-pill status-${safeStatusClass(booking.status)}">${booking.status}</span></td>
+          </tr>
+        `
+      )
+      .join("") || `
+        <tr>
+          <td colspan="8"><div class="empty-state">No hotel booking records match the search.</div></td>
+        </tr>
+      `;
+}
+
+function renderHotelOverview() {
+  const rows = state.hotelBookings || [];
+  const nextArrivals = [...rows].sort((a, b) => a.checkIn.localeCompare(b.checkIn)).slice(0, 3);
+  const checkedInRows = rows.filter((booking) => booking.status === "Checked In");
+  const overview = document.getElementById("hotelOverview");
+
+  if (!rows.length) {
+    overview.innerHTML = `<div class="empty-state">No room booking records yet.</div>`;
+    return;
+  }
+
+  overview.innerHTML = `
+    <div class="mini-list">
+      <article class="mini-item">
+        <strong>Currently in house</strong>
+        <p>${checkedInRows.length} stay record${checkedInRows.length === 1 ? "" : "s"} checked in covering ${checkedInRows.reduce((sum, booking) => sum + Number(booking.guestsCount || 0), 0)} guest${checkedInRows.reduce((sum, booking) => sum + Number(booking.guestsCount || 0), 0) === 1 ? "" : "s"}.</p>
+      </article>
+      <article class="mini-item">
+        <strong>Upcoming arrivals</strong>
+        <p>${nextArrivals.map((booking) => `${booking.guestName} · ${booking.checkIn}`).join(" · ")}</p>
+      </article>
+      <article class="mini-item">
+        <strong>Room mix</strong>
+        <p>${[...new Set(rows.map((booking) => booking.roomType))].join(" · ")}</p>
+      </article>
+      <article class="mini-item">
+        <strong>Collection split</strong>
+        <p>${rows.filter((booking) => booking.paymentStatus === "Pending").length} pending · ${rows.filter((booking) => booking.paymentStatus === "Received").length} received</p>
+      </article>
+    </div>
+  `;
+}
+
 function renderFilterState() {
   document.querySelectorAll(".filter-chip").forEach((button) => {
     button.classList.toggle("active", button.dataset.filter === uiState.bookingFilter);
@@ -560,6 +691,9 @@ function renderAll() {
   renderFilterState();
   renderBookingsTable();
   renderBookingDetail();
+  renderHotelStats();
+  renderHotelBookingsTable();
+  renderHotelOverview();
   renderClientsTable();
   renderVendorsTable();
   renderPaymentsTable();
@@ -577,6 +711,7 @@ function resetForms() {
   document.getElementById("clientForm").reset();
   document.getElementById("vendorForm").reset();
   document.getElementById("paymentForm").reset();
+  document.getElementById("hotelBookingForm").reset();
 }
 
 function bindNavigation() {
@@ -628,6 +763,7 @@ function bindForms() {
           eventDate: formData.get("eventDate"),
           guestCount: Number(formData.get("guestCount")),
           packageName: formData.get("packageName"),
+          lawnArea: formData.get("lawnArea"),
           advancePaid: Number(formData.get("advancePaid")),
           notes: formData.get("notes")
         })
@@ -710,6 +846,37 @@ function bindForms() {
       await refreshState();
       event.currentTarget.reset();
       showToast("Payment saved.");
+    } catch (error) {
+      showToast(error.message);
+    }
+  });
+
+  document.getElementById("hotelBookingForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+
+    try {
+      await api("/hotel-bookings", {
+        method: "POST",
+        body: JSON.stringify({
+          guestName: formData.get("guestName"),
+          phone: formData.get("phone"),
+          roomType: formData.get("roomType"),
+          checkIn: formData.get("checkIn"),
+          checkOut: formData.get("checkOut"),
+          roomsCount: Number(formData.get("roomsCount")),
+          guestsCount: Number(formData.get("guestsCount")),
+          amount: Number(formData.get("amount")),
+          bookingSource: formData.get("bookingSource"),
+          status: formData.get("status"),
+          paymentStatus: formData.get("paymentStatus"),
+          notes: formData.get("notes")
+        })
+      });
+
+      await refreshState();
+      event.currentTarget.reset();
+      showToast("Room booking saved.");
     } catch (error) {
       showToast(error.message);
     }

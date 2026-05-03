@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 from contextlib import asynccontextmanager
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 from typing import Generator, Literal
 
@@ -69,6 +69,12 @@ IS_SQLITE = DATABASE_URL.startswith("sqlite")
 ACTIVE_DATABASE = "sqlite" if IS_SQLITE else "postgresql"
 DATABASE_STATUS = "pending"
 DATABASE_ERROR: str | None = None
+ROOM_INVENTORY = {
+    "Deluxe Room": 16,
+    "Premium Room": 12,
+    "Family Suite": 8,
+    "Executive Suite": 4,
+}
 
 
 class Base(DeclarativeBase):
@@ -122,6 +128,24 @@ class Payment(Base):
     payment_type: Mapped[str] = mapped_column(String, nullable=False)
     amount: Mapped[float] = mapped_column(Float, nullable=False)
     status: Mapped[str] = mapped_column(String, nullable=False)
+    notes: Mapped[str] = mapped_column(String, default="")
+
+
+class HotelBooking(Base):
+    __tablename__ = "hotel_bookings"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    guest_name: Mapped[str] = mapped_column(String, nullable=False)
+    phone: Mapped[str] = mapped_column(String, nullable=False)
+    room_type: Mapped[str] = mapped_column(String, nullable=False)
+    check_in: Mapped[str] = mapped_column(String, nullable=False)
+    check_out: Mapped[str] = mapped_column(String, nullable=False)
+    rooms_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    guests_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    amount: Mapped[float] = mapped_column(Float, nullable=False)
+    booking_source: Mapped[str] = mapped_column(String, nullable=False)
+    status: Mapped[str] = mapped_column(String, nullable=False)
+    payment_status: Mapped[str] = mapped_column(String, default="Pending")
     notes: Mapped[str] = mapped_column(String, default="")
 
 
@@ -205,6 +229,10 @@ REQUIREMENTS = [
     {
         "title": "Billing and notifications",
         "description": "Advance rules, balance reminders, invoice preferences, and alerts for staff and clients.",
+    },
+    {
+        "title": "Hotel rooms and stays",
+        "description": "Room inventory, stay packages, guest check-ins, room allocation, and accommodation planning alongside venue events.",
     },
 ]
 
@@ -345,6 +373,53 @@ SEED = {
             "notes": "Waiting for finance approval from client side.",
         },
     ],
+    "hotelBookings": [
+        {
+            "id": "H001",
+            "guest_name": "Rhea Malhotra",
+            "phone": "+91 9898981212",
+            "room_type": "Premium Room",
+            "check_in": "2026-05-09",
+            "check_out": "2026-05-11",
+            "rooms_count": 6,
+            "guests_count": 12,
+            "amount": 96000,
+            "booking_source": "Wedding Block",
+            "status": "Reserved",
+            "payment_status": "Pending",
+            "notes": "Bride-side family arrival one day before ceremony.",
+        },
+        {
+            "id": "H002",
+            "guest_name": "Khanna Family Stay",
+            "phone": "+91 9811188811",
+            "room_type": "Family Suite",
+            "check_in": "2026-05-13",
+            "check_out": "2026-05-15",
+            "rooms_count": 8,
+            "guests_count": 18,
+            "amount": 168000,
+            "booking_source": "Reception Block",
+            "status": "Reserved",
+            "payment_status": "Pending",
+            "notes": "Family block tied to reception function and late checkout request.",
+        },
+        {
+            "id": "H003",
+            "guest_name": "Axis Buildcon Team",
+            "phone": "+91 9877000022",
+            "room_type": "Deluxe Room",
+            "check_in": "2026-05-20",
+            "check_out": "2026-05-21",
+            "rooms_count": 4,
+            "guests_count": 7,
+            "amount": 44000,
+            "booking_source": "Corporate Event",
+            "status": "Confirmed",
+            "payment_status": "Received",
+            "notes": "Executive stay aligned with next-day corporate gathering.",
+        },
+    ],
     "tasks": [
         {"id": "T001", "title": "Confirm stage floral design", "owner": "Decor team", "due": "Today 1:00 PM", "status": "Upcoming"},
         {"id": "T002", "title": "Check valet lane flow", "owner": "Operations manager", "due": "Today 5:30 PM", "status": "Upcoming"},
@@ -401,6 +476,21 @@ class PaymentCreate(BaseModel):
     notes: str = ""
 
 
+class HotelBookingCreate(BaseModel):
+    guestName: str
+    phone: str
+    roomType: str
+    checkIn: str
+    checkOut: str
+    roomsCount: int = Field(ge=1)
+    guestsCount: int = Field(ge=1)
+    amount: float = Field(ge=0)
+    bookingSource: str
+    status: str
+    paymentStatus: str = "Pending"
+    notes: str = ""
+
+
 class TaskCreate(BaseModel):
     title: str
     owner: str
@@ -433,6 +523,7 @@ def create_seed_data(db: Session) -> None:
     db.query(Enquiry).delete()
     db.query(Activity).delete()
     db.query(Task).delete()
+    db.query(HotelBooking).delete()
     db.query(Payment).delete()
     db.query(Vendor).delete()
     db.query(Client).delete()
@@ -442,6 +533,7 @@ def create_seed_data(db: Session) -> None:
     db.add_all(Client(**item) for item in SEED["clients"])
     db.add_all(Vendor(**item) for item in SEED["vendors"])
     db.add_all(Payment(**item) for item in SEED["payments"])
+    db.add_all(HotelBooking(**item) for item in SEED["hotelBookings"])
     db.add_all(Task(**item) for item in SEED["tasks"])
     db.add_all(
         Activity(message=message, created_at=datetime.utcnow().isoformat())
@@ -450,15 +542,35 @@ def create_seed_data(db: Session) -> None:
     db.commit()
 
 
+def seed_missing_modules(db: Session) -> None:
+    if not db.scalar(select(Booking.id).limit(1)):
+        db.add_all(Booking(**item) for item in SEED["bookings"])
+    if not db.scalar(select(Client.id).limit(1)):
+        db.add_all(Client(**item) for item in SEED["clients"])
+    if not db.scalar(select(Vendor.id).limit(1)):
+        db.add_all(Vendor(**item) for item in SEED["vendors"])
+    if not db.scalar(select(Payment.id).limit(1)):
+        db.add_all(Payment(**item) for item in SEED["payments"])
+    if not db.scalar(select(HotelBooking.id).limit(1)):
+        db.add_all(HotelBooking(**item) for item in SEED["hotelBookings"])
+    if not db.scalar(select(Task.id).limit(1)):
+        db.add_all(Task(**item) for item in SEED["tasks"])
+    if not db.scalar(select(Activity.id).limit(1)):
+        db.add_all(
+            Activity(message=message, created_at=datetime.utcnow().isoformat())
+            for message in SEED["activity"]
+        )
+    db.commit()
+
+
 def ensure_database() -> None:
     if IS_SQLITE:
         DATA_DIR.mkdir(parents=True, exist_ok=True)
     Base.metadata.create_all(bind=engine)
     ensure_enquiry_schema()
+    ensure_hotel_booking_schema()
     with SessionLocal() as db:
-        has_bookings = db.scalar(select(Booking.id).limit(1))
-        if not has_bookings:
-            create_seed_data(db)
+        seed_missing_modules(db)
 
 
 def ensure_enquiry_schema() -> None:
@@ -473,6 +585,25 @@ def ensure_enquiry_schema() -> None:
         statements.append("ALTER TABLE enquiries ADD COLUMN stay_required VARCHAR DEFAULT 'No'")
     if "rooms_needed" not in column_names:
         statements.append("ALTER TABLE enquiries ADD COLUMN rooms_needed INTEGER")
+
+    if not statements:
+        return
+
+    with engine.begin() as connection:
+        for statement in statements:
+            connection.execute(text(statement))
+
+
+def ensure_hotel_booking_schema() -> None:
+    inspector = inspect(engine)
+    if "hotel_bookings" not in inspector.get_table_names():
+        return
+
+    column_names = {column["name"] for column in inspector.get_columns("hotel_bookings")}
+    statements: list[str] = []
+
+    if "payment_status" not in column_names:
+        statements.append("ALTER TABLE hotel_bookings ADD COLUMN payment_status VARCHAR DEFAULT 'Pending'")
 
     if not statements:
         return
@@ -510,6 +641,17 @@ def next_prefixed_id(db: Session, model: type[Base], prefix: str) -> str:
             if numeric.isdigit():
                 max_number = max(max_number, int(numeric))
     return f"{prefix}{max_number + 1:03d}"
+
+
+def parse_iso_date(raw_value: str, label: str) -> date:
+    try:
+        return date.fromisoformat(raw_value)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=f"{label} must be a valid date in YYYY-MM-DD format.") from exc
+
+
+def ranges_overlap(start_a: date, end_a: date, start_b: date, end_b: date) -> bool:
+    return start_a < end_b and start_b < end_a
 
 
 def add_activity(db: Session, message: str) -> None:
@@ -570,6 +712,24 @@ def serialize_payment(row: Payment) -> dict:
     }
 
 
+def serialize_hotel_booking(row: HotelBooking) -> dict:
+    return {
+        "id": row.id,
+        "guestName": row.guest_name,
+        "phone": row.phone,
+        "roomType": row.room_type,
+        "checkIn": row.check_in,
+        "checkOut": row.check_out,
+        "roomsCount": row.rooms_count,
+        "guestsCount": row.guests_count,
+        "amount": row.amount,
+        "bookingSource": row.booking_source,
+        "status": row.status,
+        "paymentStatus": row.payment_status,
+        "notes": row.notes,
+    }
+
+
 def serialize_task(row: Task) -> dict:
     return {
         "id": row.id,
@@ -606,6 +766,7 @@ def activity_messages(db: Session) -> list[str]:
 def dashboard_summary(db: Session) -> dict:
     bookings = db.scalars(select(Booking).order_by(Booking.event_date.asc())).all()
     payments = db.scalars(select(Payment).order_by(Payment.id.asc())).all()
+    hotel_bookings = db.scalars(select(HotelBooking).order_by(HotelBooking.check_in.asc())).all()
     tasks = db.scalars(select(Task).order_by(Task.id.asc())).all()
 
     pending_payments = [payment for payment in payments if payment.status == "Pending"]
@@ -613,6 +774,11 @@ def dashboard_summary(db: Session) -> dict:
     confirmed_bookings = [booking for booking in bookings if booking.status == "Confirmed"]
     upcoming_bookings = [booking for booking in bookings if booking.status == "Upcoming"]
     inquiry_bookings = [booking for booking in bookings if booking.status == "Inquiry"]
+    active_stays = [
+        booking for booking in hotel_bookings if booking.status in {"Reserved", "Checked In", "Confirmed"}
+    ]
+    pending_hotel_collections = [booking for booking in hotel_bookings if booking.payment_status == "Pending"]
+    received_hotel_collections = [booking for booking in hotel_bookings if booking.payment_status == "Received"]
 
     return {
         "metrics": {
@@ -620,12 +786,30 @@ def dashboard_summary(db: Session) -> dict:
             "openInquiries": len(inquiry_bookings),
             "upcomingEvents": len(upcoming_bookings),
             "confirmedEvents": len(confirmed_bookings),
+            "hotelReservations": len(active_stays),
+            "roomsReserved": sum(booking.rooms_count for booking in active_stays),
             "activeVendors": db.query(Vendor).count(),
-            "paymentsReceived": sum(payment.amount for payment in received_payments),
-            "pendingCollections": sum(payment.amount for payment in pending_payments),
+            "paymentsReceived": sum(payment.amount for payment in received_payments)
+            + sum(booking.amount for booking in received_hotel_collections),
+            "pendingCollections": sum(payment.amount for payment in pending_payments)
+            + sum(booking.amount for booking in pending_hotel_collections),
         },
         "todayBookings": [serialize_booking(row) for row in bookings[:4]],
-        "pendingPayments": [serialize_payment(row) for row in pending_payments[:5]],
+        "hotelStays": [serialize_hotel_booking(row) for row in hotel_bookings[:4]],
+        "pendingPayments": [
+            *[serialize_payment(row) for row in pending_payments[:5]],
+            *[
+                {
+                    "id": row.id,
+                    "clientName": row.guest_name,
+                    "paymentType": f"Hotel Stay · {row.room_type}",
+                    "amount": row.amount,
+                    "status": row.payment_status,
+                    "notes": f"{row.rooms_count} room(s) · {row.check_in} to {row.check_out}",
+                }
+                for row in pending_hotel_collections[:5]
+            ],
+        ][:8],
         "activity": activity_messages(db)[:8],
         "tasks": [serialize_task(row) for row in tasks],
     }
@@ -667,6 +851,7 @@ def bootstrap(db: Session = Depends(get_db)) -> dict:
         "clients": [serialize_client(row) for row in db.scalars(select(Client).order_by(Client.id.asc())).all()],
         "vendors": [serialize_vendor(row) for row in db.scalars(select(Vendor).order_by(Vendor.id.asc())).all()],
         "payments": [serialize_payment(row) for row in db.scalars(select(Payment).order_by(Payment.id.asc())).all()],
+        "hotelBookings": [serialize_hotel_booking(row) for row in db.scalars(select(HotelBooking).order_by(HotelBooking.check_in.asc())).all()],
         "tasks": [serialize_task(row) for row in db.scalars(select(Task).order_by(Task.id.asc())).all()],
         "requirements": REQUIREMENTS,
         "activity": activity_messages(db),
@@ -686,18 +871,30 @@ def list_bookings(db: Session = Depends(get_db)) -> list[dict]:
 
 @app.post("/api/bookings", status_code=201)
 def create_booking(payload: BookingCreate, db: Session = Depends(get_db)) -> dict:
+    event_date = parse_iso_date(payload.eventDate, "Event date")
+    lawn_area = payload.lawnArea or "Main Lawn"
+
+    existing_booking = db.scalar(
+        select(Booking).where(Booking.event_date == event_date.isoformat(), Booking.lawn_area == lawn_area).limit(1)
+    )
+    if existing_booking is not None:
+        raise HTTPException(
+            status_code=409,
+            detail=f"{lawn_area} is already booked on {event_date.isoformat()} for {existing_booking.client_name}.",
+        )
+
     booking = Booking(
         id=next_prefixed_id(db, Booking, "B"),
         client_name=payload.clientName,
         event_type=payload.eventType,
-        event_date=payload.eventDate,
+        event_date=event_date.isoformat(),
         guest_count=payload.guestCount,
         package_name=payload.packageName,
         advance_paid=payload.advancePaid,
         notes=payload.notes,
         status=payload.status or "Inquiry",
         manager=payload.manager or "Unassigned",
-        lawn_area=payload.lawnArea or "Main Lawn",
+        lawn_area=lawn_area,
     )
     db.add(booking)
     db.commit()
@@ -783,6 +980,66 @@ def create_payment(payload: PaymentCreate, db: Session = Depends(get_db)) -> dic
     db.refresh(payment)
     add_activity(db, f"{payment.client_name} payment entry added.")
     return serialize_payment(payment)
+
+
+@app.get("/api/hotel-bookings")
+def list_hotel_bookings(db: Session = Depends(get_db)) -> list[dict]:
+    return [serialize_hotel_booking(row) for row in db.scalars(select(HotelBooking).order_by(HotelBooking.check_in.asc())).all()]
+
+
+@app.post("/api/hotel-bookings", status_code=201)
+def create_hotel_booking(payload: HotelBookingCreate, db: Session = Depends(get_db)) -> dict:
+    check_in = parse_iso_date(payload.checkIn, "Check-in date")
+    check_out = parse_iso_date(payload.checkOut, "Check-out date")
+    if check_out < check_in:
+        raise HTTPException(status_code=422, detail="Check-out date cannot be earlier than check-in date.")
+    if payload.roomType not in ROOM_INVENTORY:
+        raise HTTPException(status_code=422, detail="Selected room type is not supported.")
+
+    overlapping_stays = db.scalars(
+        select(HotelBooking).where(HotelBooking.room_type == payload.roomType)
+    ).all()
+    blocked_rooms = 0
+    for row in overlapping_stays:
+        row_check_in = parse_iso_date(row.check_in, "Existing check-in date")
+        row_check_out = parse_iso_date(row.check_out, "Existing check-out date")
+        if ranges_overlap(check_in, check_out, row_check_in, row_check_out) and row.status in {
+            "Reserved",
+            "Confirmed",
+            "Checked In",
+        }:
+            blocked_rooms += row.rooms_count
+
+    remaining_rooms = ROOM_INVENTORY[payload.roomType] - blocked_rooms
+    if payload.roomsCount > remaining_rooms:
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                f"Only {max(remaining_rooms, 0)} {payload.roomType} room(s) are available for "
+                f"{check_in.isoformat()} to {check_out.isoformat()}."
+            ),
+        )
+
+    hotel_booking = HotelBooking(
+        id=next_prefixed_id(db, HotelBooking, "H"),
+        guest_name=payload.guestName,
+        phone=payload.phone,
+        room_type=payload.roomType,
+        check_in=check_in.isoformat(),
+        check_out=check_out.isoformat(),
+        rooms_count=payload.roomsCount,
+        guests_count=payload.guestsCount,
+        amount=payload.amount,
+        booking_source=payload.bookingSource,
+        status=payload.status,
+        payment_status=payload.paymentStatus,
+        notes=payload.notes,
+    )
+    db.add(hotel_booking)
+    db.commit()
+    db.refresh(hotel_booking)
+    add_activity(db, f"{hotel_booking.guest_name} hotel stay saved as {hotel_booking.status}.")
+    return serialize_hotel_booking(hotel_booking)
 
 
 @app.get("/api/tasks")
