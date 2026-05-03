@@ -14,9 +14,19 @@
   <body>
     <main class="landing-shell">
       <header class="site-header">
-        <div class="brand-lockup">
-          <span class="eyebrow">Sample Venue Brand</span>
-          <strong>The Grand Blossom Lawn</strong>
+        <div class="site-header__row">
+          <div class="brand-lockup">
+            <span class="eyebrow">Sample Venue Brand</span>
+            <strong>The Grand Blossom Lawn</strong>
+          </div>
+          <nav class="site-nav" aria-label="Public site">
+            <a href="home.html">Home</a>
+            <a href="celebrations.html">Celebrations</a>
+            <a href="stays.html">Hotel Stays</a>
+            <a href="gallery.html">Gallery</a>
+            <a href="contact.html">Contact</a>
+            <a href="enquiry.html" class="is-active">Enquiry</a>
+          </nav>
         </div>
         <p class="site-header__note">Premium open-air venue for weddings, receptions, birthdays, and corporate gatherings in Jaipur.</p>
       </header>
@@ -34,6 +44,10 @@
           <span>Venue address</span>
           <strong>Vaishali Nagar, Jaipur, Rajasthan</strong>
         </article>
+        <article>
+          <span>Hotel inventory</span>
+          <strong>40 guest rooms available on property</strong>
+        </article>
       </section>
 
       <section class="hero-section">
@@ -42,7 +56,7 @@
           <h1>Plan your function with a venue team that starts with the right details.</h1>
           <p class="hero-text">
             Share your preferred date, guest count, budget, and event preferences. The venue team will
-            review availability and contact you with the right next steps.
+            review availability, room stay needs, and contact you with the right next steps.
           </p>
           <div class="hero-points">
             <span>Weddings</span>
@@ -50,6 +64,7 @@
             <span>Birthdays</span>
             <span>Corporate events</span>
             <span>Reception nights</span>
+            <span>Stay packages</span>
           </div>
 
           <div class="trust-strip">
@@ -87,6 +102,10 @@
               <span>Planning scope</span>
               <strong>Decor, catering, layout, and operations</strong>
             </article>
+            <article>
+              <span>Guest stay</span>
+              <strong>40 hotel rooms for family and event guests</strong>
+            </article>
           </div>
           <div class="hero-panel__promise">
             <p class="eyebrow">Before you book</p>
@@ -102,7 +121,7 @@
           <h2>Use these placeholders now. Replace them with the client’s real lawn photos tomorrow.</h2>
           <p>
             This section gives the page a more genuine public feel even before the real venue media arrives.
-            The structure is ready for actual photography, stage shots, night lighting, and dining setup images.
+            The structure is ready for actual photography, stage shots, hotel room visuals, night lighting, and dining setup images.
           </p>
         </article>
 
@@ -126,6 +145,13 @@
             <div class="gallery-card__meta">
               <strong>Dining and service layout</strong>
               <span>Use for buffet counters, live stations, or guest dining zone</span>
+            </div>
+          </article>
+          <article class="gallery-card">
+            <div class="gallery-card__visual gallery-card__visual--rooms"></div>
+            <div class="gallery-card__meta">
+              <strong>Hotel room stay experience</strong>
+              <span>Use for room interiors, family stay comfort, or wedding guest accommodation</span>
             </div>
           </article>
         </div>
@@ -180,8 +206,8 @@
               <p>Guest count, event type, and notes reduce repeated back-and-forth later.</p>
             </article>
             <article class="benefit-card">
-              <h3>Cleaner follow-up</h3>
-              <p>Your enquiry reaches the venue team with the details they need to continue quickly.</p>
+              <h3>Lawn plus stay planning</h3>
+              <p>Families can mention room requirements early instead of treating accommodation separately.</p>
             </article>
           </div>
 
@@ -247,12 +273,24 @@
               Estimated budget
               <input name="budget" type="number" min="0" required placeholder="350000" />
             </label>
+            <label>
+              Do you need guest rooms?
+              <select name="stayRequired" required>
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+                <option value="Maybe">Maybe</option>
+              </select>
+            </label>
+            <label>
+              Approximate rooms needed
+              <input name="roomsNeeded" type="number" min="0" placeholder="12" />
+            </label>
             <label class="full-span">
               Event notes
               <textarea
                 name="message"
                 rows="5"
-                placeholder="Theme, decor style, lawn preference, valet, catering, VIP seating, or any must-have notes"
+                placeholder="Theme, decor style, lawn preference, room stay expectations, valet, catering, VIP seating, or any must-have notes"
               ></textarea>
             </label>
             <button class="submit-btn" type="submit">Send enquiry</button>
@@ -265,6 +303,7 @@
             <ul>
               <li>Your preferred event date or month</li>
               <li>Approximate guest count</li>
+              <li>Whether room stays are needed for family or outstation guests</li>
               <li>Budget comfort range</li>
               <li>Important setup or service notes</li>
             </ul>
@@ -299,6 +338,10 @@
             <span>Arrival and operations</span>
             <p>Parking, valet, guest arrival timing, power backup, and event-day coordination.</p>
           </article>
+          <article class="showcase-card">
+            <span>Rooms and guest stays</span>
+            <p>Family accommodation, wedding stays, outstation guest rooms, and room-block planning.</p>
+          </article>
         </div>
       </section>
 
@@ -312,11 +355,11 @@
               <cite>Priya & Karan, Wedding Celebration</cite>
             </blockquote>
             <blockquote>
-              “We wanted a venue that looked elegant at night and could handle decor, dining, and guest movement without chaos.”
+              “We wanted a venue that looked elegant at night and could handle decor, dining, guest movement, and room stays without chaos.”
               <cite>Sharma Family, Reception Event</cite>
             </blockquote>
             <blockquote>
-              “The scale worked well for our corporate gathering, especially for stage visibility, catering flow, and parking.”
+              “The scale worked well for our corporate gathering, especially for stage visibility, catering flow, parking, and executive room stays.”
               <cite>Axis Buildcon Events Team</cite>
             </blockquote>
           </div>
@@ -350,14 +393,23 @@
             </div>
             <div>
               <strong>Can I mention specific setup needs?</strong>
-              <p>Yes. Use the notes field for decor, catering, seating, valet, or any service expectations.</p>
+              <p>Yes. Use the notes field for decor, catering, seating, valet, room stays, or any service expectations.</p>
             </div>
             <div>
-              <strong>Is this only for weddings?</strong>
-              <p>No. The page also works for receptions, engagements, birthdays, and corporate functions.</p>
+              <strong>Can I ask about rooms too?</strong>
+              <p>Yes. The property also has 40 hotel rooms, so you can mention stay requirements in the same enquiry.</p>
             </div>
           </div>
         </article>
+      </section>
+
+      <section class="cta-banner">
+        <div>
+          <p class="eyebrow">Need a fuller venue walkthrough?</p>
+          <h2>Explore celebrations, hotel stays, gallery, and contact details before you enquire.</h2>
+          <p>The public website now includes separate pages so families can understand the property before filling the form.</p>
+        </div>
+        <a href="home.html">Back to home</a>
       </section>
     </main>
 

@@ -42,6 +42,7 @@ document.getElementById("enquiryForm")?.addEventListener("submit", async (event)
   const formData = new FormData(form);
 
   try {
+    const roomsNeededValue = formData.get("roomsNeeded");
     await api("/enquiries", {
       method: "POST",
       body: JSON.stringify({
@@ -52,6 +53,8 @@ document.getElementById("enquiryForm")?.addEventListener("submit", async (event)
         eventDate: formData.get("eventDate"),
         guestCount: Number(formData.get("guestCount")),
         budget: Number(formData.get("budget")),
+        stayRequired: formData.get("stayRequired"),
+        roomsNeeded: roomsNeededValue ? Number(roomsNeededValue) : null,
         message: formData.get("message")
       })
     });

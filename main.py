@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
-from sqlalchemy import Float, Integer, String, create_engine, select, text
+from sqlalchemy import Float, Integer, String, create_engine, inspect, select, text
 from sqlalchemy.engine import URL
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, sessionmaker
 
@@ -154,6 +154,8 @@ class Enquiry(Base):
     event_date: Mapped[str] = mapped_column(String, nullable=False)
     guest_count: Mapped[int] = mapped_column(Integer, nullable=False)
     budget: Mapped[float] = mapped_column(Float, nullable=False)
+    stay_required: Mapped[str] = mapped_column(String, default="No")
+    rooms_needed: Mapped[int | None] = mapped_column(Integer, nullable=True)
     message: Mapped[str] = mapped_column(String, default="")
     status: Mapped[str] = mapped_column(String, nullable=False)
     created_at: Mapped[str] = mapped_column(String, nullable=False)
@@ -414,6 +416,8 @@ class EnquiryCreate(BaseModel):
     eventDate: str
     guestCount: int = Field(ge=1)
     budget: float = Field(ge=0)
+    stayRequired: str = "No"
+    roomsNeeded: int | None = Field(default=None, ge=0)
     message: str = ""
 
 
@@ -450,10 +454,32 @@ def ensure_database() -> None:
     if IS_SQLITE:
         DATA_DIR.mkdir(parents=True, exist_ok=True)
     Base.metadata.create_all(bind=engine)
+    ensure_enquiry_schema()
     with SessionLocal() as db:
         has_bookings = db.scalar(select(Booking.id).limit(1))
         if not has_bookings:
             create_seed_data(db)
+
+
+def ensure_enquiry_schema() -> None:
+    inspector = inspect(engine)
+    if "enquiries" not in inspector.get_table_names():
+        return
+
+    column_names = {column["name"] for column in inspector.get_columns("enquiries")}
+    statements: list[str] = []
+
+    if "stay_required" not in column_names:
+        statements.append("ALTER TABLE enquiries ADD COLUMN stay_required VARCHAR DEFAULT 'No'")
+    if "rooms_needed" not in column_names:
+        statements.append("ALTER TABLE enquiries ADD COLUMN rooms_needed INTEGER")
+
+    if not statements:
+        return
+
+    with engine.begin() as connection:
+        for statement in statements:
+            connection.execute(text(statement))
 
 
 def initialize_database() -> None:
@@ -564,6 +590,8 @@ def serialize_enquiry(row: Enquiry) -> dict:
         "eventDate": row.event_date,
         "guestCount": row.guest_count,
         "budget": row.budget,
+        "stayRequired": row.stay_required,
+        "roomsNeeded": row.rooms_needed,
         "message": row.message,
         "status": row.status,
         "createdAt": row.created_at,
@@ -794,6 +822,8 @@ def create_enquiry(payload: EnquiryCreate, db: Session = Depends(get_db)) -> dic
         event_date=payload.eventDate,
         guest_count=payload.guestCount,
         budget=payload.budget,
+        stay_required=payload.stayRequired,
+        rooms_needed=payload.roomsNeeded,
         message=payload.message,
         status="New",
         created_at=datetime.utcnow().isoformat(),

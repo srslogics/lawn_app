@@ -33,11 +33,16 @@ body {
 }
 
 .site-header {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.site-header__row {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
   gap: 18px;
-  margin-bottom: 22px;
 }
 
 .brand-lockup {
@@ -52,16 +57,41 @@ body {
 }
 
 .site-header__note {
-  max-width: 36rem;
   margin: 0;
   color: var(--muted);
   line-height: 1.6;
-  text-align: right;
+}
+
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.site-nav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(118, 84, 35, 0.12);
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.62);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.site-nav a.is-active {
+  color: #f7fbf9;
+  background: linear-gradient(135deg, var(--green) 0%, var(--green-deep) 100%);
+  border-color: transparent;
 }
 
 .contact-ribbon {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
   margin-bottom: 24px;
 }
@@ -100,9 +130,241 @@ body {
 .showcase-section,
 .faq-section,
 .gallery-section,
-.trust-section {
+.trust-section,
+.page-hero,
+.split-section,
+.contact-grid {
   display: grid;
   gap: 24px;
+}
+
+.page-hero {
+  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+  margin-bottom: 26px;
+}
+
+.page-hero__copy,
+.page-hero__panel,
+.detail-card,
+.metric-card,
+.room-card,
+.map-panel,
+.timeline-card,
+.cta-banner {
+  border: 1px solid var(--line);
+  border-radius: 30px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.page-hero__copy,
+.page-hero__panel,
+.detail-card,
+.metric-card,
+.room-card,
+.map-panel,
+.timeline-card,
+.cta-banner {
+  padding: 30px;
+}
+
+.page-hero__copy h1,
+.split-section__copy h2,
+.cta-banner h2 {
+  margin: 0;
+  font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+}
+
+.page-hero__copy h1 {
+  font-size: clamp(3rem, 5vw, 5rem);
+  max-width: 10ch;
+}
+
+.page-hero__copy p,
+.page-hero__panel p,
+.detail-card p,
+.room-card p,
+.metric-card p,
+.split-section__copy p,
+.timeline-card p,
+.map-panel p,
+.cta-banner p {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.page-hero__panel {
+  display: grid;
+  gap: 16px;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.chip-row span {
+  padding: 12px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(118, 84, 35, 0.08);
+  background: var(--panel-strong);
+  font-weight: 700;
+}
+
+.metric-grid,
+.detail-grid,
+.room-grid,
+.package-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.metric-card strong,
+.detail-card strong,
+.room-card strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1.15rem;
+}
+
+.split-section {
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  align-items: start;
+  margin-top: 26px;
+}
+
+.split-section__copy {
+  padding: 12px 6px 0;
+}
+
+.split-section__copy h2 {
+  font-size: clamp(2.1rem, 3.4vw, 3.2rem);
+  margin-bottom: 14px;
+}
+
+.timeline-list,
+.feature-list {
+  display: grid;
+  gap: 16px;
+}
+
+.timeline-card strong,
+.feature-list strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1.05rem;
+}
+
+.visual-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.visual-card {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.visual-card__image {
+  min-height: 220px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 228, 181, 0.45), transparent 28%),
+    linear-gradient(135deg, rgba(44, 107, 94, 0.95), rgba(188, 133, 64, 0.84));
+}
+
+.visual-card__image--warm {
+  background:
+    linear-gradient(160deg, rgba(229, 209, 175, 0.35), transparent 32%),
+    linear-gradient(135deg, rgba(188, 133, 64, 0.9), rgba(108, 67, 31, 0.92));
+}
+
+.visual-card__image--room {
+  background:
+    linear-gradient(180deg, rgba(255, 244, 223, 0.2), transparent 25%),
+    linear-gradient(145deg, rgba(119, 89, 57, 0.9), rgba(215, 176, 122, 0.88));
+}
+
+.visual-card__body {
+  padding: 20px;
+}
+
+.visual-card__body strong {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.visual-card__body p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.contact-grid {
+  grid-template-columns: minmax(0, 0.95fr) minmax(340px, 0.85fr);
+  align-items: start;
+  margin-top: 26px;
+}
+
+.contact-stack {
+  display: grid;
+  gap: 16px;
+}
+
+.map-panel {
+  min-height: 100%;
+}
+
+.inline-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.inline-links a,
+.cta-banner a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 0 18px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.inline-links a {
+  border: 1px solid rgba(118, 84, 35, 0.12);
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.cta-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  margin-top: 30px;
+}
+
+.cta-banner h2 {
+  font-size: clamp(2rem, 3vw, 3rem);
+  margin-bottom: 10px;
+}
+
+.cta-banner a {
+  color: #f7fbf9;
+  background: linear-gradient(135deg, var(--green) 0%, var(--green-deep) 100%);
+  box-shadow: 0 16px 32px rgba(44, 107, 94, 0.22);
 }
 
 .hero-section {
@@ -335,6 +597,13 @@ body {
   background:
     linear-gradient(160deg, rgba(229, 209, 175, 0.35), transparent 32%),
     linear-gradient(135deg, rgba(188, 133, 64, 0.9), rgba(108, 67, 31, 0.92));
+}
+
+.gallery-card__visual--rooms {
+  min-height: 200px;
+  background:
+    linear-gradient(180deg, rgba(255, 244, 223, 0.2), transparent 25%),
+    linear-gradient(145deg, rgba(119, 89, 57, 0.9), rgba(215, 176, 122, 0.88));
 }
 
 .gallery-card__meta {
@@ -629,7 +898,8 @@ body {
 }
 
 @media (max-width: 1024px) {
-  .site-header,
+  .page-hero,
+  .site-header__row,
   .contact-ribbon,
   .hero-section,
   .gallery-section,
@@ -637,21 +907,41 @@ body {
   .credibility-section,
   .showcase-section,
   .trust-section,
+  .split-section,
+  .contact-grid,
   .benefit-grid,
   .enquiry-form,
   .showcase-grid,
   .faq-list,
-  .gallery-grid {
+  .gallery-grid,
+  .metric-grid,
+  .detail-grid,
+  .room-grid,
+  .package-grid,
+  .visual-grid {
     grid-template-columns: 1fr;
   }
 
-  .site-header {
+  .site-header__row {
     align-items: start;
+    flex-direction: column;
   }
 
   .site-header__note {
     max-width: none;
-    text-align: left;
+  }
+
+  .contact-ribbon {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .site-nav {
+    justify-content: flex-start;
+  }
+
+  .cta-banner {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 
@@ -681,5 +971,9 @@ body {
 
   .site-header {
     margin-bottom: 18px;
+  }
+
+  .contact-ribbon {
+    grid-template-columns: 1fr;
   }
 }
