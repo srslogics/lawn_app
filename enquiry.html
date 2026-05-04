@@ -13,7 +13,7 @@
   </head>
   <body>
     <main class="landing-shell">
-      <header class="site-header">
+      <header class="site-header reveal">
         <div class="site-header__row">
           <div class="brand-lockup">
             <span class="eyebrow">Sample Venue Brand</span>
@@ -31,7 +31,7 @@
         <p class="site-header__note">Destination wedding venue and on-property stay experience in Jaipur for wedding weekends, family hosting, and full-scale celebrations.</p>
       </header>
 
-      <section class="contact-ribbon">
+      <section class="contact-ribbon reveal">
         <article>
           <span>Call venue desk</span>
           <strong>+91 98765 43210</strong>
@@ -50,7 +50,19 @@
         </article>
       </section>
 
-      <section class="hero-section">
+      <section class="journey-bar reveal">
+        <div class="journey-bar__meta">
+          <span class="eyebrow">Plan your visit</span>
+          <strong>Explore the estate, understand the experience, then send your enquiry.</strong>
+        </div>
+        <div class="journey-bar__actions">
+          <button type="button" class="journey-chip" data-scroll="#wedding-preview">Preview</button>
+          <button type="button" class="journey-chip" data-scroll="#wedding-fit">Why us</button>
+          <button type="button" class="journey-chip" data-scroll="#enquiry-form-section">Enquire</button>
+        </div>
+      </section>
+
+      <section class="hero-section reveal">
         <div class="hero-copy">
           <p class="eyebrow">Destination Wedding Enquiries</p>
           <h1>Plan a destination wedding with grand celebrations and guest stays in one place.</h1>
@@ -58,13 +70,18 @@
             Share your wedding dates, guest count, stay requirements, and celebration style. The venue team will
             review venue availability, guest room needs, and the scale of your wedding weekend before reaching out.
           </p>
-          <div class="hero-points">
-            <span>Destination weddings</span>
-            <span>Haldi and mehendi</span>
-            <span>Sangeet nights</span>
-            <span>Reception evenings</span>
-            <span>Wedding guest stays</span>
-            <span>Family room blocks</span>
+          <div class="hero-points" aria-label="Wedding experiences">
+            <button type="button" data-scroll="#enquiry-form-section" data-event-type="Destination Wedding" data-note-prefix="We are planning a destination wedding with guest stays.">Destination weddings</button>
+            <button type="button" data-scroll="#enquiry-form-section" data-event-type="Mehendi / Haldi" data-note-prefix="We are planning haldi or mehendi functions and need venue guidance.">Haldi and mehendi</button>
+            <button type="button" data-scroll="#enquiry-form-section" data-event-type="Sangeet" data-note-prefix="We are planning a sangeet evening and want ambience and guest-flow support.">Sangeet nights</button>
+            <button type="button" data-scroll="#enquiry-form-section" data-event-type="Reception" data-note-prefix="We are planning a reception evening and want layout, dining, and room-block guidance.">Reception evenings</button>
+            <button type="button" data-scroll="#enquiry-form-section" data-event-type="Wedding Weekend" data-note-prefix="We are planning a full wedding weekend with multiple functions and family stays.">Wedding weekend hosting</button>
+            <button type="button" data-scroll="#enquiry-form-section" data-event-type="Destination Wedding" data-note-prefix="We need room-block planning for outstation guests and family stays.">Family room blocks</button>
+          </div>
+
+          <div class="hero-cta-row">
+            <a href="#enquiry-form-section" class="primary-link">Check date availability</a>
+            <a href="#wedding-preview" class="secondary-link">See what families review first</a>
           </div>
 
           <div class="trust-strip">
@@ -115,7 +132,26 @@
         </div>
       </section>
 
-      <section class="gallery-section">
+      <section class="metric-strip reveal">
+        <article>
+          <span>Wedding format</span>
+          <strong>Single-day or weekend celebrations</strong>
+        </article>
+        <article>
+          <span>Guest stay comfort</span>
+          <strong>40 rooms for close family and outstation guests</strong>
+        </article>
+        <article>
+          <span>Planning focus</span>
+          <strong>Ceremony flow, hospitality, and experience</strong>
+        </article>
+        <article>
+          <span>Best enquiry outcome</span>
+          <strong>Faster shortlist and more useful first call</strong>
+        </article>
+      </section>
+
+      <section class="gallery-section reveal" id="wedding-preview">
         <article class="gallery-copy">
           <p class="eyebrow">Destination Wedding Preview</p>
           <h2>Show the property as a wedding destination first, then replace these with real venue visuals.</h2>
@@ -157,7 +193,7 @@
         </div>
       </section>
 
-      <section class="credibility-section">
+      <section class="credibility-section reveal" id="wedding-fit">
         <article class="credibility-card credibility-card--feature">
           <p class="eyebrow">Why families enquire here</p>
           <h2>A clearer first conversation for destination weddings and hosted family events.</h2>
@@ -181,7 +217,7 @@
         </article>
       </section>
 
-      <section class="content-section">
+      <section class="content-section reveal" id="enquiry-form-section">
         <div class="info-column">
           <article class="info-card">
             <p class="eyebrow">Why use this form</p>
@@ -238,6 +274,13 @@
             <p>Tell us about your destination wedding, related functions, or family stay needs and the venue team will continue from there.</p>
           </div>
 
+          <div class="form-quick-picks" aria-label="Popular enquiry prompts">
+            <button type="button" class="quick-pick" data-event-type="Destination Wedding" data-note-prefix="We want to understand destination wedding availability and family stay planning.">Destination wedding</button>
+            <button type="button" class="quick-pick" data-event-type="Wedding Weekend" data-note-prefix="We are comparing venues for a full wedding weekend with multiple functions.">Wedding weekend</button>
+            <button type="button" class="quick-pick" data-event-type="Reception" data-note-prefix="We are planning a reception evening and want guest-flow and hospitality guidance.">Reception evening</button>
+            <button type="button" class="quick-pick" data-event-type="Destination Wedding" data-note-prefix="We need room-block planning for family and outstation guests.">Guest stay planning</button>
+          </div>
+
           <form id="enquiryForm" class="enquiry-form">
             <label>
               Full name
@@ -279,7 +322,7 @@
             </label>
             <label>
               Do you need guest rooms?
-              <select name="stayRequired" required>
+              <select name="stayRequired" id="stayRequired" required>
                 <option value="No">No</option>
                 <option value="Yes">Yes</option>
                 <option value="Maybe">Maybe</option>
@@ -287,7 +330,7 @@
             </label>
             <label>
               Approximate rooms needed
-              <input name="roomsNeeded" type="number" min="0" placeholder="18" />
+              <input name="roomsNeeded" id="roomsNeeded" type="number" min="0" placeholder="18" />
             </label>
             <label class="full-span">
               Event notes
@@ -315,7 +358,7 @@
         </article>
       </section>
 
-      <section class="showcase-section">
+      <section class="showcase-section reveal">
         <article class="showcase-copy">
           <p class="eyebrow">What wedding families usually ask</p>
           <h2>Common destination wedding discussions before a venue is shortlisted.</h2>
@@ -349,7 +392,7 @@
         </div>
       </section>
 
-      <section class="trust-section">
+      <section class="trust-section reveal">
         <article class="testimonial-card">
           <p class="eyebrow">Sample Testimonials</p>
           <h2>Temporary social proof shaped around destination weddings.</h2>
@@ -386,22 +429,34 @@
         </article>
       </section>
 
-      <section class="faq-section">
+      <section class="faq-section reveal" id="faq">
         <article class="faq-card">
           <p class="eyebrow">Quick answers</p>
           <h2>Questions destination wedding families usually have.</h2>
           <div class="faq-list">
             <div>
-              <strong>Can I enquire before finalising every function?</strong>
-              <p>Yes. A tentative wedding date, guest range, and rough stay requirement are enough to begin the conversation.</p>
+              <button type="button" class="faq-toggle" aria-expanded="true">
+                <span>Can I enquire before finalising every function?</span>
+              </button>
+              <div class="faq-answer is-open">
+                <p>Yes. A tentative wedding date, guest range, and rough stay requirement are enough to begin the conversation.</p>
+              </div>
             </div>
             <div>
-              <strong>Can I mention haldi, mehendi, sangeet, or reception separately?</strong>
-              <p>Yes. Use the notes field to explain which functions are planned and how you expect the celebration to flow.</p>
+              <button type="button" class="faq-toggle" aria-expanded="false">
+                <span>Can I mention haldi, mehendi, sangeet, or reception separately?</span>
+              </button>
+              <div class="faq-answer">
+                <p>Yes. Use the notes field to explain which functions are planned and how you expect the celebration to flow.</p>
+              </div>
             </div>
             <div>
-              <strong>Can I ask about guest rooms in the same enquiry?</strong>
-              <p>Yes. The property also has 40 hotel rooms, so you can mention family stay and outstation guest requirements together.</p>
+              <button type="button" class="faq-toggle" aria-expanded="false">
+                <span>Can I ask about guest rooms in the same enquiry?</span>
+              </button>
+              <div class="faq-answer">
+                <p>Yes. The property also has 40 hotel rooms, so you can mention family stay and outstation guest requirements together.</p>
+              </div>
             </div>
           </div>
         </article>
@@ -416,6 +471,14 @@
         <a href="home.html">Back to home</a>
       </section>
     </main>
+
+    <div class="floating-enquiry-bar">
+      <div>
+        <span class="eyebrow">Ready to shortlist?</span>
+        <strong>Share your wedding dates and guest stay needs.</strong>
+      </div>
+      <button type="button" class="floating-enquiry-bar__button" data-scroll="#enquiry-form-section">Make enquiry</button>
+    </div>
 
     <div class="toast" id="toast" aria-live="polite"></div>
     <script src="enquiry.js"></script>
