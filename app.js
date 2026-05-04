@@ -98,6 +98,7 @@ function setView(view) {
     clients: "Clients",
     vendors: "Vendors",
     finance: "Finance",
+    analytics: "Analytics",
     settings: "Venue setup"
   };
 
@@ -568,6 +569,213 @@ function renderRequirements() {
     .join("");
 }
 
+function countBy(items, keyFn) {
+  return items.reduce((acc, item) => {
+    const key = keyFn(item);
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+}
+
+function sumBy(items, valueFn) {
+  return items.reduce((sum, item) => sum + Number(valueFn(item) || 0), 0);
+}
+
+function averageBy(items, valueFn) {
+  if (!items.length) return 0;
+  return sumBy(items, valueFn) / items.length;
+}
+
+function parseDateValue(value) {
+  return new Date(`${value}T00:00:00`);
+}
+
+function daysBetween(start, end) {
+  const diff = parseDateValue(end) - parseDateValue(start);
+  return Math.max(1, Math.round(diff / 86400000));
+}
+
+function buildBarChart(groups, valueLabel, emptyText = "No analytics data yet.") {
+  const entries = Object.entries(groups);
+  if (!entries.length) {
+    return `<div class="empty-state">${emptyText}</div>`;
+  }
+
+  const maxValue = Math.max(...entries.map(([, value]) => Number(value)));
+  return `
+    <div class="bar-chart">
+      ${entries
+        .map(
+          ([label, value]) => `
+            <article class="bar-row">
+              <div class="bar-row__meta">
+                <strong>${label}</strong>
+                <span>${valueLabel(value)}</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width:${maxValue ? (Number(value) / maxValue) * 100 : 0}%"></div>
+              </div>
+            </article>
+          `
+        )
+        .join("")}
+    </div>
+  `;
+}
+
+function renderAnalytics() {
+  const bookings = state.bookings || [];
+  const hotelBookings = state.hotelBookings || [];
+  const payments = state.payments || [];
+  const metrics = state.dashboard?.metrics || {};
+
+  const venueReceived = sumBy(payments.filter((payment) => payment.status === "Received"), (payment) => payment.amount);
+  const venuePending = sumBy(payments.filter((payment) => payment.status === "Pending"), (payment) => payment.amount);
+  const hotelReceived = sumBy(
+    hotelBookings.filter((booking) => booking.paymentStatus === "Received"),
+    (booking) => booking.amount
+  );
+  const hotelPending = sumBy(
+    hotelBookings.filter((booking) => booking.paymentStatus === "Pending"),
+    (booking) => booking.amount
+  );
+  const combinedTrackedValue = venueReceived + venuePending + hotelReceived + hotelPending;
+  const averageGuests = Math.round(averageBy(bookings, (booking) => booking.guestCount));
+  const averageStayNights = averageBy(hotelBookings, (booking) =>
+    daysBetween(booking.checkIn, booking.checkOut)
+  );
+  const hotelRoomInventory = 40;
+  const roomsReserved = metrics.roomsReserved || 0;
+  const roomOccupancyPressure = hotelRoomInventory
+    ? Math.min(100, Math.round((roomsReserved / hotelRoomInventory) * 100))
+    : 0;
+
+  document.getElementById("analyticsKpiGrid").innerHTML = [
+    {
+      label: "Combined tracked value",
+      value: money(combinedTrackedValue),
+      detail: "Venue payments plus hotel stay collections"
+    },
+    {
+      label: "Average event size",
+      value: averageGuests || 0,
+      detail: "Average guest count across booking records"
+    },
+    {
+      label: "Average stay length",
+      value: `${averageStayNights ? averageStayNights.toFixed(1) : "0.0"} night${averageStayNights === 1 ? "" : "s"}`,
+      detail: "Average hotel stay duration"
+    },
+    {
+      label: "Room pressure",
+      value: `${roomOccupancyPressure}%`,
+      detail: `${roomsReserved}/${hotelRoomInventory} rooms currently reserved`
+    },
+    {
+      label: "Pending collections",
+      value: money(metrics.pendingCollections || 0),
+      detail: "Outstanding venue and hotel collections"
+    },
+    {
+      label: "Received collections",
+      value: money(metrics.paymentsReceived || 0),
+      detail: "Realized venue and hotel collections"
+    }
+  ]
+    .map(
+      (item) => `
+        <article class="analytics-kpi">
+          <span>${item.label}</span>
+          <strong>${item.value}</strong>
+          <small>${item.detail}</small>
+        </article>
+      `
+    )
+    .join("");
+
+  document.getElementById("analyticsRevenueMix").innerHTML = buildBarChart(
+    {
+      "Venue received": venueReceived,
+      "Venue pending": venuePending,
+      "Hotel received": hotelReceived,
+      "Hotel pending": hotelPending
+    },
+    (value) => money(value),
+    "No revenue mix data yet."
+  );
+
+  document.getElementById("analyticsEventMix").innerHTML = buildBarChart(
+    countBy(bookings, (booking) => booking.eventType),
+    (value) => `${value} booking${value === 1 ? "" : "s"}`,
+    "No event mix data yet."
+  );
+
+  document.getElementById("analyticsLawnMix").innerHTML = buildBarChart(
+    countBy(bookings, (booking) => booking.lawnArea),
+    (value) => `${value} event${value === 1 ? "" : "s"}`,
+    "No lawn utilization data yet."
+  );
+
+  document.getElementById("analyticsPackageMix").innerHTML = buildBarChart(
+    countBy(bookings, (booking) => booking.packageName),
+    (value) => `${value} booking${value === 1 ? "" : "s"}`,
+    "No package demand data yet."
+  );
+
+  document.getElementById("analyticsRoomTypeMix").innerHTML = buildBarChart(
+    hotelBookings.reduce((acc, booking) => {
+      acc[booking.roomType] = (acc[booking.roomType] || 0) + Number(booking.roomsCount || 0);
+      return acc;
+    }, {}),
+    (value) => `${value} room${value === 1 ? "" : "s"}`,
+    "No room type demand data yet."
+  );
+
+  document.getElementById("analyticsHotelSourceMix").innerHTML = buildBarChart(
+    countBy(hotelBookings, (booking) => booking.bookingSource),
+    (value) => `${value} stay${value === 1 ? "" : "s"}`,
+    "No hotel source data yet."
+  );
+
+  const today = new Date();
+  const nextThirtyDays = new Date(today.getTime() + 30 * 86400000);
+  const upcomingEventLoad = bookings.filter((booking) => {
+    const eventDate = parseDateValue(booking.eventDate);
+    return eventDate >= today && eventDate <= nextThirtyDays;
+  });
+  const upcomingStayLoad = hotelBookings.filter((booking) => {
+    const checkIn = parseDateValue(booking.checkIn);
+    return checkIn >= today && checkIn <= nextThirtyDays;
+  });
+
+  document.getElementById("analyticsLoadMix").innerHTML = buildBarChart(
+    {
+      "Upcoming events": upcomingEventLoad.length,
+      "Upcoming hotel stays": upcomingStayLoad.length,
+      "Rooms blocked next 30d": sumBy(upcomingStayLoad, (booking) => booking.roomsCount),
+      "Guests hosted next 30d": sumBy(upcomingStayLoad, (booking) => booking.guestsCount)
+    },
+    (value) => String(value),
+    "No near-term load data yet."
+  );
+
+  const monthTrend = {};
+  bookings.forEach((booking) => {
+    const key = booking.eventDate.slice(0, 7);
+    monthTrend[`${key} · Events`] = (monthTrend[`${key} · Events`] || 0) + 1;
+  });
+  hotelBookings.forEach((booking) => {
+    const key = booking.checkIn.slice(0, 7);
+    monthTrend[`${key} · Stays`] = (monthTrend[`${key} · Stays`] || 0) + 1;
+  });
+
+  document.getElementById("analyticsMonthlyTrend").innerHTML = buildBarChart(
+    monthTrend,
+    (value) => `${value} record${value === 1 ? "" : "s"}`,
+    "No monthly trend data yet."
+  );
+}
+
 function renderHotelStats() {
   const rows = state.hotelBookings || [];
   const activeRows = rows.filter((booking) => ["Reserved", "Confirmed", "Checked In"].includes(booking.status));
@@ -698,6 +906,7 @@ function renderAll() {
   renderVendorsTable();
   renderPaymentsTable();
   renderCalendar();
+  renderAnalytics();
   renderRequirements();
 }
 

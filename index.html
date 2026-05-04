@@ -34,6 +34,7 @@
           <button class="nav-link" data-view="clients">Clients</button>
           <button class="nav-link" data-view="vendors">Vendors</button>
           <button class="nav-link" data-view="finance">Finance</button>
+          <button class="nav-link" data-view="analytics">Analytics</button>
           <button class="nav-link" data-view="settings">Venue setup</button>
         </nav>
 
@@ -588,6 +589,103 @@
                 </label>
                 <button class="primary-btn full-width" type="submit">Save payment</button>
               </form>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" data-view-panel="analytics">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Owner Analytics</p>
+              <h3>Business metrics, demand patterns, and operating pressure</h3>
+            </div>
+          </div>
+
+          <div class="analytics-kpi-grid" id="analyticsKpiGrid"></div>
+
+          <div class="analytics-grid analytics-grid--wide">
+            <article class="panel">
+              <div class="section-heading compact-heading">
+                <div>
+                  <p class="eyebrow">Revenue</p>
+                  <h3>Collections and revenue mix</h3>
+                </div>
+              </div>
+              <div id="analyticsRevenueMix"></div>
+            </article>
+
+            <article class="panel">
+              <div class="section-heading compact-heading">
+                <div>
+                  <p class="eyebrow">Demand</p>
+                  <h3>Event type mix</h3>
+                </div>
+              </div>
+              <div id="analyticsEventMix"></div>
+            </article>
+          </div>
+
+          <div class="analytics-grid">
+            <article class="panel">
+              <div class="section-heading compact-heading">
+                <div>
+                  <p class="eyebrow">Lawn Performance</p>
+                  <h3>Lawn area utilization</h3>
+                </div>
+              </div>
+              <div id="analyticsLawnMix"></div>
+            </article>
+
+            <article class="panel">
+              <div class="section-heading compact-heading">
+                <div>
+                  <p class="eyebrow">Packages</p>
+                  <h3>Package demand distribution</h3>
+                </div>
+              </div>
+              <div id="analyticsPackageMix"></div>
+            </article>
+
+            <article class="panel">
+              <div class="section-heading compact-heading">
+                <div>
+                  <p class="eyebrow">Hotel Demand</p>
+                  <h3>Room type demand</h3>
+                </div>
+              </div>
+              <div id="analyticsRoomTypeMix"></div>
+            </article>
+          </div>
+
+          <div class="analytics-grid">
+            <article class="panel">
+              <div class="section-heading compact-heading">
+                <div>
+                  <p class="eyebrow">Acquisition</p>
+                  <h3>Hotel booking sources</h3>
+                </div>
+              </div>
+              <div id="analyticsHotelSourceMix"></div>
+            </article>
+
+            <article class="panel">
+              <div class="section-heading compact-heading">
+                <div>
+                  <p class="eyebrow">Schedule</p>
+                  <h3>Upcoming operating load</h3>
+                </div>
+              </div>
+              <div id="analyticsLoadMix"></div>
+            </article>
+
+            <article class="panel">
+              <div class="section-heading compact-heading">
+                <div>
+                  <p class="eyebrow">Trend</p>
+                  <h3>Month-wise pipeline</h3>
+                </div>
+              </div>
+              <div id="analyticsMonthlyTrend"></div>
             </article>
           </div>
         </section>

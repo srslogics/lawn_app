@@ -431,7 +431,9 @@ textarea {
 .summary-grid,
 .content-grid,
 .section-grid,
-.bookings-layout {
+.bookings-layout,
+.analytics-grid,
+.analytics-kpi-grid {
   display: grid;
   gap: 22px;
 }
@@ -453,6 +455,18 @@ textarea {
 .bookings-layout {
   grid-template-columns: minmax(0, 1.5fr) minmax(320px, 0.8fr);
   align-items: start;
+}
+
+.analytics-kpi-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.analytics-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.analytics-grid--wide {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .bookings-heading__copy {
@@ -517,6 +531,7 @@ textarea {
 }
 
 .stat-card,
+.analytics-kpi,
 .detail-card,
 .requirement-card,
 .finance-highlight,
@@ -534,6 +549,12 @@ textarea {
   padding-top: 22px;
 }
 
+.analytics-kpi {
+  position: relative;
+  overflow: hidden;
+  padding-top: 22px;
+}
+
 .stat-card::after {
   content: "";
   position: absolute;
@@ -545,7 +566,19 @@ textarea {
   background: linear-gradient(90deg, var(--accent), rgba(177, 118, 43, 0));
 }
 
+.analytics-kpi::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 18px;
+  width: 56px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--green), rgba(45, 107, 94, 0));
+}
+
 .stat-card span,
+.analytics-kpi span,
 .finance-highlight span {
   display: block;
   color: var(--muted);
@@ -553,11 +586,18 @@ textarea {
 }
 
 .stat-card strong,
+.analytics-kpi strong,
 .finance-highlight strong {
   display: block;
   margin: 6px 0;
   font-size: 2.1rem;
   line-height: 1;
+}
+
+.analytics-kpi small,
+.stat-card small {
+  color: var(--muted);
+  line-height: 1.5;
 }
 
 .card-list,
@@ -835,6 +875,48 @@ textarea {
   color: var(--muted);
 }
 
+.bar-chart {
+  display: grid;
+  gap: 16px;
+}
+
+.bar-row {
+  display: grid;
+  gap: 10px;
+}
+
+.bar-row__meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: baseline;
+}
+
+.bar-row__meta strong {
+  font-size: 0.98rem;
+}
+
+.bar-row__meta span {
+  color: var(--muted);
+  font-size: 0.9rem;
+  text-align: right;
+}
+
+.bar-track {
+  width: 100%;
+  height: 12px;
+  border-radius: 999px;
+  background: rgba(187, 135, 68, 0.1);
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--green), var(--accent));
+  min-width: 8px;
+}
+
 .toast {
   position: fixed;
   right: 24px;
@@ -862,6 +944,8 @@ textarea {
   .section-grid,
   .entity-grid,
   .bookings-layout,
+  .analytics-grid,
+  .analytics-kpi-grid,
   .requirements-grid,
   .calendar-board {
     grid-template-columns: 1fr;
@@ -963,6 +1047,7 @@ textarea {
   }
 
   .stats-grid,
+  .analytics-kpi-grid,
   .app-form,
   .detail-grid {
     grid-template-columns: 1fr;
