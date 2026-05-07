@@ -3,6 +3,8 @@ const API_BASE =
     ? "http://127.0.0.1:4173/api"
     : `${window.location.origin}/api`;
 
+document.body.classList.add("js-enhanced");
+
 function showToast(message) {
   const toast = document.getElementById("toast");
   toast.textContent = message;
