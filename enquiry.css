@@ -217,6 +217,8 @@ body {
   border-radius: 999px;
   text-decoration: none;
   font-weight: 800;
+  white-space: nowrap;
+  flex-shrink: 0;
   transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
 }
 
@@ -1232,6 +1234,8 @@ body {
   border-radius: 999px;
   text-decoration: none;
   font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .inline-links a {
@@ -1381,6 +1385,8 @@ body {
   border-radius: 999px;
   text-decoration: none;
   font-weight: 800;
+  white-space: nowrap;
+  flex-shrink: 0;
   transition: transform 180ms ease, filter 180ms ease, background 180ms ease;
 }
 
@@ -1937,6 +1943,7 @@ body {
   color: #f7fbf9;
   background: linear-gradient(135deg, var(--green) 0%, var(--green-deep) 100%);
   font-weight: 800;
+  white-space: nowrap;
   cursor: pointer;
 }
 
@@ -1972,6 +1979,11 @@ body.js-enhanced .reveal.is-visible {
 }
 
 @media (max-width: 1024px) {
+  .home-stage {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
   .home-canvas__backdrop {
     inset: 80px 0 auto;
     height: 380px;
@@ -1991,15 +2003,24 @@ body.js-enhanced .reveal.is-visible {
 
   .home-stage__visual {
     min-height: auto;
+    display: grid;
+    gap: 18px;
+  }
+
+  .dream-card--hero {
+    width: 100%;
+    margin-left: 0;
   }
 
   .floating-note,
   .mini-gallery {
     position: static;
+    animation: none;
   }
 
   .mini-gallery {
     margin-top: 18px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .home-hero,
@@ -2065,6 +2086,10 @@ body.js-enhanced .reveal.is-visible {
     flex-direction: column;
     align-items: flex-start;
   }
+
+  .cta-banner a {
+    align-self: flex-start;
+  }
 }
 
 @media (max-width: 720px) {
@@ -2125,6 +2150,8 @@ body.js-enhanced .reveal.is-visible {
 
   .home-stage__actions a {
     width: 100%;
+    white-space: normal;
+    text-align: center;
   }
 
   .dream-card__image {
@@ -2202,6 +2229,14 @@ body.js-enhanced .reveal.is-visible {
   .quick-pick,
   .floating-enquiry-bar__button {
     width: 100%;
+  }
+
+  .cta-banner a,
+  .primary-link,
+  .secondary-link,
+  .floating-enquiry-bar__button {
+    white-space: normal;
+    text-align: center;
   }
 
   .floating-enquiry-bar {
