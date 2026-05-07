@@ -262,6 +262,10 @@ body {
 .home-stage__visual {
   position: relative;
   min-height: 720px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+  gap: 18px;
 }
 
 .dream-card,
@@ -281,8 +285,9 @@ body {
 }
 
 .dream-card--hero {
-  width: min(100%, 540px);
-  margin-left: auto;
+  grid-column: 1 / -1;
+  width: 100%;
+  margin-left: 0;
 }
 
 .dream-card__image {
@@ -330,13 +335,13 @@ body {
 }
 
 .floating-note {
-  position: absolute;
+  position: static;
   padding: 16px 18px;
   border-radius: 22px;
   background: rgba(255, 251, 246, 0.92);
   backdrop-filter: blur(16px);
-  max-width: 210px;
-  animation: floaty 6s ease-in-out infinite;
+  max-width: none;
+  animation: none;
 }
 
 .floating-note span {
@@ -354,22 +359,9 @@ body {
   line-height: 1.4;
 }
 
-.floating-note--one {
-  top: 78px;
-  left: 0;
-}
-
-.floating-note--two {
-  right: -8px;
-  top: 360px;
-  animation-delay: 0.6s;
-}
-
 .mini-gallery {
-  position: absolute;
-  left: 18px;
-  right: 42px;
-  bottom: 0;
+  position: static;
+  grid-column: 1 / -1;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
