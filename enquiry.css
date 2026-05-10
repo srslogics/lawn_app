@@ -25,6 +25,12 @@ body {
     radial-gradient(circle at bottom right, rgba(44, 107, 94, 0.08), transparent 26%),
     linear-gradient(180deg, #ecdecb 0%, var(--bg) 42%, #fcf8f2 100%);
   scroll-behavior: smooth;
+  overflow-x: clip;
+}
+
+img,
+video {
+  max-width: 100%;
 }
 
 .landing-shell {
@@ -82,6 +88,7 @@ body {
   background: rgba(255, 255, 255, 0.62);
   text-decoration: none;
   font-weight: 700;
+  text-wrap: balance;
 }
 
 .site-nav a.is-active {
@@ -123,6 +130,326 @@ body {
   display: block;
   margin-top: 6px;
   font-size: 1.05rem;
+  overflow-wrap: anywhere;
+}
+
+.royal-hero,
+.curated-metrics,
+.moment-editorial,
+.hosting-story,
+.experience-film,
+.royal-paths,
+.concierge-ribbon {
+  display: grid;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.royal-hero {
+  position: relative;
+  overflow: hidden;
+  grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.64fr);
+  align-items: end;
+  min-height: 78svh;
+  padding: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 40px;
+  background: #1e1a17;
+  box-shadow: 0 34px 90px rgba(50, 36, 20, 0.22);
+}
+
+.royal-hero__media,
+.royal-hero__veil {
+  position: absolute;
+  inset: 0;
+}
+
+.royal-hero__media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.royal-hero__veil {
+  background:
+    linear-gradient(90deg, rgba(19, 15, 12, 0.74) 0%, rgba(19, 15, 12, 0.48) 38%, rgba(19, 15, 12, 0.2) 100%),
+    linear-gradient(180deg, rgba(255, 210, 143, 0.08), rgba(19, 15, 12, 0.16));
+}
+
+.royal-hero__content,
+.royal-hero__aside {
+  position: relative;
+  z-index: 1;
+}
+
+.royal-hero__content {
+  display: grid;
+  gap: 18px;
+  max-width: 42rem;
+  color: #fbf3e8;
+}
+
+.royal-hero__content .eyebrow {
+  color: #dfb172;
+}
+
+.royal-hero__content h1 {
+  margin: 0;
+  font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+  font-size: clamp(4rem, 8vw, 6.8rem);
+  line-height: 0.86;
+  letter-spacing: -0.075em;
+  max-width: 8.5ch;
+}
+
+.royal-hero__lede {
+  margin: 0;
+  max-width: 36rem;
+  color: rgba(251, 243, 232, 0.86);
+  font-size: 1.08rem;
+  line-height: 1.8;
+}
+
+.royal-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.royal-hero__actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
+  padding: 0 22px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 800;
+  white-space: nowrap;
+  transition: transform 180ms ease, filter 180ms ease;
+}
+
+.royal-hero__actions a:first-child {
+  color: #f7fbf9;
+  background: linear-gradient(135deg, var(--green) 0%, var(--green-deep) 100%);
+}
+
+.royal-hero__actions a.is-secondary {
+  color: #fbf3e8;
+  border: 1px solid rgba(255, 243, 225, 0.22);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+}
+
+.royal-hero__actions a:hover {
+  transform: translateY(-2px);
+}
+
+.royal-hero__aside {
+  display: grid;
+  gap: 14px;
+}
+
+.royal-hero__aside article {
+  padding: 18px 20px;
+  border: 1px solid rgba(255, 244, 226, 0.14);
+  border-radius: 24px;
+  background: rgba(255, 250, 245, 0.12);
+  backdrop-filter: blur(18px);
+  color: #fff5eb;
+}
+
+.royal-hero__aside .eyebrow {
+  margin-bottom: 8px;
+  color: #e3b87a;
+}
+
+.curated-metrics {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.curated-metrics article,
+.concierge-ribbon article,
+.hosting-card,
+.royal-paths__card {
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: rgba(255, 251, 246, 0.92);
+  box-shadow: var(--shadow);
+}
+
+.curated-metrics article {
+  padding: 24px;
+}
+
+.curated-metrics span,
+.concierge-ribbon span {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--accent-deep);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.curated-metrics strong,
+.concierge-ribbon strong {
+  font-size: 1.16rem;
+  line-height: 1.48;
+}
+
+.moment-editorial {
+  grid-template-columns: minmax(0, 0.76fr) minmax(0, 1.24fr);
+  align-items: start;
+}
+
+.moment-editorial__intro {
+  padding: 10px 8px 0 0;
+}
+
+.moment-editorial__intro h2,
+.hosting-story__lead h2,
+.experience-film__copy h2 {
+  margin: 0 0 14px;
+  font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+  font-size: clamp(2.4rem, 4vw, 4.1rem);
+  line-height: 0.95;
+  letter-spacing: -0.06em;
+}
+
+.moment-editorial__intro p,
+.hosting-story__lead p,
+.experience-film__copy p {
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+.moment-editorial__gallery {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.editorial-media {
+  overflow: hidden;
+  min-height: 260px;
+  border: 1px solid var(--line);
+  border-radius: 30px;
+  background: rgba(255, 251, 246, 0.92);
+  box-shadow: var(--shadow);
+}
+
+.editorial-media--wide {
+  grid-column: 1 / -1;
+  min-height: 440px;
+}
+
+.editorial-media__caption {
+  padding: 20px 22px 24px;
+}
+
+.editorial-media__caption strong {
+  display: block;
+  font-size: 1.24rem;
+  line-height: 1.35;
+}
+
+.hosting-story {
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  align-items: start;
+}
+
+.hosting-story__lead {
+  padding: 10px 8px 0 0;
+}
+
+.hosting-story__cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.hosting-card {
+  padding: 24px;
+}
+
+.hosting-card strong,
+.royal-paths__card strong {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 1.34rem;
+  line-height: 1.35;
+}
+
+.hosting-card p,
+.royal-paths__card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.72;
+}
+
+.experience-film {
+  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+  align-items: start;
+}
+
+.experience-film__copy {
+  padding: 10px 8px 0 0;
+}
+
+.experience-film__strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.film-frame {
+  overflow: hidden;
+  min-height: 360px;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: rgba(255, 251, 246, 0.9);
+  box-shadow: var(--shadow);
+}
+
+.royal-paths {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.royal-paths__card {
+  display: block;
+  padding: 24px;
+  color: inherit;
+  text-decoration: none;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.royal-paths__card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 26px 60px rgba(95, 67, 26, 0.14);
+}
+
+.royal-paths__card--feature,
+.royal-paths__card--cta {
+  background:
+    radial-gradient(circle at top right, rgba(188, 133, 64, 0.12), transparent 24%),
+    linear-gradient(180deg, rgba(255, 252, 247, 0.98), rgba(242, 232, 217, 0.92));
+}
+
+.concierge-ribbon {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.concierge-ribbon article {
+  padding: 20px 22px;
+}
+
+.media-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .home-canvas {
@@ -293,6 +620,7 @@ body {
 .dream-card__image {
   min-height: 340px;
   position: relative;
+  overflow: hidden;
 }
 
 .dream-card__image::before {
@@ -302,6 +630,8 @@ body {
   background:
     radial-gradient(circle at 18% 18%, rgba(255, 239, 206, 0.5), transparent 18%),
     linear-gradient(180deg, transparent 52%, rgba(15, 12, 9, 0.2) 100%);
+  pointer-events: none;
+  z-index: 1;
 }
 
 .dream-card__image--ceremony {
@@ -322,6 +652,44 @@ body {
   background:
     linear-gradient(180deg, rgba(255, 248, 230, 0.2), transparent 24%),
     linear-gradient(145deg, rgba(118, 86, 56, 0.92), rgba(210, 170, 116, 0.9));
+}
+
+.media-showcase {
+  display: grid;
+  gap: 22px;
+  margin-bottom: 26px;
+}
+
+.media-showcase__lead h2 {
+  margin: 0;
+  font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+  font-size: clamp(2.1rem, 3.8vw, 3.4rem);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+}
+
+.media-showcase__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.media-showcase__grid--rooms {
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+}
+
+.media-frame {
+  overflow: hidden;
+  min-height: 280px;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.media-frame--wide {
+  grid-column: 1 / -1;
+  min-height: 420px;
 }
 
 .dream-card__content {
@@ -999,6 +1367,7 @@ body {
   font-weight: 700;
   cursor: pointer;
   transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+  text-wrap: balance;
 }
 
 .journey-chip:hover,
@@ -1162,9 +1531,14 @@ body {
 
 .visual-card__image {
   min-height: 220px;
+  overflow: hidden;
   background:
     radial-gradient(circle at top right, rgba(255, 228, 181, 0.45), transparent 28%),
     linear-gradient(135deg, rgba(44, 107, 94, 0.95), rgba(188, 133, 64, 0.84));
+}
+
+.visual-card__image--photo {
+  background: #ddd3c4;
 }
 
 .visual-card__image--warm {
@@ -1192,6 +1566,10 @@ body {
   margin: 0;
   color: var(--muted);
   line-height: 1.7;
+}
+
+.visual-grid--real .visual-card--wide {
+  grid-column: 1 / -1;
 }
 
 .contact-grid {
@@ -1228,6 +1606,7 @@ body {
   font-weight: 700;
   white-space: nowrap;
   flex-shrink: 0;
+  text-wrap: balance;
 }
 
 .inline-links a {
@@ -1380,6 +1759,7 @@ body {
   white-space: nowrap;
   flex-shrink: 0;
   transition: transform 180ms ease, filter 180ms ease, background 180ms ease;
+  text-wrap: balance;
 }
 
 .primary-link {
@@ -1971,6 +2351,24 @@ body.js-enhanced .reveal.is-visible {
 }
 
 @media (max-width: 1024px) {
+  .royal-hero,
+  .curated-metrics,
+  .moment-editorial,
+  .hosting-story,
+  .experience-film,
+  .royal-paths,
+  .concierge-ribbon,
+  .moment-editorial__gallery,
+  .hosting-story__cards,
+  .experience-film__strip {
+    grid-template-columns: 1fr;
+  }
+
+  .royal-hero {
+    min-height: auto;
+    padding: 28px;
+  }
+
   .home-stage {
     grid-template-columns: 1fr;
     align-items: start;
@@ -2020,6 +2418,7 @@ body.js-enhanced .reveal.is-visible {
   .home-story,
   .signature-grid,
   .editorial-showcase,
+  .media-showcase__grid,
   .page-hero,
   .site-header__row,
   .contact-ribbon,
@@ -2049,7 +2448,8 @@ body.js-enhanced .reveal.is-visible {
 
   .home-story__cards,
   .editorial-showcase__grid,
-  .home-hero__visual {
+  .home-hero__visual,
+  .media-showcase__grid--rooms {
     grid-template-columns: 1fr;
   }
 
@@ -2087,39 +2487,131 @@ body.js-enhanced .reveal.is-visible {
 @media (max-width: 720px) {
   .landing-shell {
     width: min(100% - 24px, 1200px);
-    padding: 18px 0 30px;
+    padding: 16px 0 116px;
+  }
+
+  .royal-hero,
+  .curated-metrics,
+  .moment-editorial,
+  .hosting-story,
+  .experience-film,
+  .royal-paths,
+  .concierge-ribbon,
+  .home-stage,
+  .experience-band,
+  .home-editorial,
+  .signature-runway,
+  .curated-paths,
+  .home-contact-ribbon,
+  .home-hero,
+  .pulse-ribbon,
+  .home-story,
+  .signature-grid,
+  .editorial-showcase,
+  .contact-ribbon,
+  .journey-bar,
+  .metric-strip,
+  .hero-section,
+  .gallery-section,
+  .content-section,
+  .credibility-section,
+  .showcase-section,
+  .trust-section,
+  .split-section,
+  .visual-grid,
+  .media-showcase,
+  .page-hero {
+    gap: 18px;
+    margin-bottom: 20px;
   }
 
   .site-header {
-    gap: 12px;
-    margin-bottom: 14px;
+    gap: 10px;
+    margin-bottom: 12px;
   }
 
   .brand-lockup strong {
-    font-size: clamp(1.9rem, 8vw, 2.4rem);
-    max-width: 8.8ch;
+    font-size: clamp(1.75rem, 7.6vw, 2.2rem);
+    max-width: 8.2ch;
   }
 
   .site-header__note {
-    font-size: 0.98rem;
-    line-height: 1.5;
+    font-size: 0.95rem;
+    line-height: 1.55;
   }
 
   .site-nav {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 10px;
+    gap: 8px;
     width: 100%;
   }
 
   .site-nav a {
     min-width: 0;
-    padding: 0 12px;
+    min-height: 48px;
+    padding: 0 10px;
     text-align: center;
+    line-height: 1.2;
+    font-size: 0.96rem;
   }
 
   .home-canvas {
-    gap: 20px;
+    gap: 18px;
+  }
+
+  .royal-hero {
+    min-height: auto;
+    padding: 20px;
+    border-radius: 26px;
+  }
+
+  .royal-hero__content h1 {
+    font-size: clamp(2.65rem, 12.5vw, 3.8rem);
+    max-width: 7.2ch;
+    line-height: 0.9;
+  }
+
+  .royal-hero__lede {
+    font-size: 0.98rem;
+    line-height: 1.65;
+  }
+
+  .royal-hero__aside {
+    gap: 10px;
+  }
+
+  .royal-hero__aside article,
+  .curated-metrics article,
+  .hosting-card,
+  .royal-paths__card,
+  .concierge-ribbon article,
+  .contact-ribbon article,
+  .gallery-card__meta,
+  .detail-card,
+  .timeline-card,
+  .room-card,
+  .metric-card,
+  .package-card,
+  .visual-card__body {
+    padding: 18px;
+  }
+
+  .royal-hero__actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .royal-hero__actions a {
+    width: 100%;
+    white-space: normal;
+    text-align: center;
+  }
+
+  .editorial-media,
+  .editorial-media--wide,
+  .film-frame {
+    min-height: 200px;
   }
 
   .home-marquee {
@@ -2132,7 +2624,18 @@ body.js-enhanced .reveal.is-visible {
   }
 
   .home-stage__copy h1 {
-    font-size: clamp(3rem, 14vw, 4.8rem);
+    font-size: clamp(2.65rem, 12vw, 3.7rem);
+    max-width: 7.1ch;
+    line-height: 0.9;
+  }
+
+  .home-stage__lede,
+  .home-hero__copy p,
+  .page-hero__copy p,
+  .hero-text,
+  .site-header__note {
+    font-size: 0.98rem;
+    line-height: 1.7;
   }
 
   .home-stage__actions {
@@ -2147,7 +2650,12 @@ body.js-enhanced .reveal.is-visible {
   }
 
   .dream-card__image {
-    min-height: 250px;
+    min-height: 220px;
+  }
+
+  .media-frame,
+  .media-frame--wide {
+    min-height: 200px;
   }
 
   .dream-card__content,
@@ -2155,19 +2663,24 @@ body.js-enhanced .reveal.is-visible {
   .runway-card,
   .path-card,
   .home-contact-ribbon article {
-    padding: 20px;
+    padding: 18px;
   }
 
   .home-hero__copy,
   .home-hero__visual,
   .story-card,
   .signature-panel {
-    padding: 22px;
-    border-radius: 24px;
+    padding: 20px;
+    border-radius: 22px;
   }
 
   .home-hero__copy h1 {
-    font-size: clamp(2.9rem, 13vw, 4.2rem);
+    font-size: clamp(2.5rem, 11.5vw, 3.4rem);
+    line-height: 0.92;
+  }
+
+  .home-hero__copy p {
+    max-width: none;
   }
 
   .home-hero__actions,
@@ -2188,20 +2701,25 @@ body.js-enhanced .reveal.is-visible {
   .testimonial-card,
   .location-card,
   .journey-bar {
-    padding: 22px;
-    border-radius: 24px;
+    padding: 20px;
+    border-radius: 22px;
   }
 
   .hero-copy h1 {
-    font-size: clamp(2.4rem, 11vw, 3.5rem);
+    font-size: clamp(2.15rem, 10vw, 3rem);
+    line-height: 0.94;
+  }
+
+  .hero-panel__card strong {
+    font-size: 1.35rem;
   }
 
   .form-heading h2 {
-    font-size: 2rem;
+    font-size: 1.85rem;
   }
 
   .site-header {
-    margin-bottom: 18px;
+    margin-bottom: 16px;
   }
 
   .contact-ribbon {
@@ -2231,11 +2749,59 @@ body.js-enhanced .reveal.is-visible {
     text-align: center;
   }
 
+  .gallery-card__visual,
+  .gallery-card__visual--evening,
+  .gallery-card__visual--dining,
+  .gallery-card__visual--rooms,
+  .visual-card__image,
+  .visual-card__image--warm,
+  .visual-card__image--room {
+    min-height: 200px;
+  }
+
+  .moment-editorial__intro h2,
+  .hosting-story__lead h2,
+  .experience-film__copy h2,
+  .gallery-copy h2,
+  .split-section__copy h2,
+  .media-showcase__lead h2,
+  .page-hero__copy h1 {
+    font-size: clamp(2rem, 9vw, 2.8rem);
+    line-height: 0.98;
+  }
+
+  .gallery-copy,
+  .split-section__copy,
+  .showcase-copy,
+  .media-showcase__lead {
+    padding: 0;
+  }
+
+  .page-hero__copy,
+  .page-hero__panel,
+  .detail-card,
+  .metric-card,
+  .room-card,
+  .map-panel,
+  .timeline-card,
+  .cta-banner {
+    padding: 22px;
+  }
+
+  .chip-row,
+  .hero-points,
+  .trust-strip,
+  .benefit-grid,
+  .timeline-list,
+  .process-list {
+    gap: 12px;
+  }
+
   .floating-enquiry-bar {
     align-items: stretch;
     flex-direction: column;
     gap: 12px;
-    padding: 14px 14px 16px;
+    padding: 12px 12px 14px;
     border-radius: 18px;
   }
 
@@ -2247,5 +2813,228 @@ body.js-enhanced .reveal.is-visible {
     right: 12px;
     left: 12px;
     bottom: 108px;
+  }
+}
+
+@media (max-width: 540px) {
+  .landing-shell {
+    width: min(100% - 18px, 1200px);
+    padding: 12px 0 108px;
+  }
+
+  .site-header__row {
+    gap: 12px;
+  }
+
+  .site-nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .site-nav a {
+    min-height: 46px;
+    font-size: 0.98rem;
+    padding: 0 8px;
+  }
+
+  .site-header__note {
+    font-size: 0.92rem;
+    line-height: 1.55;
+  }
+
+  .royal-hero,
+  .home-hero__copy,
+  .home-hero__visual,
+  .hero-copy,
+  .hero-panel,
+  .info-card,
+  .form-card,
+  .credibility-card,
+  .testimonial-card,
+  .location-card,
+  .journey-bar,
+  .cta-banner,
+  .page-hero__panel,
+  .hero-panel__card,
+  .visual-card,
+  .gallery-card,
+  .detail-card,
+  .timeline-card,
+  .room-card,
+  .metric-card,
+  .package-card {
+    border-radius: 20px;
+  }
+
+  .royal-hero {
+    padding: 18px;
+  }
+
+  .royal-hero__content,
+  .home-stage__copy,
+  .hero-copy {
+    gap: 14px;
+  }
+
+  .royal-hero__content h1,
+  .home-stage__copy h1 {
+    font-size: clamp(2.3rem, 11vw, 3.1rem);
+    max-width: 6.8ch;
+  }
+
+  .home-hero__copy h1,
+  .hero-copy h1 {
+    font-size: clamp(2rem, 9.6vw, 2.7rem);
+  }
+
+  .page-hero__copy h1,
+  .gallery-copy h2,
+  .split-section__copy h2,
+  .showcase-copy h2,
+  .media-showcase__lead h2,
+  .testimonial-card h2,
+  .location-card h2,
+  .faq-card h2 {
+    font-size: clamp(1.9rem, 8.8vw, 2.45rem);
+    line-height: 1;
+    max-width: none;
+  }
+
+  .brand-lockup strong {
+    max-width: none;
+  }
+
+  .contact-ribbon strong,
+  .curated-metrics strong,
+  .concierge-ribbon strong,
+  .hosting-card strong,
+  .royal-paths__card strong,
+  .visual-card__body strong {
+    font-size: 1.02rem;
+  }
+
+  .curated-metrics strong,
+  .experience-band strong,
+  .pulse-ribbon strong,
+  .metric-strip strong {
+    font-size: 1.02rem;
+    line-height: 1.4;
+  }
+
+  .gallery-card__visual,
+  .gallery-card__visual--evening,
+  .gallery-card__visual--dining,
+  .gallery-card__visual--rooms,
+  .visual-card__image,
+  .visual-card__image--warm,
+  .visual-card__image--room,
+  .media-frame,
+  .media-frame--wide,
+  .editorial-media,
+  .editorial-media--wide,
+  .film-frame {
+    min-height: 180px;
+  }
+
+  .contact-ribbon article,
+  .gallery-card__meta,
+  .detail-card,
+  .timeline-card,
+  .room-card,
+  .metric-card,
+  .visual-card__body,
+  .hero-copy,
+  .hero-panel,
+  .info-card,
+  .form-card,
+  .credibility-card,
+  .testimonial-card,
+  .location-card,
+  .journey-bar,
+  .cta-banner {
+    padding: 16px;
+  }
+
+  .cta-banner h2,
+  .hero-panel__promise h3,
+  .form-heading h2 {
+    font-size: 1.6rem;
+    line-height: 1.02;
+  }
+
+  .home-marquee {
+    grid-template-columns: 1fr;
+  }
+
+  .home-marquee span,
+  .chip-row span,
+  .journey-chip,
+  .quick-pick,
+  .hero-points button,
+  .inline-links a,
+  .location-actions a,
+  .cta-banner a,
+  .primary-link,
+  .secondary-link,
+  .site-nav a {
+    overflow-wrap: anywhere;
+  }
+
+  .chip-row span,
+  .hero-points button {
+    width: 100%;
+  }
+
+  .hero-panel__stats article,
+  .trust-strip article,
+  .benefit-card,
+  .showcase-card,
+  .faq-list > div {
+    padding: 14px 16px;
+  }
+
+  .journey-bar__meta strong {
+    font-size: 1.04rem;
+    line-height: 1.35;
+  }
+
+  .gallery-card__meta span,
+  .visual-card__body p,
+  .timeline-card p,
+  .detail-card p,
+  .room-card p,
+  .metric-card p,
+  .showcase-card p,
+  .testimonial-list blockquote,
+  .faq-list p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .journey-chip,
+  .quick-pick {
+    min-height: 48px;
+  }
+
+  .floating-enquiry-bar {
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    transform: none;
+    width: auto;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 16px;
+  }
+
+  .floating-enquiry-bar > div {
+    display: none;
+  }
+
+  .floating-enquiry-bar__button {
+    min-height: 44px;
+  }
+
+  .toast {
+    bottom: 84px;
   }
 }
