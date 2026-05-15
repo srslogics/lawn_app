@@ -722,16 +722,24 @@ textarea {
 .status-upcoming,
 .status-site-visit,
 .status-quoted,
-.status-reserved {
+.status-reserved,
+.status-contacted {
   background: rgba(167, 101, 34, 0.16);
   color: var(--accent);
 }
 
 .status-risk,
 .status-backup,
-.status-checked-out {
+.status-checked-out,
+.status-urgent,
+.status-closed {
   background: rgba(180, 79, 51, 0.14);
   color: var(--red);
+}
+
+.status-converted {
+  background: rgba(41, 88, 72, 0.14);
+  color: var(--green);
 }
 
 .detail-card h4 {
@@ -808,6 +816,23 @@ textarea {
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
+}
+
+.form-actions {
+  display: grid;
+  gap: 12px;
+}
+
+.inline-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.table-note {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 700;
 }
 
 .app-form label {

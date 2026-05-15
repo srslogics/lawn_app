@@ -511,6 +511,10 @@ class EnquiryCreate(BaseModel):
     message: str = ""
 
 
+class EnquiryStatusUpdate(BaseModel):
+    status: Literal["New", "Contacted", "Converted", "Closed"]
+
+
 def get_db() -> Generator[Session, None, None]:
     db = SessionLocal()
     try:
@@ -521,6 +525,24 @@ def get_db() -> Generator[Session, None, None]:
 
 def normalize_text(value: str | None) -> str:
     return (value or "").strip()
+
+
+def find_duplicate_client(db: Session, phone: str, email: str, exclude_id: str | None = None) -> Client | None:
+    rows = db.scalars(select(Client).where((Client.phone == phone) | (Client.email == email))).all()
+    for row in rows:
+        if exclude_id and row.id == exclude_id:
+            continue
+        return row
+    return None
+
+
+def find_duplicate_vendor(db: Session, name: str, phone: str, exclude_id: str | None = None) -> Vendor | None:
+    rows = db.scalars(select(Vendor).where(Vendor.name == name, Vendor.phone == phone)).all()
+    for row in rows:
+        if exclude_id and row.id == exclude_id:
+            continue
+        return row
+    return None
 
 
 def clear_application_data(db: Session) -> None:
@@ -754,6 +776,95 @@ def activity_messages(db: Session) -> list[str]:
     return [row.message for row in rows]
 
 
+def build_reminders(
+    bookings: list[Booking], payments: list[Payment], hotel_bookings: list[HotelBooking]
+) -> list[dict]:
+    today = date.today()
+    reminders: list[dict] = []
+
+    for payment in payments:
+        if payment.status != "Pending":
+            continue
+        reminders.append(
+            {
+                "id": f"payment-{payment.id}",
+                "title": f"Collect {payment.payment_type.lower()} from {payment.client_name}",
+                "detail": f"Pending venue payment of Rs. {payment.amount:,.0f}.",
+                "priority": "Urgent",
+                "actionView": "finance",
+                "actionLabel": "Open finance",
+                "sortWeight": 0,
+            }
+        )
+
+    for booking in hotel_bookings:
+        if booking.payment_status == "Pending":
+            reminders.append(
+                {
+                    "id": f"hotel-payment-{booking.id}",
+                    "title": f"Collect hotel payment from {booking.guest_name}",
+                    "detail": f"{booking.rooms_count} room(s) from {booking.check_in} to {booking.check_out} still pending.",
+                    "priority": "Urgent",
+                    "actionView": "hotel",
+                    "actionLabel": "Open hotel",
+                    "sortWeight": 1,
+                }
+            )
+
+    for booking in bookings:
+        if booking.status not in {"Upcoming", "Confirmed"}:
+            continue
+        event_date = date.fromisoformat(booking.event_date)
+        days_left = (event_date - today).days
+        if days_left < 0 or days_left > 7:
+            continue
+        days_label = "Today" if days_left == 0 else "Tomorrow" if days_left == 1 else f"In {days_left} days"
+        reminders.append(
+            {
+                "id": f"booking-{booking.id}",
+                "title": f"{booking.client_name} {booking.event_type.lower()} needs attention",
+                "detail": f"{days_label} · {booking.lawn_area} · {booking.guest_count} guests.",
+                "priority": "Upcoming",
+                "actionView": "bookings",
+                "actionLabel": "Open booking",
+                "sortWeight": 10 + days_left,
+            }
+        )
+
+    for booking in hotel_bookings:
+        if booking.status not in {"Reserved", "Confirmed"}:
+            continue
+        check_in = date.fromisoformat(booking.check_in)
+        days_left = (check_in - today).days
+        if days_left < 0 or days_left > 3:
+            continue
+        days_label = "Today" if days_left == 0 else "Tomorrow" if days_left == 1 else f"In {days_left} days"
+        reminders.append(
+            {
+                "id": f"arrival-{booking.id}",
+                "title": f"{booking.guest_name} arrival is coming up",
+                "detail": f"{days_label} · {booking.rooms_count} room(s) · {booking.room_type}.",
+                "priority": "Upcoming",
+                "actionView": "hotel",
+                "actionLabel": "Open hotel",
+                "sortWeight": 20 + days_left,
+            }
+        )
+
+    reminders.sort(key=lambda item: (item["sortWeight"], item["title"]))
+    return [
+        {
+            "id": item["id"],
+            "title": item["title"],
+            "detail": item["detail"],
+            "priority": item["priority"],
+            "actionView": item["actionView"],
+            "actionLabel": item["actionLabel"],
+        }
+        for item in reminders[:10]
+    ]
+
+
 def dashboard_summary(db: Session) -> dict:
     bookings = db.scalars(select(Booking).order_by(Booking.event_date.asc())).all()
     payments = db.scalars(select(Payment).order_by(Payment.id.asc())).all()
@@ -770,6 +881,7 @@ def dashboard_summary(db: Session) -> dict:
     ]
     pending_hotel_collections = [booking for booking in hotel_bookings if booking.payment_status == "Pending"]
     received_hotel_collections = [booking for booking in hotel_bookings if booking.payment_status == "Received"]
+    reminders = build_reminders(bookings, payments, hotel_bookings)
 
     return {
         "metrics": {
@@ -784,6 +896,7 @@ def dashboard_summary(db: Session) -> dict:
             + sum(booking.amount for booking in received_hotel_collections),
             "pendingCollections": sum(payment.amount for payment in pending_payments)
             + sum(booking.amount for booking in pending_hotel_collections),
+            "remindersCount": len(reminders),
         },
         "todayBookings": [serialize_booking(row) for row in bookings[:4]],
         "hotelStays": [serialize_hotel_booking(row) for row in hotel_bookings[:4]],
@@ -801,6 +914,7 @@ def dashboard_summary(db: Session) -> dict:
                 for row in pending_hotel_collections[:5]
             ],
         ][:8],
+        "reminders": reminders,
         "activity": activity_messages(db)[:8],
         "tasks": [serialize_task(row) for row in tasks],
     }
@@ -812,7 +926,7 @@ async def lifespan(_: FastAPI):
     yield
 
 
-app = FastAPI(title="Celebration Lawn Command", lifespan=lifespan)
+app = FastAPI(title="Royal Celebration Console", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -864,7 +978,7 @@ def list_bookings(db: Session = Depends(get_db)) -> list[dict]:
 @app.post("/api/bookings", status_code=201)
 def create_booking(payload: BookingCreate, db: Session = Depends(get_db)) -> dict:
     event_date = parse_iso_date(payload.eventDate, "Event date")
-    lawn_area = payload.lawnArea or "Main Lawn"
+    lawn_area = normalize_text(payload.lawnArea) or "Main Lawn"
 
     existing_booking = db.scalar(
         select(Booking).where(Booking.event_date == event_date.isoformat(), Booking.lawn_area == lawn_area).limit(1)
@@ -892,6 +1006,49 @@ def create_booking(payload: BookingCreate, db: Session = Depends(get_db)) -> dic
     db.commit()
     db.refresh(booking)
     add_activity(db, f"{booking.client_name} booking created as {booking.status}.")
+    return serialize_booking(booking)
+
+
+@app.put("/api/bookings/{booking_id}")
+def update_booking(booking_id: str, payload: BookingCreate, db: Session = Depends(get_db)) -> dict:
+    booking = db.get(Booking, booking_id)
+    if booking is None:
+        raise HTTPException(status_code=404, detail="Booking not found")
+
+    event_date = parse_iso_date(payload.eventDate, "Event date")
+    lawn_area = normalize_text(payload.lawnArea) or "Main Lawn"
+
+    conflicting_booking = db.scalar(
+        select(Booking)
+        .where(
+            Booking.event_date == event_date.isoformat(),
+            Booking.lawn_area == lawn_area,
+            Booking.id != booking_id,
+        )
+        .limit(1)
+    )
+    if conflicting_booking is not None:
+        raise HTTPException(
+            status_code=409,
+            detail=f"{lawn_area} is already booked on {event_date.isoformat()} for {conflicting_booking.client_name}.",
+        )
+
+    booking.client_name = normalize_text(payload.clientName)
+    booking.event_type = normalize_text(payload.eventType)
+    booking.event_date = event_date.isoformat()
+    booking.guest_count = payload.guestCount
+    booking.package_name = normalize_text(payload.packageName)
+    booking.advance_paid = payload.advancePaid
+    booking.notes = normalize_text(payload.notes)
+    booking.lawn_area = lawn_area
+    if payload.manager is not None:
+        booking.manager = normalize_text(payload.manager) or booking.manager
+    if payload.status is not None:
+        booking.status = normalize_text(payload.status) or booking.status
+
+    db.commit()
+    db.refresh(booking)
+    add_activity(db, f"{booking.client_name} booking updated for {booking.event_date}.")
     return serialize_booking(booking)
 
 
@@ -935,9 +1092,7 @@ def create_client(payload: ClientCreate, db: Session = Depends(get_db)) -> dict:
     stage = normalize_text(payload.stage)
     preferences = normalize_text(payload.preferences)
 
-    existing_client = db.scalar(
-        select(Client).where((Client.phone == phone) | (Client.email == email)).limit(1)
-    )
+    existing_client = find_duplicate_client(db, phone, email)
     if existing_client is not None:
         raise HTTPException(
             status_code=409,
@@ -959,6 +1114,49 @@ def create_client(payload: ClientCreate, db: Session = Depends(get_db)) -> dict:
     return serialize_client(client)
 
 
+@app.put("/api/clients/{client_id}")
+def update_client(client_id: str, payload: ClientCreate, db: Session = Depends(get_db)) -> dict:
+    client = db.get(Client, client_id)
+    if client is None:
+        raise HTTPException(status_code=404, detail="Client not found")
+
+    name = normalize_text(payload.name)
+    phone = normalize_text(payload.phone)
+    email = normalize_text(payload.email).lower()
+    stage = normalize_text(payload.stage)
+    preferences = normalize_text(payload.preferences)
+
+    existing_client = find_duplicate_client(db, phone, email, exclude_id=client_id)
+    if existing_client is not None:
+        raise HTTPException(
+            status_code=409,
+            detail=f"Client record already exists for {existing_client.name} with the same phone or email.",
+        )
+
+    client.name = name
+    client.phone = phone
+    client.email = email
+    client.stage = stage
+    client.preferences = preferences
+    db.commit()
+    db.refresh(client)
+    add_activity(db, f"{client.name} client record updated.")
+    return serialize_client(client)
+
+
+@app.delete("/api/clients/{client_id}")
+def delete_client(client_id: str, db: Session = Depends(get_db)) -> dict:
+    client = db.get(Client, client_id)
+    if client is None:
+        raise HTTPException(status_code=404, detail="Client not found")
+
+    client_name = client.name
+    db.delete(client)
+    db.commit()
+    add_activity(db, f"{client_name} client record deleted.")
+    return {"ok": True, "message": "Client deleted."}
+
+
 @app.get("/api/vendors")
 def list_vendors(db: Session = Depends(get_db)) -> list[dict]:
     return [serialize_vendor(row) for row in db.scalars(select(Vendor).order_by(Vendor.id.asc())).all()]
@@ -973,9 +1171,7 @@ def create_vendor(payload: VendorCreate, db: Session = Depends(get_db)) -> dict:
     status = normalize_text(payload.status)
     notes = normalize_text(payload.notes)
 
-    existing_vendor = db.scalar(
-        select(Vendor).where(Vendor.name == name, Vendor.phone == phone).limit(1)
-    )
+    existing_vendor = find_duplicate_vendor(db, name, phone)
     if existing_vendor is not None:
         raise HTTPException(
             status_code=409,
@@ -998,6 +1194,51 @@ def create_vendor(payload: VendorCreate, db: Session = Depends(get_db)) -> dict:
     return serialize_vendor(vendor)
 
 
+@app.put("/api/vendors/{vendor_id}")
+def update_vendor(vendor_id: str, payload: VendorCreate, db: Session = Depends(get_db)) -> dict:
+    vendor = db.get(Vendor, vendor_id)
+    if vendor is None:
+        raise HTTPException(status_code=404, detail="Vendor not found")
+
+    name = normalize_text(payload.name)
+    category = normalize_text(payload.category)
+    contact_person = normalize_text(payload.contactPerson)
+    phone = normalize_text(payload.phone)
+    status = normalize_text(payload.status)
+    notes = normalize_text(payload.notes)
+
+    existing_vendor = find_duplicate_vendor(db, name, phone, exclude_id=vendor_id)
+    if existing_vendor is not None:
+        raise HTTPException(
+            status_code=409,
+            detail=f"Vendor record already exists for {existing_vendor.name} with the same phone.",
+        )
+
+    vendor.name = name
+    vendor.category = category
+    vendor.contact_person = contact_person
+    vendor.phone = phone
+    vendor.status = status
+    vendor.notes = notes
+    db.commit()
+    db.refresh(vendor)
+    add_activity(db, f"{vendor.name} vendor record updated.")
+    return serialize_vendor(vendor)
+
+
+@app.delete("/api/vendors/{vendor_id}")
+def delete_vendor(vendor_id: str, db: Session = Depends(get_db)) -> dict:
+    vendor = db.get(Vendor, vendor_id)
+    if vendor is None:
+        raise HTTPException(status_code=404, detail="Vendor not found")
+
+    vendor_name = vendor.name
+    db.delete(vendor)
+    db.commit()
+    add_activity(db, f"{vendor_name} vendor record deleted.")
+    return {"ok": True, "message": "Vendor deleted."}
+
+
 @app.get("/api/payments")
 def list_payments(db: Session = Depends(get_db)) -> list[dict]:
     return [serialize_payment(row) for row in db.scalars(select(Payment).order_by(Payment.id.asc())).all()]
@@ -1018,6 +1259,36 @@ def create_payment(payload: PaymentCreate, db: Session = Depends(get_db)) -> dic
     db.refresh(payment)
     add_activity(db, f"{payment.client_name} payment entry added.")
     return serialize_payment(payment)
+
+
+@app.put("/api/payments/{payment_id}")
+def update_payment(payment_id: str, payload: PaymentCreate, db: Session = Depends(get_db)) -> dict:
+    payment = db.get(Payment, payment_id)
+    if payment is None:
+        raise HTTPException(status_code=404, detail="Payment not found")
+
+    payment.client_name = normalize_text(payload.clientName)
+    payment.payment_type = normalize_text(payload.paymentType)
+    payment.amount = payload.amount
+    payment.status = normalize_text(payload.status)
+    payment.notes = normalize_text(payload.notes)
+    db.commit()
+    db.refresh(payment)
+    add_activity(db, f"{payment.client_name} payment entry updated.")
+    return serialize_payment(payment)
+
+
+@app.delete("/api/payments/{payment_id}")
+def delete_payment(payment_id: str, db: Session = Depends(get_db)) -> dict:
+    payment = db.get(Payment, payment_id)
+    if payment is None:
+        raise HTTPException(status_code=404, detail="Payment not found")
+
+    client_name = payment.client_name
+    db.delete(payment)
+    db.commit()
+    add_activity(db, f"{client_name} payment entry deleted.")
+    return {"ok": True, "message": "Payment deleted."}
 
 
 @app.get("/api/hotel-bookings")
@@ -1080,6 +1351,74 @@ def create_hotel_booking(payload: HotelBookingCreate, db: Session = Depends(get_
     return serialize_hotel_booking(hotel_booking)
 
 
+@app.put("/api/hotel-bookings/{hotel_booking_id}")
+def update_hotel_booking(hotel_booking_id: str, payload: HotelBookingCreate, db: Session = Depends(get_db)) -> dict:
+    hotel_booking = db.get(HotelBooking, hotel_booking_id)
+    if hotel_booking is None:
+        raise HTTPException(status_code=404, detail="Hotel booking not found")
+
+    check_in = parse_iso_date(payload.checkIn, "Check-in date")
+    check_out = parse_iso_date(payload.checkOut, "Check-out date")
+    if check_out < check_in:
+        raise HTTPException(status_code=422, detail="Check-out date cannot be earlier than check-in date.")
+    if payload.roomType not in ROOM_INVENTORY:
+        raise HTTPException(status_code=422, detail="Selected room type is not supported.")
+
+    overlapping_stays = db.scalars(
+        select(HotelBooking).where(HotelBooking.room_type == payload.roomType, HotelBooking.id != hotel_booking_id)
+    ).all()
+    blocked_rooms = 0
+    for row in overlapping_stays:
+        row_check_in = parse_iso_date(row.check_in, "Existing check-in date")
+        row_check_out = parse_iso_date(row.check_out, "Existing check-out date")
+        if ranges_overlap(check_in, check_out, row_check_in, row_check_out) and row.status in {
+            "Reserved",
+            "Confirmed",
+            "Checked In",
+        }:
+            blocked_rooms += row.rooms_count
+
+    remaining_rooms = ROOM_INVENTORY[payload.roomType] - blocked_rooms
+    if payload.roomsCount > remaining_rooms:
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                f"Only {max(remaining_rooms, 0)} {payload.roomType} room(s) are available for "
+                f"{check_in.isoformat()} to {check_out.isoformat()}."
+            ),
+        )
+
+    hotel_booking.guest_name = normalize_text(payload.guestName)
+    hotel_booking.phone = normalize_text(payload.phone)
+    hotel_booking.room_type = normalize_text(payload.roomType)
+    hotel_booking.check_in = check_in.isoformat()
+    hotel_booking.check_out = check_out.isoformat()
+    hotel_booking.rooms_count = payload.roomsCount
+    hotel_booking.guests_count = payload.guestsCount
+    hotel_booking.amount = payload.amount
+    hotel_booking.booking_source = normalize_text(payload.bookingSource)
+    hotel_booking.status = normalize_text(payload.status)
+    hotel_booking.payment_status = normalize_text(payload.paymentStatus)
+    hotel_booking.notes = normalize_text(payload.notes)
+    db.commit()
+    db.refresh(hotel_booking)
+    add_activity(db, f"{hotel_booking.guest_name} hotel stay updated.")
+    return serialize_hotel_booking(hotel_booking)
+
+
+@app.delete("/api/hotel-bookings/{hotel_booking_id}")
+def delete_hotel_booking(hotel_booking_id: str, db: Session = Depends(get_db)) -> dict:
+    hotel_booking = db.get(HotelBooking, hotel_booking_id)
+    if hotel_booking is None:
+        raise HTTPException(status_code=404, detail="Hotel booking not found")
+
+    guest_name = hotel_booking.guest_name
+    db.delete(hotel_booking)
+    db.commit()
+    add_activity(db, f"{guest_name} hotel stay deleted.")
+    return {"ok": True, "message": "Hotel booking deleted."}
+
+
 @app.get("/api/tasks")
 def list_tasks(db: Session = Depends(get_db)) -> list[dict]:
     return [serialize_task(row) for row in db.scalars(select(Task).order_by(Task.id.asc())).all()]
@@ -1139,6 +1478,59 @@ def create_enquiry(payload: EnquiryCreate, db: Session = Depends(get_db)) -> dic
     db.refresh(enquiry)
     add_activity(db, f"New enquiry received from {enquiry.name} for {enquiry.event_type}.")
     return serialize_enquiry(enquiry)
+
+
+@app.patch("/api/enquiries/{enquiry_id}/status")
+def update_enquiry_status(enquiry_id: int, payload: EnquiryStatusUpdate, db: Session = Depends(get_db)) -> dict:
+    enquiry = db.get(Enquiry, enquiry_id)
+    if enquiry is None:
+        raise HTTPException(status_code=404, detail="Enquiry not found")
+
+    enquiry.status = payload.status
+    db.commit()
+    db.refresh(enquiry)
+    add_activity(db, f"{enquiry.name} enquiry marked {enquiry.status}.")
+    return serialize_enquiry(enquiry)
+
+
+@app.post("/api/enquiries/{enquiry_id}/convert-client")
+def convert_enquiry_to_client(enquiry_id: int, db: Session = Depends(get_db)) -> dict:
+    enquiry = db.get(Enquiry, enquiry_id)
+    if enquiry is None:
+        raise HTTPException(status_code=404, detail="Enquiry not found")
+
+    existing_client = find_duplicate_client(db, enquiry.phone, enquiry.email)
+    if existing_client is None:
+        existing_client = Client(
+            id=next_prefixed_id(db, Client, "C"),
+            name=enquiry.name,
+            phone=enquiry.phone,
+            email=enquiry.email,
+            stage="Inquiry",
+            preferences=enquiry.message or f"{enquiry.event_type} enquiry from website.",
+        )
+        db.add(existing_client)
+        db.commit()
+        db.refresh(existing_client)
+
+    enquiry.status = "Converted"
+    db.commit()
+    db.refresh(enquiry)
+    add_activity(db, f"{enquiry.name} enquiry converted into a client record.")
+    return {"client": serialize_client(existing_client), "enquiry": serialize_enquiry(enquiry)}
+
+
+@app.delete("/api/enquiries/{enquiry_id}")
+def delete_enquiry(enquiry_id: int, db: Session = Depends(get_db)) -> dict:
+    enquiry = db.get(Enquiry, enquiry_id)
+    if enquiry is None:
+        raise HTTPException(status_code=404, detail="Enquiry not found")
+
+    enquiry_name = enquiry.name
+    db.delete(enquiry)
+    db.commit()
+    add_activity(db, f"{enquiry_name} enquiry deleted.")
+    return {"ok": True, "message": "Enquiry deleted."}
 
 
 @app.post("/api/reset")

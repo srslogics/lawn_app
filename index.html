@@ -3,9 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SrSLogics Celebration Lawn</title>
+    <title>Royal Celebration Console</title>
     <link rel="icon" type="image/png" href="assets/SrSLogicsLogo.png" />
-    <meta property="og:title" content="SrSLogics Celebration Lawn" />
+    <meta property="og:title" content="Royal Celebration Console" />
     <meta
       property="og:description"
       content="Venue bookings, hotel stays, operations, vendors, collections, and event execution in one premium workspace."
@@ -19,9 +19,9 @@
       <aside class="sidebar">
         <div class="brand-block">
           <p class="eyebrow">Venue Management</p>
-          <h1>SrSLogics <span>Celebration Lawn</span></h1>
+          <h1>Royal Celebration <span>Console</span></h1>
           <p class="sidebar-copy">
-            Lawn bookings, hotel stays, event flow, vendors, collections, and daily venue readiness in one place.
+            Venue bookings, hotel stays, event flow, vendors, collections, and daily readiness in one place.
           </p>
           <div class="brand-line"></div>
         </div>
@@ -116,6 +116,16 @@
             <article class="panel">
               <div class="section-heading">
                 <div>
+                  <p class="eyebrow">Automatic reminders</p>
+                  <h3>What needs attention next</h3>
+                </div>
+              </div>
+              <div class="mini-list" id="remindersList"></div>
+            </article>
+
+            <article class="panel">
+              <div class="section-heading">
+                <div>
                   <p class="eyebrow">Tasks</p>
                   <h3>Operational checklist</h3>
                 </div>
@@ -191,8 +201,8 @@
               <article class="panel">
                 <div class="section-heading compact-heading">
                   <div>
-                    <p class="eyebrow">New Booking</p>
-                    <h3>Create record</h3>
+                    <p class="eyebrow" id="bookingFormEyebrow">New Booking</p>
+                    <h3 id="bookingFormTitle">Create record</h3>
                   </div>
                 </div>
                 <form id="bookingForm" class="app-form">
@@ -244,7 +254,10 @@
                     Notes
                     <textarea name="notes" rows="4" placeholder="Decor, catering, VIP requirements, timing notes"></textarea>
                   </label>
-                  <button class="primary-btn full-width" type="submit">Save booking</button>
+                  <div class="form-actions">
+                    <button class="primary-btn full-width" id="bookingFormSubmitBtn" type="submit">Save booking</button>
+                    <button class="ghost-btn full-width" id="cancelBookingEditBtn" type="button" hidden>Cancel edit</button>
+                  </div>
                 </form>
               </article>
             </aside>
@@ -275,6 +288,7 @@
                       <th>Amount</th>
                       <th>Payment</th>
                       <th>Status</th>
+                      <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody id="hotelBookingsTableBody"></tbody>
@@ -296,8 +310,8 @@
               <article class="panel">
                 <div class="section-heading compact-heading">
                   <div>
-                    <p class="eyebrow">New Room Booking</p>
-                    <h3>Create stay record</h3>
+                    <p class="eyebrow" id="hotelFormEyebrow">New Room Booking</p>
+                    <h3 id="hotelFormTitle">Create stay record</h3>
                   </div>
                 </div>
                 <form id="hotelBookingForm" class="app-form">
@@ -368,7 +382,10 @@
                     Notes
                     <textarea name="notes" rows="4" placeholder="Late check-in, family block, corporate stay notes, breakfast or pickup remarks"></textarea>
                   </label>
-                  <button class="primary-btn full-width" type="submit">Save room booking</button>
+                  <div class="form-actions">
+                    <button class="primary-btn full-width" id="hotelFormSubmitBtn" type="submit">Save room booking</button>
+                    <button class="ghost-btn full-width" id="cancelHotelEditBtn" type="button" hidden>Cancel edit</button>
+                  </div>
                 </form>
               </article>
             </aside>
@@ -407,6 +424,7 @@
                       <th>Budget</th>
                       <th>Stay</th>
                       <th>Status</th>
+                      <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody id="enquiriesTableBody"></tbody>
@@ -444,6 +462,7 @@
                       <th>Email</th>
                       <th>Stage</th>
                       <th>Preferences</th>
+                      <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody id="clientsTableBody"></tbody>
@@ -454,8 +473,8 @@
             <article class="panel">
               <div class="section-heading compact-heading">
                 <div>
-                  <p class="eyebrow">Add Client</p>
-                  <h3>New CRM record</h3>
+                  <p class="eyebrow" id="clientFormEyebrow">Add Client</p>
+                  <h3 id="clientFormTitle">New CRM record</h3>
                 </div>
               </div>
               <form id="clientForm" class="app-form">
@@ -484,7 +503,10 @@
                   Preferences
                   <textarea name="preferences" rows="4" placeholder="Theme, catering notes, parking, VIP seating"></textarea>
                 </label>
-                <button class="primary-btn full-width" type="submit">Save client</button>
+                <div class="form-actions">
+                  <button class="primary-btn full-width" id="clientFormSubmitBtn" type="submit">Save client</button>
+                  <button class="ghost-btn full-width" id="cancelClientEditBtn" type="button" hidden>Cancel edit</button>
+                </div>
               </form>
             </article>
           </div>
@@ -508,6 +530,7 @@
                       <th>Contact</th>
                       <th>Phone</th>
                       <th>Status</th>
+                      <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody id="vendorsTableBody"></tbody>
@@ -518,8 +541,8 @@
             <article class="panel">
               <div class="section-heading compact-heading">
                 <div>
-                  <p class="eyebrow">Add Vendor</p>
-                  <h3>Partner record</h3>
+                  <p class="eyebrow" id="vendorFormEyebrow">Add Vendor</p>
+                  <h3 id="vendorFormTitle">Partner record</h3>
                 </div>
               </div>
               <form id="vendorForm" class="app-form">
@@ -558,7 +581,10 @@
                   Notes
                   <textarea name="notes" rows="4" placeholder="Rates, setup conditions, reliability"></textarea>
                 </label>
-                <button class="primary-btn full-width" type="submit">Save vendor</button>
+                <div class="form-actions">
+                  <button class="primary-btn full-width" id="vendorFormSubmitBtn" type="submit">Save vendor</button>
+                  <button class="ghost-btn full-width" id="cancelVendorEditBtn" type="button" hidden>Cancel edit</button>
+                </div>
               </form>
             </article>
           </div>
@@ -583,6 +609,7 @@
                       <th>Amount</th>
                       <th>Status</th>
                       <th>Notes</th>
+                      <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody id="paymentsTableBody"></tbody>
@@ -593,8 +620,8 @@
             <article class="panel">
               <div class="section-heading compact-heading">
                 <div>
-                  <p class="eyebrow">Add Payment</p>
-                  <h3>Finance entry</h3>
+                  <p class="eyebrow" id="paymentFormEyebrow">Add Payment</p>
+                  <h3 id="paymentFormTitle">Finance entry</h3>
                 </div>
               </div>
               <form id="paymentForm" class="app-form">
@@ -626,7 +653,10 @@
                   Notes
                   <textarea name="notes" rows="4" placeholder="Reference number, due date, balance context"></textarea>
                 </label>
-                <button class="primary-btn full-width" type="submit">Save payment</button>
+                <div class="form-actions">
+                  <button class="primary-btn full-width" id="paymentFormSubmitBtn" type="submit">Save payment</button>
+                  <button class="ghost-btn full-width" id="cancelPaymentEditBtn" type="button" hidden>Cancel edit</button>
+                </div>
               </form>
             </article>
           </div>

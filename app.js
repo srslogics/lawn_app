@@ -21,7 +21,12 @@ let uiState = {
   bookingFilter: "All",
   globalSearch: "",
   mobileNavOpen: false,
-  currentView: "dashboard"
+  currentView: "dashboard",
+  editingBookingId: null,
+  editingHotelBookingId: null,
+  editingClientId: null,
+  editingVendorId: null,
+  editingPaymentId: null
 };
 
 function money(value) {
@@ -167,12 +172,151 @@ function getSelectedBooking() {
   return filtered[0];
 }
 
+function setBookingFormMode(booking = null) {
+  const eyebrow = document.getElementById("bookingFormEyebrow");
+  const title = document.getElementById("bookingFormTitle");
+  const submit = document.getElementById("bookingFormSubmitBtn");
+  const cancel = document.getElementById("cancelBookingEditBtn");
+
+  uiState.editingBookingId = booking?.id || null;
+  eyebrow.textContent = booking ? "Edit Booking" : "New Booking";
+  title.textContent = booking ? `Update ${booking.clientName}` : "Create record";
+  submit.textContent = booking ? "Update booking" : "Save booking";
+  cancel.hidden = !booking;
+}
+
+function clearBookingForm() {
+  document.getElementById("bookingForm").reset();
+  setBookingFormMode();
+}
+
+function loadBookingIntoForm(booking) {
+  const form = document.getElementById("bookingForm");
+  if (!booking || !form) return;
+
+  form.elements.clientName.value = booking.clientName;
+  form.elements.eventType.value = booking.eventType;
+  form.elements.eventDate.value = booking.eventDate;
+  form.elements.guestCount.value = booking.guestCount;
+  form.elements.packageName.value = booking.packageName;
+  form.elements.lawnArea.value = booking.lawnArea;
+  form.elements.advancePaid.value = booking.advancePaid;
+  form.elements.notes.value = booking.notes || "";
+
+  setBookingFormMode(booking);
+}
+
+function setHotelFormMode(booking = null) {
+  document.getElementById("hotelFormEyebrow").textContent = booking ? "Edit Room Booking" : "New Room Booking";
+  document.getElementById("hotelFormTitle").textContent = booking ? `Update ${booking.guestName}` : "Create stay record";
+  document.getElementById("hotelFormSubmitBtn").textContent = booking ? "Update room booking" : "Save room booking";
+  document.getElementById("cancelHotelEditBtn").hidden = !booking;
+  uiState.editingHotelBookingId = booking?.id || null;
+}
+
+function clearHotelForm() {
+  document.getElementById("hotelBookingForm").reset();
+  setHotelFormMode();
+}
+
+function loadHotelIntoForm(booking) {
+  const form = document.getElementById("hotelBookingForm");
+  if (!booking || !form) return;
+  form.elements.guestName.value = booking.guestName;
+  form.elements.phone.value = booking.phone;
+  form.elements.roomType.value = booking.roomType;
+  form.elements.bookingSource.value = booking.bookingSource;
+  form.elements.checkIn.value = booking.checkIn;
+  form.elements.checkOut.value = booking.checkOut;
+  form.elements.roomsCount.value = booking.roomsCount;
+  form.elements.guestsCount.value = booking.guestsCount;
+  form.elements.amount.value = booking.amount;
+  form.elements.status.value = booking.status;
+  form.elements.paymentStatus.value = booking.paymentStatus;
+  form.elements.notes.value = booking.notes || "";
+  setHotelFormMode(booking);
+}
+
+function setClientFormMode(client = null) {
+  document.getElementById("clientFormEyebrow").textContent = client ? "Edit Client" : "Add Client";
+  document.getElementById("clientFormTitle").textContent = client ? `Update ${client.name}` : "New CRM record";
+  document.getElementById("clientFormSubmitBtn").textContent = client ? "Update client" : "Save client";
+  document.getElementById("cancelClientEditBtn").hidden = !client;
+  uiState.editingClientId = client?.id || null;
+}
+
+function clearClientForm() {
+  document.getElementById("clientForm").reset();
+  setClientFormMode();
+}
+
+function loadClientIntoForm(client) {
+  const form = document.getElementById("clientForm");
+  if (!client || !form) return;
+  form.elements.name.value = client.name;
+  form.elements.phone.value = client.phone;
+  form.elements.email.value = client.email;
+  form.elements.stage.value = client.stage;
+  form.elements.preferences.value = client.preferences || "";
+  setClientFormMode(client);
+}
+
+function setVendorFormMode(vendor = null) {
+  document.getElementById("vendorFormEyebrow").textContent = vendor ? "Edit Vendor" : "Add Vendor";
+  document.getElementById("vendorFormTitle").textContent = vendor ? `Update ${vendor.name}` : "Partner record";
+  document.getElementById("vendorFormSubmitBtn").textContent = vendor ? "Update vendor" : "Save vendor";
+  document.getElementById("cancelVendorEditBtn").hidden = !vendor;
+  uiState.editingVendorId = vendor?.id || null;
+}
+
+function clearVendorForm() {
+  document.getElementById("vendorForm").reset();
+  setVendorFormMode();
+}
+
+function loadVendorIntoForm(vendor) {
+  const form = document.getElementById("vendorForm");
+  if (!vendor || !form) return;
+  form.elements.name.value = vendor.name;
+  form.elements.category.value = vendor.category;
+  form.elements.contactPerson.value = vendor.contactPerson;
+  form.elements.phone.value = vendor.phone;
+  form.elements.status.value = vendor.status;
+  form.elements.notes.value = vendor.notes || "";
+  setVendorFormMode(vendor);
+}
+
+function setPaymentFormMode(payment = null) {
+  document.getElementById("paymentFormEyebrow").textContent = payment ? "Edit Payment" : "Add Payment";
+  document.getElementById("paymentFormTitle").textContent = payment ? `Update ${payment.clientName}` : "Finance entry";
+  document.getElementById("paymentFormSubmitBtn").textContent = payment ? "Update payment" : "Save payment";
+  document.getElementById("cancelPaymentEditBtn").hidden = !payment;
+  uiState.editingPaymentId = payment?.id || null;
+}
+
+function clearPaymentForm() {
+  document.getElementById("paymentForm").reset();
+  setPaymentFormMode();
+}
+
+function loadPaymentIntoForm(payment) {
+  const form = document.getElementById("paymentForm");
+  if (!payment || !form) return;
+  form.elements.clientName.value = payment.clientName;
+  form.elements.paymentType.value = payment.paymentType;
+  form.elements.amount.value = payment.amount;
+  form.elements.status.value = payment.status;
+  form.elements.notes.value = payment.notes || "";
+  setPaymentFormMode(payment);
+}
+
 function renderSidebarCard() {
   const metrics = state.dashboard?.metrics;
+  const remindersCount = metrics?.remindersCount || 0;
   document.getElementById("sidebarCard").innerHTML = `
     <p class="eyebrow">Today on site</p>
     <strong>${metrics?.confirmedEvents || 0} confirmed event${metrics?.confirmedEvents === 1 ? "" : "s"} · ${metrics?.roomsReserved || 0} room${metrics?.roomsReserved === 1 ? "" : "s"} reserved</strong>
-    <span>${money(metrics?.pendingCollections || 0)} still pending in collections across live records.</span>
+    <span>${money(metrics?.pendingCollections || 0)} still pending in collections across live records${remindersCount ? ` · ${remindersCount} reminder${remindersCount === 1 ? "" : "s"} open` : ""}.</span>
   `;
 }
 
@@ -256,6 +400,34 @@ function renderTasks() {
     state.tasks
       .map((task) => detailCard(task.title, `${task.owner} · ${task.due}`, task.status, [task.id]))
       .join("") || `<div class="empty-state">No tasks yet.</div>`;
+}
+
+function renderReminders() {
+  const reminders = state.dashboard?.reminders || [];
+  const container = document.getElementById("remindersList");
+  if (!container) return;
+
+  container.innerHTML =
+    reminders
+      .map(
+        (reminder) => `
+          <article class="mini-item">
+            <strong>${reminder.title}</strong>
+            <p>${reminder.detail}</p>
+            <div class="inline-actions">
+              <span class="status-pill status-${safeStatusClass(reminder.priority)}">${reminder.priority}</span>
+              <button class="row-action" type="button" data-reminder-view="${reminder.actionView}">${reminder.actionLabel}</button>
+            </div>
+          </article>
+        `
+      )
+      .join("") || `<div class="empty-state">No automatic reminders right now.</div>`;
+
+  container.querySelectorAll("[data-reminder-view]").forEach((button) => {
+    button.addEventListener("click", () => {
+      setView(button.dataset.reminderView);
+    });
+  });
 }
 
 function renderCollectionsSummary() {
@@ -404,6 +576,8 @@ function renderBookingDetail() {
       </div>
 
       <div class="detail-actions">
+        <button class="row-action" data-add-payment="true">Add payment</button>
+        <button class="row-action" data-edit-booking="true">Edit booking</button>
         <button class="row-action" data-status-action="Inquiry">Mark Inquiry</button>
         <button class="row-action" data-status-action="Upcoming">Mark Upcoming</button>
         <button class="row-action" data-status-action="Confirmed">Mark Confirmed</button>
@@ -427,6 +601,30 @@ function renderBookingDetail() {
     });
   });
 
+  detail.querySelector('[data-edit-booking="true"]')?.addEventListener("click", () => {
+    loadBookingIntoForm(booking);
+    document.querySelector('#bookingForm input[name="clientName"]')?.focus();
+    if (window.innerWidth <= 1260) {
+      document.getElementById("bookingForm")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    }
+  });
+
+  detail.querySelector('[data-add-payment="true"]')?.addEventListener("click", () => {
+    clearPaymentForm();
+    const form = document.getElementById("paymentForm");
+    form.elements.clientName.value = booking.clientName;
+    form.elements.paymentType.value = "Advance";
+    form.elements.amount.value = booking.advancePaid || "";
+    form.elements.status.value = "Received";
+    form.elements.notes.value = `${booking.eventType} · ${booking.eventDate} · ${booking.lawnArea}`;
+    setView("finance");
+    document.querySelector('#paymentForm input[name="amount"]')?.focus();
+    showToast("Payment form prepared from booking.");
+  });
+
   detail.querySelector('[data-delete-booking="true"]')?.addEventListener("click", async () => {
     const confirmed = window.confirm(
       `Delete ${booking.clientName}'s booking on ${booking.eventDate}? This removes the booking record from the application.`
@@ -438,6 +636,9 @@ function renderBookingDetail() {
         method: "DELETE"
       });
       uiState.selectedBookingId = null;
+      if (uiState.editingBookingId === booking.id) {
+        clearBookingForm();
+      }
       await refreshState();
       showToast("Booking deleted.");
     } catch (error) {
@@ -462,14 +663,46 @@ function renderClientsTable() {
             <td data-label="Email">${client.email}</td>
             <td data-label="Stage"><span class="status-pill status-${safeStatusClass(client.stage)}">${client.stage}</span></td>
             <td data-label="Preferences">${client.preferences}</td>
+            <td data-label="Actions">
+              <div class="inline-actions">
+                <button class="row-action" type="button" data-edit-client="${client.id}">Edit</button>
+                <button class="row-action row-action--danger" type="button" data-delete-client="${client.id}">Delete</button>
+              </div>
+            </td>
           </tr>
         `
       )
       .join("") || `
         <tr>
-          <td colspan="5"><div class="empty-state">No client records match the search.</div></td>
+          <td colspan="6"><div class="empty-state">No client records match the search.</div></td>
         </tr>
       `;
+
+  document.querySelectorAll("[data-edit-client]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const client = state.clients.find((item) => item.id === button.dataset.editClient);
+      loadClientIntoForm(client);
+      setView("clients");
+      document.querySelector('#clientForm input[name="name"]')?.focus();
+    });
+  });
+
+  document.querySelectorAll("[data-delete-client]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const client = state.clients.find((item) => item.id === button.dataset.deleteClient);
+      if (!client) return;
+      const confirmed = window.confirm(`Delete ${client.name}'s client record?`);
+      if (!confirmed) return;
+      try {
+        await api(`/clients/${client.id}`, { method: "DELETE" });
+        if (uiState.editingClientId === client.id) clearClientForm();
+        await refreshState();
+        showToast("Client deleted.");
+      } catch (error) {
+        showToast(error.message);
+      }
+    });
+  });
 }
 
 function renderVendorsTable() {
@@ -491,20 +724,53 @@ function renderVendorsTable() {
             <td data-label="Contact">${vendor.contactPerson}</td>
             <td data-label="Phone">${vendor.phone}</td>
             <td data-label="Status"><span class="status-pill status-${safeStatusClass(vendor.status)}">${vendor.status}</span></td>
+            <td data-label="Actions">
+              <div class="inline-actions">
+                <button class="row-action" type="button" data-edit-vendor="${vendor.id}">Edit</button>
+                <button class="row-action row-action--danger" type="button" data-delete-vendor="${vendor.id}">Delete</button>
+              </div>
+            </td>
           </tr>
         `
       )
       .join("") || `
         <tr>
-          <td colspan="5"><div class="empty-state">No vendor records match the search.</div></td>
+          <td colspan="6"><div class="empty-state">No vendor records match the search.</div></td>
         </tr>
       `;
+
+  document.querySelectorAll("[data-edit-vendor]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const vendor = state.vendors.find((item) => item.id === button.dataset.editVendor);
+      loadVendorIntoForm(vendor);
+      setView("vendors");
+      document.querySelector('#vendorForm input[name="name"]')?.focus();
+    });
+  });
+
+  document.querySelectorAll("[data-delete-vendor]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const vendor = state.vendors.find((item) => item.id === button.dataset.deleteVendor);
+      if (!vendor) return;
+      const confirmed = window.confirm(`Delete ${vendor.name} from the vendor directory?`);
+      if (!confirmed) return;
+      try {
+        await api(`/vendors/${vendor.id}`, { method: "DELETE" });
+        if (uiState.editingVendorId === vendor.id) clearVendorForm();
+        await refreshState();
+        showToast("Vendor deleted.");
+      } catch (error) {
+        showToast(error.message);
+      }
+    });
+  });
 }
 
 function renderPaymentsTable() {
   const rows = [
     ...state.payments.map((payment) => ({
       kind: "venue",
+      id: payment.id,
       clientName: payment.clientName,
       paymentType: payment.paymentType,
       amount: payment.amount,
@@ -534,14 +800,50 @@ function renderPaymentsTable() {
             <td data-label="Amount">${money(Number(payment.amount))}</td>
             <td data-label="Status"><span class="status-pill status-${safeStatusClass(payment.status)}">${payment.status}</span></td>
             <td data-label="Notes">${payment.kind === "hotel" ? `${payment.notes} · Hotel collection` : payment.notes}</td>
+            <td data-label="Actions">
+              ${
+                payment.kind === "venue"
+                  ? `<div class="inline-actions">
+                      <button class="row-action" type="button" data-edit-payment="${payment.id}">Edit</button>
+                      <button class="row-action row-action--danger" type="button" data-delete-payment="${payment.id}">Delete</button>
+                    </div>`
+                  : `<span class="table-note">Manage in hotel</span>`
+              }
+            </td>
           </tr>
         `
       )
       .join("") || `
         <tr>
-          <td colspan="5"><div class="empty-state">No payment records match the search.</div></td>
+          <td colspan="6"><div class="empty-state">No payment records match the search.</div></td>
         </tr>
       `;
+
+  document.querySelectorAll("[data-edit-payment]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const payment = state.payments.find((item) => item.id === button.dataset.editPayment);
+      loadPaymentIntoForm(payment);
+      setView("finance");
+      document.querySelector('#paymentForm input[name="clientName"]')?.focus();
+    });
+  });
+
+  document.querySelectorAll("[data-delete-payment]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const payment = state.payments.find((item) => item.id === button.dataset.deletePayment);
+      if (!payment) return;
+      const confirmed = window.confirm(`Delete the payment entry for ${payment.clientName}?`);
+      if (!confirmed) return;
+      try {
+        await api(`/payments/${payment.id}`, { method: "DELETE" });
+        if (uiState.editingPaymentId === payment.id) clearPaymentForm();
+        await refreshState();
+        showToast("Payment deleted.");
+      } catch (error) {
+        showToast(error.message);
+      }
+    });
+  });
 }
 
 function renderCalendar() {
@@ -600,12 +902,20 @@ function renderEnquiriesTable() {
             <td data-label="Budget">${money(Number(enquiry.budget))}</td>
             <td data-label="Stay">${enquiry.stayRequired === "Yes" ? `${enquiry.roomsNeeded || 0} room(s)` : "No stay"}</td>
             <td data-label="Status"><span class="status-pill status-${safeStatusClass(enquiry.status)}">${enquiry.status}</span></td>
+            <td data-label="Actions">
+              <div class="inline-actions">
+                <button class="row-action" type="button" data-enquiry-client="${enquiry.id}">Create client</button>
+                <button class="row-action" type="button" data-enquiry-booking="${enquiry.id}">Use for booking</button>
+                <button class="row-action" type="button" data-enquiry-status="${enquiry.id}" data-next-status="Contacted">Contacted</button>
+                <button class="row-action row-action--danger" type="button" data-delete-enquiry="${enquiry.id}">Delete</button>
+              </div>
+            </td>
           </tr>
         `
       )
       .join("") || `
         <tr>
-          <td colspan="7"><div class="empty-state">No website enquiries yet.</div></td>
+          <td colspan="8"><div class="empty-state">No website enquiries yet.</div></td>
         </tr>
       `;
 
@@ -621,6 +931,85 @@ function renderEnquiriesTable() {
         `
       )
       .join("") || `<div class="empty-state">No enquiry notes yet.</div>`;
+
+  document.querySelectorAll("[data-enquiry-client]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      try {
+        const result = await api(`/enquiries/${button.dataset.enquiryClient}/convert-client`, {
+          method: "POST"
+        });
+        await refreshState();
+        showToast(`${result.client.name} is ready in CRM.`);
+      } catch (error) {
+        showToast(error.message);
+      }
+    });
+  });
+
+  document.querySelectorAll("[data-enquiry-booking]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const enquiry = state.enquiries.find((item) => String(item.id) === button.dataset.enquiryBooking);
+      if (!enquiry) return;
+
+      clearBookingForm();
+      const form = document.getElementById("bookingForm");
+      form.elements.clientName.value = enquiry.name;
+      form.elements.eventType.value =
+        Array.from(form.elements.eventType.options).some((option) => option.value === enquiry.eventType)
+          ? enquiry.eventType
+          : "Wedding";
+      form.elements.eventDate.value = enquiry.eventDate;
+      form.elements.guestCount.value = enquiry.guestCount;
+      form.elements.packageName.value = enquiry.eventType === "Corporate" ? "Custom Luxury" : "Gold";
+      form.elements.advancePaid.value = 0;
+      form.elements.notes.value = `${enquiry.message || "Converted from website enquiry."} Budget: ${money(Number(enquiry.budget))}`;
+
+      try {
+        await api(`/enquiries/${enquiry.id}/status`, {
+          method: "PATCH",
+          body: JSON.stringify({ status: "Contacted" })
+        });
+        await refreshState();
+      } catch {
+        // Keep prefill even if status patch fails.
+      }
+
+      setView("bookings");
+      document.querySelector('#bookingForm input[name="clientName"]')?.focus();
+      showToast("Booking form prepared from enquiry.");
+    });
+  });
+
+  document.querySelectorAll("[data-enquiry-status]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      try {
+        await api(`/enquiries/${button.dataset.enquiryStatus}/status`, {
+          method: "PATCH",
+          body: JSON.stringify({ status: button.dataset.nextStatus })
+        });
+        await refreshState();
+        showToast(`Enquiry marked ${button.dataset.nextStatus}.`);
+      } catch (error) {
+        showToast(error.message);
+      }
+    });
+  });
+
+  document.querySelectorAll("[data-delete-enquiry]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const enquiry = state.enquiries.find((item) => String(item.id) === button.dataset.deleteEnquiry);
+      if (!enquiry) return;
+      const confirmed = window.confirm(`Delete the enquiry from ${enquiry.name}?`);
+      if (!confirmed) return;
+      try {
+        await api(`/enquiries/${enquiry.id}`, { method: "DELETE" });
+        await refreshState();
+        showToast("Enquiry deleted.");
+      } catch (error) {
+        showToast(error.message);
+      }
+    });
+  });
 }
 
 function renderRequirements() {
@@ -907,14 +1296,46 @@ function renderHotelBookingsTable() {
             <td data-label="Amount">${money(Number(booking.amount))}</td>
             <td data-label="Payment"><span class="status-pill status-${safeStatusClass(booking.paymentStatus)}">${booking.paymentStatus}</span></td>
             <td data-label="Status"><span class="status-pill status-${safeStatusClass(booking.status)}">${booking.status}</span></td>
+            <td data-label="Actions">
+              <div class="inline-actions">
+                <button class="row-action" type="button" data-edit-hotel="${booking.id}">Edit</button>
+                <button class="row-action row-action--danger" type="button" data-delete-hotel="${booking.id}">Delete</button>
+              </div>
+            </td>
           </tr>
         `
       )
       .join("") || `
         <tr>
-          <td colspan="8"><div class="empty-state">No hotel booking records match the search.</div></td>
+          <td colspan="9"><div class="empty-state">No hotel booking records match the search.</div></td>
         </tr>
       `;
+
+  document.querySelectorAll("[data-edit-hotel]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const booking = state.hotelBookings.find((item) => item.id === button.dataset.editHotel);
+      loadHotelIntoForm(booking);
+      setView("hotel");
+      document.querySelector('#hotelBookingForm input[name="guestName"]')?.focus();
+    });
+  });
+
+  document.querySelectorAll("[data-delete-hotel]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const booking = state.hotelBookings.find((item) => item.id === button.dataset.deleteHotel);
+      if (!booking) return;
+      const confirmed = window.confirm(`Delete the hotel booking for ${booking.guestName}?`);
+      if (!confirmed) return;
+      try {
+        await api(`/hotel-bookings/${booking.id}`, { method: "DELETE" });
+        if (uiState.editingHotelBookingId === booking.id) clearHotelForm();
+        await refreshState();
+        showToast("Hotel booking deleted.");
+      } catch (error) {
+        showToast(error.message);
+      }
+    });
+  });
 }
 
 function renderHotelOverview() {
@@ -960,6 +1381,7 @@ function renderAll() {
   renderSidebarCard();
   renderStats();
   renderToday();
+  renderReminders();
   renderTasks();
   renderCollectionsSummary();
   renderActivity();
@@ -984,11 +1406,11 @@ async function refreshState() {
 }
 
 function resetForms() {
-  document.getElementById("bookingForm").reset();
-  document.getElementById("clientForm").reset();
-  document.getElementById("vendorForm").reset();
-  document.getElementById("paymentForm").reset();
-  document.getElementById("hotelBookingForm").reset();
+  clearBookingForm();
+  clearClientForm();
+  clearVendorForm();
+  clearPaymentForm();
+  clearHotelForm();
 }
 
 function bindNavigation() {
@@ -1030,10 +1452,11 @@ function bindForms() {
   document.getElementById("bookingForm").addEventListener("submit", async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
+    const editingBookingId = uiState.editingBookingId;
 
     try {
-      const booking = await api("/bookings", {
-        method: "POST",
+      const booking = await api(editingBookingId ? `/bookings/${editingBookingId}` : "/bookings", {
+        method: editingBookingId ? "PUT" : "POST",
         body: JSON.stringify({
           clientName: formData.get("clientName"),
           eventType: formData.get("eventType"),
@@ -1048,8 +1471,8 @@ function bindForms() {
 
       uiState.selectedBookingId = booking.id;
       await refreshState();
-      event.currentTarget.reset();
-      showToast("Booking saved.");
+      clearBookingForm();
+      showToast(editingBookingId ? "Booking updated." : "Booking saved.");
     } catch (error) {
       showToast(error.message);
     }
@@ -1058,10 +1481,11 @@ function bindForms() {
   document.getElementById("clientForm").addEventListener("submit", async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
+    const editingClientId = uiState.editingClientId;
 
     try {
-      await api("/clients", {
-        method: "POST",
+      await api(editingClientId ? `/clients/${editingClientId}` : "/clients", {
+        method: editingClientId ? "PUT" : "POST",
         body: JSON.stringify({
           name: formData.get("name"),
           phone: formData.get("phone"),
@@ -1072,8 +1496,8 @@ function bindForms() {
       });
 
       await refreshState();
-      event.currentTarget.reset();
-      showToast("Client saved.");
+      clearClientForm();
+      showToast(editingClientId ? "Client updated." : "Client saved.");
     } catch (error) {
       showToast(error.message);
     }
@@ -1082,10 +1506,11 @@ function bindForms() {
   document.getElementById("vendorForm").addEventListener("submit", async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
+    const editingVendorId = uiState.editingVendorId;
 
     try {
-      await api("/vendors", {
-        method: "POST",
+      await api(editingVendorId ? `/vendors/${editingVendorId}` : "/vendors", {
+        method: editingVendorId ? "PUT" : "POST",
         body: JSON.stringify({
           name: formData.get("name"),
           category: formData.get("category"),
@@ -1097,8 +1522,8 @@ function bindForms() {
       });
 
       await refreshState();
-      event.currentTarget.reset();
-      showToast("Vendor saved.");
+      clearVendorForm();
+      showToast(editingVendorId ? "Vendor updated." : "Vendor saved.");
     } catch (error) {
       showToast(error.message);
     }
@@ -1107,10 +1532,11 @@ function bindForms() {
   document.getElementById("paymentForm").addEventListener("submit", async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
+    const editingPaymentId = uiState.editingPaymentId;
 
     try {
-      await api("/payments", {
-        method: "POST",
+      await api(editingPaymentId ? `/payments/${editingPaymentId}` : "/payments", {
+        method: editingPaymentId ? "PUT" : "POST",
         body: JSON.stringify({
           clientName: formData.get("clientName"),
           paymentType: formData.get("paymentType"),
@@ -1121,8 +1547,8 @@ function bindForms() {
       });
 
       await refreshState();
-      event.currentTarget.reset();
-      showToast("Payment saved.");
+      clearPaymentForm();
+      showToast(editingPaymentId ? "Payment updated." : "Payment saved.");
     } catch (error) {
       showToast(error.message);
     }
@@ -1131,10 +1557,11 @@ function bindForms() {
   document.getElementById("hotelBookingForm").addEventListener("submit", async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
+    const editingHotelBookingId = uiState.editingHotelBookingId;
 
     try {
-      await api("/hotel-bookings", {
-        method: "POST",
+      await api(editingHotelBookingId ? `/hotel-bookings/${editingHotelBookingId}` : "/hotel-bookings", {
+        method: editingHotelBookingId ? "PUT" : "POST",
         body: JSON.stringify({
           guestName: formData.get("guestName"),
           phone: formData.get("phone"),
@@ -1152,8 +1579,8 @@ function bindForms() {
       });
 
       await refreshState();
-      event.currentTarget.reset();
-      showToast("Room booking saved.");
+      clearHotelForm();
+      showToast(editingHotelBookingId ? "Room booking updated." : "Room booking saved.");
     } catch (error) {
       showToast(error.message);
     }
@@ -1163,15 +1590,18 @@ function bindForms() {
 function bindUtilityActions() {
   document.getElementById("quickAddBtn").addEventListener("click", () => {
     setView("bookings");
+    clearBookingForm();
     document.querySelector('#bookingForm input[name="clientName"]').focus();
   });
 
   document.getElementById("heroBookingBtn").addEventListener("click", () => {
     setView("bookings");
+    clearBookingForm();
     document.querySelector('#bookingForm input[name="clientName"]').focus();
   });
 
   document.getElementById("focusBookingFormBtn")?.addEventListener("click", () => {
+    clearBookingForm();
     document.querySelector('#bookingForm input[name="clientName"]')?.focus();
     if (window.innerWidth <= 1260) {
       document.getElementById("bookingForm")?.scrollIntoView({
@@ -1179,6 +1609,31 @@ function bindUtilityActions() {
         block: "start"
       });
     }
+  });
+
+  document.getElementById("cancelBookingEditBtn")?.addEventListener("click", () => {
+    clearBookingForm();
+    showToast("Edit cancelled.");
+  });
+
+  document.getElementById("cancelHotelEditBtn")?.addEventListener("click", () => {
+    clearHotelForm();
+    showToast("Edit cancelled.");
+  });
+
+  document.getElementById("cancelClientEditBtn")?.addEventListener("click", () => {
+    clearClientForm();
+    showToast("Edit cancelled.");
+  });
+
+  document.getElementById("cancelVendorEditBtn")?.addEventListener("click", () => {
+    clearVendorForm();
+    showToast("Edit cancelled.");
+  });
+
+  document.getElementById("cancelPaymentEditBtn")?.addEventListener("click", () => {
+    clearPaymentForm();
+    showToast("Edit cancelled.");
   });
 
 }
