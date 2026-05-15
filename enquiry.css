@@ -404,6 +404,10 @@ video {
   gap: 18px;
 }
 
+.experience-film__strip--single {
+  grid-template-columns: 1fr;
+}
+
 .film-frame {
   overflow: hidden;
   min-height: 360px;
@@ -411,6 +415,17 @@ video {
   border-radius: 28px;
   background: rgba(255, 251, 246, 0.9);
   box-shadow: var(--shadow);
+}
+
+.film-frame--feature {
+  min-height: 560px;
+}
+
+.film-frame--portrait-feature {
+  max-width: 420px;
+  width: 100%;
+  justify-self: center;
+  background: #111;
 }
 
 .royal-paths {
@@ -450,6 +465,11 @@ video {
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+.media-cover--contain {
+  object-fit: contain;
+  background: #111;
 }
 
 .home-canvas {
@@ -690,6 +710,14 @@ video {
 .media-frame--wide {
   grid-column: 1 / -1;
   min-height: 420px;
+}
+
+.media-frame--portrait {
+  min-height: 560px;
+  max-width: 420px;
+  width: 100%;
+  justify-self: center;
+  background: #111;
 }
 
 .dream-card__content {
@@ -1553,6 +1581,11 @@ video {
     linear-gradient(145deg, rgba(119, 89, 57, 0.9), rgba(215, 176, 122, 0.88));
 }
 
+.visual-card__image--portrait {
+  min-height: 560px;
+  background: #111;
+}
+
 .visual-card__body {
   padding: 20px;
 }
@@ -1570,6 +1603,11 @@ video {
 
 .visual-grid--real .visual-card--wide {
   grid-column: 1 / -1;
+}
+
+.visual-card--portrait {
+  max-width: 440px;
+  justify-self: center;
 }
 
 .contact-grid {
