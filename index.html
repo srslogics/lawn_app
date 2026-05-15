@@ -31,6 +31,7 @@
           <button class="nav-link" data-view="bookings">Bookings</button>
           <button class="nav-link" data-view="hotel">Hotel</button>
           <button class="nav-link" data-view="calendar">Calendar</button>
+          <button class="nav-link" data-view="enquiries">Enquiries</button>
           <button class="nav-link" data-view="clients">Clients</button>
           <button class="nav-link" data-view="vendors">Vendors</button>
           <button class="nav-link" data-view="finance">Finance</button>
@@ -46,7 +47,7 @@
           <div class="topbar-intro">
             <p class="eyebrow">Live Workspace</p>
             <h2 id="viewTitle">Dashboard</h2>
-            <p class="topbar-copy">Bookings, hotel stays, calendar, vendors, payments, and daily readiness with a cleaner operational view.</p>
+            <p class="topbar-copy">Bookings, website enquiries, hotel stays, vendors, payments, and daily readiness with a cleaner operational view.</p>
           </div>
           <div class="topbar-actions">
             <button class="mobile-nav-toggle" id="mobileNavToggle" type="button" aria-expanded="false" aria-controls="primaryNav">
@@ -384,6 +385,45 @@
             </div>
             <div class="calendar-board" id="calendarBoard"></div>
           </article>
+        </section>
+
+        <section class="view" data-view-panel="enquiries">
+          <div class="section-grid entity-grid">
+            <article class="panel">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">Website Leads</p>
+                  <h3>Public enquiries from the website</h3>
+                </div>
+              </div>
+              <div class="table-shell">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Lead</th>
+                      <th>Event</th>
+                      <th>Date</th>
+                      <th>Guests</th>
+                      <th>Budget</th>
+                      <th>Stay</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="enquiriesTableBody"></tbody>
+                </table>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="section-heading compact-heading">
+                <div>
+                  <p class="eyebrow">Lead Notes</p>
+                  <h3>What came from the public form</h3>
+                </div>
+              </div>
+              <div class="mini-list" id="enquiriesSummary"></div>
+            </article>
+          </div>
         </section>
 
         <section class="view" data-view-panel="clients">

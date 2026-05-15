@@ -412,6 +412,12 @@ textarea {
   border: 1px solid var(--line);
 }
 
+.row-action--danger {
+  background: rgba(160, 34, 34, 0.1);
+  color: #8e1f1f;
+  border-color: rgba(160, 34, 34, 0.16);
+}
+
 .primary-btn:hover,
 .ghost-btn:hover,
 .filter-chip:hover,

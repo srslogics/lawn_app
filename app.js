@@ -6,6 +6,7 @@ const API_BASE =
 let state = {
   bookings: [],
   hotelBookings: [],
+  enquiries: [],
   clients: [],
   vendors: [],
   payments: [],
@@ -95,6 +96,7 @@ function setView(view) {
     bookings: "Bookings",
     hotel: "Hotel",
     calendar: "Calendar",
+    enquiries: "Enquiries",
     clients: "Clients",
     vendors: "Vendors",
     finance: "Finance",
@@ -405,6 +407,7 @@ function renderBookingDetail() {
         <button class="row-action" data-status-action="Inquiry">Mark Inquiry</button>
         <button class="row-action" data-status-action="Upcoming">Mark Upcoming</button>
         <button class="row-action" data-status-action="Confirmed">Mark Confirmed</button>
+        <button class="row-action row-action--danger" data-delete-booking="true">Delete booking</button>
       </div>
     </article>
   `;
@@ -422,6 +425,24 @@ function renderBookingDetail() {
         showToast(error.message);
       }
     });
+  });
+
+  detail.querySelector('[data-delete-booking="true"]')?.addEventListener("click", async () => {
+    const confirmed = window.confirm(
+      `Delete ${booking.clientName}'s booking on ${booking.eventDate}? This removes the booking record from the application.`
+    );
+    if (!confirmed) return;
+
+    try {
+      await api(`/bookings/${booking.id}`, {
+        method: "DELETE"
+      });
+      uiState.selectedBookingId = null;
+      await refreshState();
+      showToast("Booking deleted.");
+    } catch (error) {
+      showToast(error.message);
+    }
   });
 }
 
@@ -554,6 +575,52 @@ function renderCalendar() {
         `
       )
       .join("") || `<div class="empty-state">No calendar items yet.</div>`;
+}
+
+function renderEnquiriesTable() {
+  const rows = (state.enquiries || []).filter((enquiry) => {
+    if (!uiState.globalSearch) return true;
+    return matchGlobalSearch(
+      `${enquiry.name} ${enquiry.phone} ${enquiry.email} ${enquiry.eventType} ${enquiry.message}`
+    );
+  });
+
+  document.getElementById("enquiriesTableBody").innerHTML =
+    rows
+      .map(
+        (enquiry) => `
+          <tr>
+            <td data-label="Lead">
+              <div class="table-primary">${enquiry.name}</div>
+              <div class="table-secondary">${enquiry.phone} · ${enquiry.email}</div>
+            </td>
+            <td data-label="Event">${enquiry.eventType}</td>
+            <td data-label="Date">${enquiry.eventDate}</td>
+            <td data-label="Guests">${enquiry.guestCount}</td>
+            <td data-label="Budget">${money(Number(enquiry.budget))}</td>
+            <td data-label="Stay">${enquiry.stayRequired === "Yes" ? `${enquiry.roomsNeeded || 0} room(s)` : "No stay"}</td>
+            <td data-label="Status"><span class="status-pill status-${safeStatusClass(enquiry.status)}">${enquiry.status}</span></td>
+          </tr>
+        `
+      )
+      .join("") || `
+        <tr>
+          <td colspan="7"><div class="empty-state">No website enquiries yet.</div></td>
+        </tr>
+      `;
+
+  document.getElementById("enquiriesSummary").innerHTML =
+    rows
+      .slice(0, 6)
+      .map(
+        (enquiry) => `
+          <article class="mini-item">
+            <strong>${enquiry.name} · ${enquiry.eventType}</strong>
+            <p>${enquiry.message || "No extra notes shared."}</p>
+          </article>
+        `
+      )
+      .join("") || `<div class="empty-state">No enquiry notes yet.</div>`;
 }
 
 function renderRequirements() {
@@ -906,6 +973,7 @@ function renderAll() {
   renderVendorsTable();
   renderPaymentsTable();
   renderCalendar();
+  renderEnquiriesTable();
   renderAnalytics();
   renderRequirements();
 }

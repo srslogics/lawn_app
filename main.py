@@ -843,6 +843,7 @@ def bootstrap(db: Session = Depends(get_db)) -> dict:
         "vendors": [serialize_vendor(row) for row in db.scalars(select(Vendor).order_by(Vendor.id.asc())).all()],
         "payments": [serialize_payment(row) for row in db.scalars(select(Payment).order_by(Payment.id.asc())).all()],
         "hotelBookings": [serialize_hotel_booking(row) for row in db.scalars(select(HotelBooking).order_by(HotelBooking.check_in.asc())).all()],
+        "enquiries": [serialize_enquiry(row) for row in db.scalars(select(Enquiry).order_by(Enquiry.id.desc())).all()],
         "tasks": [serialize_task(row) for row in db.scalars(select(Task).order_by(Task.id.asc())).all()],
         "requirements": REQUIREMENTS,
         "activity": activity_messages(db),
@@ -904,6 +905,21 @@ def update_booking_status(booking_id: str, payload: BookingStatusUpdate, db: Ses
     db.refresh(booking)
     add_activity(db, f"{booking.client_name} moved to {booking.status}.")
     return serialize_booking(booking)
+
+
+@app.delete("/api/bookings/{booking_id}")
+def delete_booking(booking_id: str, db: Session = Depends(get_db)) -> dict:
+    booking = db.get(Booking, booking_id)
+    if booking is None:
+        raise HTTPException(status_code=404, detail="Booking not found")
+
+    client_name = booking.client_name
+    event_date = booking.event_date
+    lawn_area = booking.lawn_area
+    db.delete(booking)
+    db.commit()
+    add_activity(db, f"{client_name} booking removed from {event_date} at {lawn_area}.")
+    return {"ok": True, "message": "Booking deleted."}
 
 
 @app.get("/api/clients")
