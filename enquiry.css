@@ -391,12 +391,20 @@ video {
 
 .experience-film {
   grid-template-columns: minmax(0, 0.84fr) minmax(0, 1.16fr);
-  align-items: center;
+  align-items: start;
+}
+
+.experience-film--stacked {
+  grid-template-columns: 1fr;
 }
 
 .experience-film__copy {
   padding: 10px 8px 0 0;
   max-width: 34rem;
+}
+
+.experience-film--stacked .experience-film__copy {
+  max-width: none;
 }
 
 .experience-film__strip {
@@ -424,14 +432,6 @@ video {
   min-height: 0;
   width: 100%;
   aspect-ratio: 16 / 10;
-}
-
-.film-frame--portrait-feature {
-  max-width: 430px;
-  width: 100%;
-  aspect-ratio: 9 / 16;
-  justify-self: center;
-  background: #111;
 }
 
 .royal-paths {
