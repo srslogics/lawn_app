@@ -519,7 +519,11 @@ def get_db() -> Generator[Session, None, None]:
         db.close()
 
 
-def create_seed_data(db: Session) -> None:
+def normalize_text(value: str | None) -> str:
+    return (value or "").strip()
+
+
+def clear_application_data(db: Session) -> None:
     db.query(Enquiry).delete()
     db.query(Activity).delete()
     db.query(Task).delete()
@@ -528,7 +532,11 @@ def create_seed_data(db: Session) -> None:
     db.query(Vendor).delete()
     db.query(Client).delete()
     db.query(Booking).delete()
+    db.commit()
 
+
+def create_seed_data(db: Session) -> None:
+    clear_application_data(db)
     db.add_all(Booking(**item) for item in SEED["bookings"])
     db.add_all(Client(**item) for item in SEED["clients"])
     db.add_all(Vendor(**item) for item in SEED["vendors"])
@@ -543,24 +551,7 @@ def create_seed_data(db: Session) -> None:
 
 
 def seed_missing_modules(db: Session) -> None:
-    if not db.scalar(select(Booking.id).limit(1)):
-        db.add_all(Booking(**item) for item in SEED["bookings"])
-    if not db.scalar(select(Client.id).limit(1)):
-        db.add_all(Client(**item) for item in SEED["clients"])
-    if not db.scalar(select(Vendor.id).limit(1)):
-        db.add_all(Vendor(**item) for item in SEED["vendors"])
-    if not db.scalar(select(Payment.id).limit(1)):
-        db.add_all(Payment(**item) for item in SEED["payments"])
-    if not db.scalar(select(HotelBooking.id).limit(1)):
-        db.add_all(HotelBooking(**item) for item in SEED["hotelBookings"])
-    if not db.scalar(select(Task.id).limit(1)):
-        db.add_all(Task(**item) for item in SEED["tasks"])
-    if not db.scalar(select(Activity.id).limit(1)):
-        db.add_all(
-            Activity(message=message, created_at=datetime.utcnow().isoformat())
-            for message in SEED["activity"]
-        )
-    db.commit()
+    return None
 
 
 def ensure_database() -> None:
@@ -922,13 +913,28 @@ def list_clients(db: Session = Depends(get_db)) -> list[dict]:
 
 @app.post("/api/clients", status_code=201)
 def create_client(payload: ClientCreate, db: Session = Depends(get_db)) -> dict:
+    name = normalize_text(payload.name)
+    phone = normalize_text(payload.phone)
+    email = normalize_text(payload.email).lower()
+    stage = normalize_text(payload.stage)
+    preferences = normalize_text(payload.preferences)
+
+    existing_client = db.scalar(
+        select(Client).where((Client.phone == phone) | (Client.email == email)).limit(1)
+    )
+    if existing_client is not None:
+        raise HTTPException(
+            status_code=409,
+            detail=f"Client record already exists for {existing_client.name} with the same phone or email.",
+        )
+
     client = Client(
         id=next_prefixed_id(db, Client, "C"),
-        name=payload.name,
-        phone=payload.phone,
-        email=payload.email,
-        stage=payload.stage,
-        preferences=payload.preferences,
+        name=name,
+        phone=phone,
+        email=email,
+        stage=stage,
+        preferences=preferences,
     )
     db.add(client)
     db.commit()
@@ -944,14 +950,30 @@ def list_vendors(db: Session = Depends(get_db)) -> list[dict]:
 
 @app.post("/api/vendors", status_code=201)
 def create_vendor(payload: VendorCreate, db: Session = Depends(get_db)) -> dict:
+    name = normalize_text(payload.name)
+    category = normalize_text(payload.category)
+    contact_person = normalize_text(payload.contactPerson)
+    phone = normalize_text(payload.phone)
+    status = normalize_text(payload.status)
+    notes = normalize_text(payload.notes)
+
+    existing_vendor = db.scalar(
+        select(Vendor).where(Vendor.name == name, Vendor.phone == phone).limit(1)
+    )
+    if existing_vendor is not None:
+        raise HTTPException(
+            status_code=409,
+            detail=f"Vendor record already exists for {existing_vendor.name} with the same phone.",
+        )
+
     vendor = Vendor(
         id=next_prefixed_id(db, Vendor, "V"),
-        name=payload.name,
-        category=payload.category,
-        contact_person=payload.contactPerson,
-        phone=payload.phone,
-        status=payload.status,
-        notes=payload.notes,
+        name=name,
+        category=category,
+        contact_person=contact_person,
+        phone=phone,
+        status=status,
+        notes=notes,
     )
     db.add(vendor)
     db.commit()
@@ -1071,17 +1093,28 @@ def list_enquiries(db: Session = Depends(get_db)) -> list[dict]:
 
 @app.post("/api/enquiries", status_code=201)
 def create_enquiry(payload: EnquiryCreate, db: Session = Depends(get_db)) -> dict:
+    event_date = parse_iso_date(payload.eventDate, "Event date")
+    stay_required = normalize_text(payload.stayRequired) or "No"
+    if stay_required not in {"Yes", "No"}:
+        raise HTTPException(status_code=422, detail="Stay requirement must be either Yes or No.")
+
+    rooms_needed = payload.roomsNeeded
+    if stay_required == "Yes" and (rooms_needed is None or rooms_needed < 1):
+        raise HTTPException(status_code=422, detail="Rooms needed must be at least 1 when guest stay is required.")
+    if stay_required == "No":
+        rooms_needed = None
+
     enquiry = Enquiry(
-        name=payload.name,
-        phone=payload.phone,
-        email=payload.email,
-        event_type=payload.eventType,
-        event_date=payload.eventDate,
+        name=normalize_text(payload.name),
+        phone=normalize_text(payload.phone),
+        email=normalize_text(payload.email).lower(),
+        event_type=normalize_text(payload.eventType),
+        event_date=event_date.isoformat(),
         guest_count=payload.guestCount,
         budget=payload.budget,
-        stay_required=payload.stayRequired,
-        rooms_needed=payload.roomsNeeded,
-        message=payload.message,
+        stay_required=stay_required,
+        rooms_needed=rooms_needed,
+        message=normalize_text(payload.message),
         status="New",
         created_at=datetime.utcnow().isoformat(),
     )
@@ -1094,8 +1127,8 @@ def create_enquiry(payload: EnquiryCreate, db: Session = Depends(get_db)) -> dic
 
 @app.post("/api/reset")
 def reset(db: Session = Depends(get_db)) -> dict:
-    create_seed_data(db)
-    return {"ok": True, "message": "Database reset to seed data."}
+    clear_application_data(db)
+    return {"ok": True, "message": "Application data cleared."}
 
 
 @app.get("/")

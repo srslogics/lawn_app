@@ -1113,26 +1113,6 @@ function bindUtilityActions() {
     }
   });
 
-  document.getElementById("seedBtn").addEventListener("click", async () => {
-    try {
-      await api("/reset", { method: "POST" });
-      uiState = {
-        selectedBookingId: null,
-        bookingFilter: "All",
-        globalSearch: "",
-        mobileNavOpen: false,
-        currentView: "dashboard"
-      };
-      resetForms();
-      document.getElementById("bookingSearch").value = "";
-      document.getElementById("globalSearch").value = "";
-      await refreshState();
-      setView("dashboard");
-      showToast("Sample data restored.");
-    } catch (error) {
-      showToast(error.message);
-    }
-  });
 }
 
 async function init() {
