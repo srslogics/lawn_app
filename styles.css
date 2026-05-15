@@ -76,6 +76,10 @@ textarea {
   font: inherit;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -331,12 +335,21 @@ textarea {
 .app-form select,
 .app-form textarea {
   width: 100%;
+  font-weight: 600;
   border: 1px solid rgba(77, 57, 27, 0.12);
   border-radius: 16px;
   padding: 14px 16px;
   background: rgba(255, 255, 255, 0.76);
   color: var(--ink);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.48);
+}
+
+.topbar-search input::placeholder,
+.table-toolbar input::placeholder,
+.app-form input::placeholder,
+.app-form textarea::placeholder {
+  color: rgba(103, 88, 68, 0.92);
+  font-weight: 600;
 }
 
 .topbar-search input:focus,
@@ -621,7 +634,7 @@ textarea {
 
 .table-toolbar {
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) auto;
+  grid-template-columns: 1fr;
   gap: 14px;
   margin-bottom: 22px;
   padding: 14px;
@@ -638,6 +651,7 @@ textarea {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  align-items: center;
 }
 
 .table-shell {
@@ -990,6 +1004,19 @@ textarea {
   }
 }
 
+@media (max-width: 1460px) {
+  .bookings-layout,
+  .entity-grid,
+  .hotel-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bookings-layout .detail-stack {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+}
+
 @media (max-width: 760px) {
   .app-shell {
     gap: 16px;
@@ -1155,6 +1182,10 @@ textarea {
     background: transparent;
     border: 0;
     border-radius: 0;
+  }
+
+  .bookings-layout .detail-stack {
+    grid-template-columns: 1fr;
   }
 
   .data-table {

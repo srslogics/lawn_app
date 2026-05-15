@@ -29,6 +29,59 @@ let uiState = {
   editingPaymentId: null
 };
 
+const viewMeta = {
+  dashboard: {
+    title: "Dashboard",
+    copy: "Bookings, website enquiries, hotel stays, vendors, payments, and daily readiness with a cleaner operational view.",
+    actionLabel: "New booking"
+  },
+  bookings: {
+    title: "Bookings",
+    copy: "Create, update, confirm, and track event bookings without re-entering details.",
+    actionLabel: "New booking"
+  },
+  hotel: {
+    title: "Hotel",
+    copy: "Manage room blocks, arrivals, guest stays, and hotel collections from one place.",
+    actionLabel: "New room booking"
+  },
+  calendar: {
+    title: "Calendar",
+    copy: "See the upcoming event load clearly so dates, teams, and venue areas stay aligned.",
+    actionLabel: "New booking"
+  },
+  enquiries: {
+    title: "Enquiries",
+    copy: "Convert public leads into clients and bookings quickly before follow-up slips.",
+    actionLabel: "New booking"
+  },
+  clients: {
+    title: "Clients",
+    copy: "Keep client details, stage, and planning preferences together for quick follow-up.",
+    actionLabel: "New client"
+  },
+  vendors: {
+    title: "Vendors",
+    copy: "Maintain a usable vendor list with contacts, status, and quick edit access.",
+    actionLabel: "New vendor"
+  },
+  finance: {
+    title: "Finance",
+    copy: "Track collections, update payment records, and move faster on pending balances.",
+    actionLabel: "Add payment"
+  },
+  analytics: {
+    title: "Analytics",
+    copy: "Watch business health, demand patterns, and pressure points without manual reporting.",
+    actionLabel: "New booking"
+  },
+  settings: {
+    title: "Venue setup",
+    copy: "Review the main business setup areas that shape bookings, operations, and finance.",
+    actionLabel: "New booking"
+  }
+};
+
 function money(value) {
   return new Intl.NumberFormat("en-IN", {
     style: "currency",
@@ -96,20 +149,10 @@ function setView(view) {
     panel.classList.toggle("active", panel.dataset.viewPanel === view);
   });
 
-  const titleMap = {
-    dashboard: "Dashboard",
-    bookings: "Bookings",
-    hotel: "Hotel",
-    calendar: "Calendar",
-    enquiries: "Enquiries",
-    clients: "Clients",
-    vendors: "Vendors",
-    finance: "Finance",
-    analytics: "Analytics",
-    settings: "Venue setup"
-  };
-
-  document.getElementById("viewTitle").textContent = titleMap[view] || "Dashboard";
+  const meta = viewMeta[view] || viewMeta.dashboard;
+  document.getElementById("viewTitle").textContent = meta.title;
+  document.querySelector(".topbar-copy").textContent = meta.copy;
+  document.getElementById("quickAddBtn").textContent = meta.actionLabel;
 
   if (window.innerWidth <= 760) {
     uiState.mobileNavOpen = false;
@@ -200,6 +243,7 @@ function loadBookingIntoForm(booking) {
   form.elements.guestCount.value = booking.guestCount;
   form.elements.packageName.value = booking.packageName;
   form.elements.lawnArea.value = booking.lawnArea;
+  form.elements.status.value = booking.status;
   form.elements.advancePaid.value = booking.advancePaid;
   form.elements.notes.value = booking.notes || "";
 
@@ -1464,6 +1508,7 @@ function bindForms() {
           guestCount: Number(formData.get("guestCount")),
           packageName: formData.get("packageName"),
           lawnArea: formData.get("lawnArea"),
+          status: formData.get("status"),
           advancePaid: Number(formData.get("advancePaid")),
           notes: formData.get("notes")
         })
@@ -1589,6 +1634,32 @@ function bindForms() {
 
 function bindUtilityActions() {
   document.getElementById("quickAddBtn").addEventListener("click", () => {
+    const currentView = uiState.currentView;
+    if (currentView === "hotel") {
+      setView("hotel");
+      clearHotelForm();
+      document.querySelector('#hotelBookingForm input[name="guestName"]')?.focus();
+      return;
+    }
+    if (currentView === "clients") {
+      setView("clients");
+      clearClientForm();
+      document.querySelector('#clientForm input[name="name"]')?.focus();
+      return;
+    }
+    if (currentView === "vendors") {
+      setView("vendors");
+      clearVendorForm();
+      document.querySelector('#vendorForm input[name="name"]')?.focus();
+      return;
+    }
+    if (currentView === "finance") {
+      setView("finance");
+      clearPaymentForm();
+      document.querySelector('#paymentForm input[name="clientName"]')?.focus();
+      return;
+    }
+
     setView("bookings");
     clearBookingForm();
     document.querySelector('#bookingForm input[name="clientName"]').focus();
