@@ -390,22 +390,25 @@ video {
 }
 
 .experience-film {
-  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
-  align-items: start;
+  grid-template-columns: minmax(0, 0.84fr) minmax(0, 1.16fr);
+  align-items: center;
 }
 
 .experience-film__copy {
   padding: 10px 8px 0 0;
+  max-width: 34rem;
 }
 
 .experience-film__strip {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
+  align-items: start;
 }
 
 .experience-film__strip--single {
   grid-template-columns: 1fr;
+  justify-items: center;
 }
 
 .film-frame {
@@ -418,12 +421,15 @@ video {
 }
 
 .film-frame--feature {
-  min-height: 560px;
+  min-height: 0;
+  width: 100%;
+  aspect-ratio: 16 / 10;
 }
 
 .film-frame--portrait-feature {
-  max-width: 420px;
+  max-width: 430px;
   width: 100%;
+  aspect-ratio: 9 / 16;
   justify-self: center;
   background: #111;
 }
@@ -692,6 +698,7 @@ video {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
+  align-items: start;
 }
 
 .media-showcase__grid--rooms {
@@ -700,7 +707,8 @@ video {
 
 .media-frame {
   overflow: hidden;
-  min-height: 280px;
+  min-height: 0;
+  aspect-ratio: 4 / 3;
   border: 1px solid var(--line);
   border-radius: 28px;
   background: var(--panel);
@@ -709,7 +717,7 @@ video {
 
 .media-frame--wide {
   grid-column: 1 / -1;
-  min-height: 420px;
+  aspect-ratio: 16 / 9;
 }
 
 .media-frame--portrait {
@@ -1547,6 +1555,7 @@ video {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
+  align-items: start;
 }
 
 .visual-card {
@@ -1558,7 +1567,8 @@ video {
 }
 
 .visual-card__image {
-  min-height: 220px;
+  min-height: 0;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
   background:
     radial-gradient(circle at top right, rgba(255, 228, 181, 0.45), transparent 28%),
@@ -1582,7 +1592,8 @@ video {
 }
 
 .visual-card__image--portrait {
-  min-height: 560px;
+  aspect-ratio: 9 / 16;
+  min-height: 0;
   background: #111;
 }
 
@@ -1603,6 +1614,10 @@ video {
 
 .visual-grid--real .visual-card--wide {
   grid-column: 1 / -1;
+}
+
+.visual-grid--real .visual-card--wide .visual-card__image {
+  aspect-ratio: 16 / 9;
 }
 
 .visual-card--portrait {
@@ -1951,6 +1966,7 @@ video {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
+  align-items: start;
 }
 
 .gallery-card {
@@ -1962,28 +1978,30 @@ video {
 }
 
 .gallery-card__visual {
-  min-height: 230px;
+  min-height: 0;
+  aspect-ratio: 4 / 3;
   background:
     radial-gradient(circle at top right, rgba(255, 228, 181, 0.45), transparent 28%),
     linear-gradient(135deg, rgba(44, 107, 94, 0.95), rgba(188, 133, 64, 0.84));
 }
 
+.gallery-card--hero .gallery-card__visual {
+  aspect-ratio: 16 / 10;
+}
+
 .gallery-card__visual--evening {
-  min-height: 200px;
   background:
     radial-gradient(circle at center, rgba(255, 230, 170, 0.35), transparent 22%),
     linear-gradient(140deg, rgba(92, 59, 27, 0.95), rgba(44, 107, 94, 0.88));
 }
 
 .gallery-card__visual--dining {
-  min-height: 200px;
   background:
     linear-gradient(160deg, rgba(229, 209, 175, 0.35), transparent 32%),
     linear-gradient(135deg, rgba(188, 133, 64, 0.9), rgba(108, 67, 31, 0.92));
 }
 
 .gallery-card__visual--rooms {
-  min-height: 200px;
   background:
     linear-gradient(180deg, rgba(255, 244, 223, 0.2), transparent 25%),
     linear-gradient(145deg, rgba(119, 89, 57, 0.9), rgba(215, 176, 122, 0.88));
