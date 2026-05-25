@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Royal Celebration PWA Icon</title>
+  <desc id="desc">Rounded square icon for Royal Celebration.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2c6b5e"/>
+      <stop offset="100%" stop-color="#1f4f45"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#e2b66f"/>
+      <stop offset="100%" stop-color="#bc8540"/>
+    </linearGradient>
+  </defs>
+  <rect x="24" y="24" width="464" height="464" rx="108" fill="url(#bg)"/>
+  <circle cx="256" cy="162" r="68" fill="rgba(255,255,255,0.08)"/>
+  <path d="M170 328c0-61 38-98 95-98 37 0 66 13 88 41l-31 28c-16-19-34-27-57-27-36 0-59 22-59 58s23 58 59 58c23 0 41-8 57-27l31 28c-22 28-51 41-88 41-57 0-95-37-95-102z" fill="#fff8ef"/>
+  <path d="M154 129l34-31 33 31 35-46 35 46 33-31 34 31v18H154z" fill="url(#accent)"/>
+  <text x="256" y="418" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="66" font-weight="700" fill="url(#accent)">RC</text>
+</svg>

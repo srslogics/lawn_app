@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Offline | Royal Celebration</title>
+    <meta name="theme-color" content="#2c6b5e" />
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f6efe4;
+        --panel: rgba(255, 251, 246, 0.96);
+        --ink: #241911;
+        --muted: #6f655a;
+        --line: rgba(118, 84, 35, 0.1);
+        --green: #2c6b5e;
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        font-family: "Avenir Next", "Segoe UI", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at top left, rgba(188, 133, 64, 0.18), transparent 24%),
+          radial-gradient(circle at bottom right, rgba(44, 107, 94, 0.08), transparent 26%),
+          linear-gradient(180deg, #ecdecb 0%, var(--bg) 42%, #fcf8f2 100%);
+      }
+      .offline-card {
+        width: min(560px, 100%);
+        padding: 32px;
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        background: var(--panel);
+        box-shadow: 0 24px 80px rgba(95, 67, 26, 0.12);
+      }
+      .eyebrow {
+        margin: 0 0 10px;
+        color: #8d5b22;
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+      h1 {
+        margin: 0 0 12px;
+        font-family: "Iowan Old Style", "Palatino Linotype", serif;
+        font-size: clamp(2.2rem, 6vw, 3.4rem);
+        line-height: 0.95;
+        letter-spacing: -0.05em;
+      }
+      p {
+        margin: 0 0 18px;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        padding: 0 18px;
+        border-radius: 999px;
+        text-decoration: none;
+        font-weight: 800;
+      }
+      a.primary {
+        color: #f7fbf9;
+        background: linear-gradient(135deg, var(--green) 0%, #1f4f45 100%);
+      }
+      a.secondary {
+        color: var(--ink);
+        border: 1px solid var(--line);
+        background: rgba(255,255,255,0.72);
+      }
+    </style>
+  </head>
+  <body>
+    <article class="offline-card">
+      <p class="eyebrow">Offline mode</p>
+      <h1>Royal Celebration is temporarily offline.</h1>
+      <p>
+        The app shell is installed, but this page needs a connection for the latest bookings,
+        enquiries, and updates. Reconnect and reload when you are ready.
+      </p>
+      <div class="actions">
+        <a class="primary" href="/">Open console</a>
+        <a class="secondary" href="/home.html">Open website</a>
+      </div>
+    </article>
+  </body>
+</html>

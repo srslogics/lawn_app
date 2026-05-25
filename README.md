@@ -7,6 +7,7 @@ A real client-server application foundation for a celebration lawn business.
 - Python `FastAPI` backend
 - PostgreSQL persistence via `SQLAlchemy`
 - Static asset serving from the same app
+- PWA support with manifest, service worker, and offline fallback
 - Booking, client, vendor, payment, task, enquiry, dashboard, and reset endpoints
 - Frontend wired to live API instead of `localStorage`
 - Public enquiry page for customer leads
@@ -31,6 +32,17 @@ Public enquiry page:
 - [http://127.0.0.1:4173/enquiry](http://127.0.0.1:4173/enquiry)
 
 The backend will automatically read database settings from `.env` and connect to PostgreSQL. If no PostgreSQL settings are present, it falls back to local SQLite for development.
+
+## PWA
+
+- `manifest.webmanifest` defines the installable app metadata
+- `sw.js` caches the main shell and provides an offline fallback page
+- `pwa.js` registers the service worker on the admin app and public website pages
+
+Important:
+
+- PWA features only work on `http://127.0.0.1`, `http://localhost`, or `https`
+- They will not work from `file:///...`
 
 ## API
 

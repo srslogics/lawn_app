@@ -1,0 +1,27 @@
+{
+  "id": "/",
+  "name": "Royal Celebration",
+  "short_name": "Royal Celebration",
+  "description": "Bookings, enquiries, hotel stays, vendors, collections, and destination wedding planning in one installable workspace.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f6efe4",
+  "theme_color": "#2c6b5e",
+  "categories": ["business", "productivity", "lifestyle"],
+  "icons": [
+    {
+      "src": "/assets/pwa-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/SrSLogicsLogo.png",
+      "sizes": "1376x768",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
