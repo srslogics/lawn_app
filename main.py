@@ -1549,4 +1549,9 @@ def enquiry_page() -> FileResponse:
     return FileResponse(ROOT_DIR / "enquiry.html")
 
 
+@app.get("/favicon.ico")
+def favicon() -> FileResponse:
+    return FileResponse(ROOT_DIR / "assets" / "SrSLogicsLogo.png")
+
+
 app.mount("/", StaticFiles(directory=ROOT_DIR, html=True), name="static")
