@@ -6,7 +6,7 @@ from datetime import date, datetime
 from pathlib import Path
 from typing import Generator, Literal
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -947,6 +947,12 @@ def health(db: Session = Depends(get_db)) -> dict:
         "databaseStatus": DATABASE_STATUS,
         "databaseError": DATABASE_ERROR,
     }
+
+
+@app.head("/api/health")
+def health_head(db: Session = Depends(get_db)) -> Response:
+    db.execute(text("SELECT 1"))
+    return Response(status_code=200)
 
 
 @app.get("/api/bootstrap")
