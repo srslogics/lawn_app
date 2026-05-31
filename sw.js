@@ -1,6 +1,6 @@
-const STATIC_CACHE = "royal-celebration-static-v1";
-const RUNTIME_CACHE = "royal-celebration-runtime-v1";
-const API_CACHE = "royal-celebration-api-v1";
+const STATIC_CACHE = "royal-celebration-static-v2";
+const RUNTIME_CACHE = "royal-celebration-runtime-v2";
+const API_CACHE = "royal-celebration-api-v2";
 
 const APP_SHELL = [
   "/",
@@ -80,6 +80,17 @@ function cacheFirst(request, cacheName) {
   });
 }
 
+function shouldAlwaysRefresh(url) {
+  return [
+    "/",
+    "/index.html",
+    "/styles.css",
+    "/app.js",
+    "/pwa.js",
+    "/manifest.webmanifest",
+  ].includes(url.pathname);
+}
+
 self.addEventListener("fetch", (event) => {
   const { request } = event;
   const url = new URL(request.url);
@@ -99,6 +110,11 @@ self.addEventListener("fetch", (event) => {
 
   if (isHtmlNavigation(request)) {
     event.respondWith(networkFirst(request, RUNTIME_CACHE, "/offline.html"));
+    return;
+  }
+
+  if (shouldAlwaysRefresh(url)) {
+    event.respondWith(networkFirst(request, RUNTIME_CACHE));
     return;
   }
 
