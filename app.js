@@ -264,7 +264,9 @@ function setBookingFormMode(booking = null) {
 }
 
 function clearBookingForm() {
-  document.getElementById("bookingForm").reset();
+  const form = document.getElementById("bookingForm");
+  if (!form) return;
+  form.reset();
   setBookingFormMode();
 }
 
@@ -294,7 +296,9 @@ function setHotelFormMode(booking = null) {
 }
 
 function clearHotelForm() {
-  document.getElementById("hotelBookingForm").reset();
+  const form = document.getElementById("hotelBookingForm");
+  if (!form) return;
+  form.reset();
   setHotelFormMode();
 }
 
@@ -325,7 +329,9 @@ function setClientFormMode(client = null) {
 }
 
 function clearClientForm() {
-  document.getElementById("clientForm").reset();
+  const form = document.getElementById("clientForm");
+  if (!form) return;
+  form.reset();
   setClientFormMode();
 }
 
@@ -349,7 +355,9 @@ function setVendorFormMode(vendor = null) {
 }
 
 function clearVendorForm() {
-  document.getElementById("vendorForm").reset();
+  const form = document.getElementById("vendorForm");
+  if (!form) return;
+  form.reset();
   setVendorFormMode();
 }
 
@@ -374,7 +382,9 @@ function setPaymentFormMode(payment = null) {
 }
 
 function clearPaymentForm() {
-  document.getElementById("paymentForm").reset();
+  const form = document.getElementById("paymentForm");
+  if (!form) return;
+  form.reset();
   setPaymentFormMode();
 }
 
@@ -1541,7 +1551,7 @@ function bindFilters() {
 }
 
 function bindForms() {
-  document.getElementById("bookingForm").addEventListener("submit", async (event) => {
+  document.getElementById("bookingForm")?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const editingBookingId = uiState.editingBookingId;
@@ -1571,7 +1581,7 @@ function bindForms() {
     }
   });
 
-  document.getElementById("clientForm").addEventListener("submit", async (event) => {
+  document.getElementById("clientForm")?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const editingClientId = uiState.editingClientId;
@@ -1596,7 +1606,7 @@ function bindForms() {
     }
   });
 
-  document.getElementById("vendorForm").addEventListener("submit", async (event) => {
+  document.getElementById("vendorForm")?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const editingVendorId = uiState.editingVendorId;
@@ -1622,7 +1632,7 @@ function bindForms() {
     }
   });
 
-  document.getElementById("paymentForm").addEventListener("submit", async (event) => {
+  document.getElementById("paymentForm")?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const editingPaymentId = uiState.editingPaymentId;
@@ -1647,7 +1657,7 @@ function bindForms() {
     }
   });
 
-  document.getElementById("hotelBookingForm").addEventListener("submit", async (event) => {
+  document.getElementById("hotelBookingForm")?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const editingHotelBookingId = uiState.editingHotelBookingId;
