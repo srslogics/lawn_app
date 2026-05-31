@@ -1,14 +1,20 @@
 from __future__ import annotations
 
+import base64
+import hashlib
+import hmac
+import json
 import os
+import secrets
+import time
 from contextlib import asynccontextmanager
 from datetime import date, datetime
 from pathlib import Path
 from typing import Generator, Literal
 
-from fastapi import Depends, FastAPI, HTTPException, Response
+from fastapi import Depends, FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from sqlalchemy import Float, Integer, String, create_engine, inspect, select, text
@@ -69,6 +75,12 @@ IS_SQLITE = DATABASE_URL.startswith("sqlite")
 ACTIVE_DATABASE = "sqlite" if IS_SQLITE else "postgresql"
 DATABASE_STATUS = "pending"
 DATABASE_ERROR: str | None = None
+APP_LOGIN_USERNAME = os.getenv("APP_LOGIN_USERNAME", "admin")
+APP_LOGIN_PASSWORD = os.getenv("APP_LOGIN_PASSWORD", "Royal@123")
+APP_LOGIN_DISPLAY_NAME = os.getenv("APP_LOGIN_DISPLAY_NAME", "Royal Celebration Owner")
+SESSION_COOKIE_NAME = "royal_console_session"
+SESSION_SECRET = os.getenv("APP_SESSION_SECRET", "royal-celebration-console-secret")
+SESSION_MAX_AGE_SECONDS = int(os.getenv("APP_SESSION_MAX_AGE_SECONDS", "604800"))
 ROOM_INVENTORY = {
     "Deluxe Room": 16,
     "Premium Room": 12,
@@ -515,6 +527,11 @@ class EnquiryStatusUpdate(BaseModel):
     status: Literal["New", "Contacted", "Converted", "Closed"]
 
 
+class LoginRequest(BaseModel):
+    username: str = Field(min_length=1)
+    password: str = Field(min_length=1)
+
+
 def get_db() -> Generator[Session, None, None]:
     db = SessionLocal()
     try:
@@ -525,6 +542,66 @@ def get_db() -> Generator[Session, None, None]:
 
 def normalize_text(value: str | None) -> str:
     return (value or "").strip()
+
+
+def session_cookie_secure(request: Request) -> bool:
+    forwarded_proto = request.headers.get("x-forwarded-proto", "").lower()
+    return request.url.scheme == "https" or forwarded_proto == "https"
+
+
+def create_session_token(username: str) -> str:
+    payload = {
+        "username": username,
+        "exp": int(time.time()) + SESSION_MAX_AGE_SECONDS,
+    }
+    raw_payload = json.dumps(payload, separators=(",", ":")).encode("utf-8")
+    encoded_payload = base64.urlsafe_b64encode(raw_payload).decode("ascii")
+    signature = hmac.new(
+        SESSION_SECRET.encode("utf-8"),
+        encoded_payload.encode("utf-8"),
+        hashlib.sha256,
+    ).hexdigest()
+    return f"{encoded_payload}.{signature}"
+
+
+def decode_session_token(token: str | None) -> dict | None:
+    if not token or "." not in token:
+        return None
+
+    encoded_payload, signature = token.rsplit(".", 1)
+    expected_signature = hmac.new(
+        SESSION_SECRET.encode("utf-8"),
+        encoded_payload.encode("utf-8"),
+        hashlib.sha256,
+    ).hexdigest()
+
+    if not secrets.compare_digest(signature, expected_signature):
+        return None
+
+    try:
+        raw_payload = base64.urlsafe_b64decode(encoded_payload.encode("ascii"))
+        payload = json.loads(raw_payload.decode("utf-8"))
+    except (ValueError, UnicodeDecodeError, json.JSONDecodeError):
+        return None
+
+    if payload.get("exp", 0) < int(time.time()):
+        return None
+
+    return payload
+
+
+def is_public_api_request(request: Request) -> bool:
+    if request.method == "OPTIONS":
+        return True
+
+    path = request.url.path
+    if path == "/api/health":
+        return True
+    if path in {"/api/auth/login", "/api/auth/logout", "/api/auth/session"}:
+        return True
+    if path == "/api/enquiries" and request.method == "POST":
+        return True
+    return False
 
 
 def find_duplicate_client(db: Session, phone: str, email: str, exclude_id: str | None = None) -> Client | None:
@@ -934,6 +1011,68 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def require_login_for_console_api(request: Request, call_next):
+    if request.url.path.startswith("/api") and not is_public_api_request(request):
+        session = decode_session_token(request.cookies.get(SESSION_COOKIE_NAME))
+        if session is None:
+            return JSONResponse(status_code=401, content={"detail": "Login required."})
+        request.state.session_user = session["username"]
+
+    return await call_next(request)
+
+
+@app.get("/api/auth/session")
+def auth_session(request: Request) -> dict:
+    session = decode_session_token(request.cookies.get(SESSION_COOKIE_NAME))
+    if session is None:
+        return {"authenticated": False, "user": None}
+
+    return {
+        "authenticated": True,
+        "user": {
+            "username": session["username"],
+            "displayName": APP_LOGIN_DISPLAY_NAME,
+        },
+    }
+
+
+@app.post("/api/auth/login")
+def auth_login(payload: LoginRequest, request: Request) -> JSONResponse:
+    username = normalize_text(payload.username)
+    password = payload.password
+
+    if username != APP_LOGIN_USERNAME or password != APP_LOGIN_PASSWORD:
+        raise HTTPException(status_code=401, detail="Invalid username or password.")
+
+    response = JSONResponse(
+        {
+            "ok": True,
+            "user": {
+                "username": APP_LOGIN_USERNAME,
+                "displayName": APP_LOGIN_DISPLAY_NAME,
+            },
+        }
+    )
+    response.set_cookie(
+        key=SESSION_COOKIE_NAME,
+        value=create_session_token(APP_LOGIN_USERNAME),
+        max_age=SESSION_MAX_AGE_SECONDS,
+        httponly=True,
+        samesite="lax",
+        secure=session_cookie_secure(request),
+        path="/",
+    )
+    return response
+
+
+@app.post("/api/auth/logout")
+def auth_logout() -> JSONResponse:
+    response = JSONResponse({"ok": True})
+    response.delete_cookie(key=SESSION_COOKIE_NAME, path="/")
+    return response
 
 
 @app.get("/api/health")

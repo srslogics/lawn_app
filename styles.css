@@ -92,6 +92,61 @@ textarea {
   border: 0;
 }
 
+.auth-screen {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.auth-card {
+  width: min(100%, 460px);
+  padding: 32px;
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at top left, rgba(187, 135, 68, 0.14), transparent 24%),
+    radial-gradient(circle at top right, rgba(45, 107, 94, 0.08), transparent 20%),
+    linear-gradient(180deg, rgba(255, 252, 247, 0.96) 0%, rgba(246, 238, 228, 0.98) 100%);
+  border: 1px solid rgba(113, 83, 38, 0.1);
+  box-shadow: var(--shadow);
+}
+
+.auth-card h1 {
+  margin: 0 0 12px;
+  font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  line-height: 0.94;
+  letter-spacing: -0.06em;
+}
+
+.auth-copy,
+.auth-message {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.auth-form {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.auth-form label {
+  display: grid;
+  gap: 8px;
+  font-weight: 700;
+}
+
+.auth-message {
+  min-height: 1.6em;
+  font-size: 0.95rem;
+}
+
+.auth-message.error {
+  color: var(--red);
+}
+
 .app-shell {
   display: grid;
   grid-template-columns: 300px 1fr;
@@ -329,8 +384,26 @@ textarea {
   align-items: center;
 }
 
+.session-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 16px;
+  border-radius: 999px;
+  background: rgba(255, 252, 247, 0.86);
+  border: 1px solid rgba(113, 83, 38, 0.1);
+  color: var(--muted);
+  font-size: 0.92rem;
+  white-space: nowrap;
+}
+
+.session-chip strong {
+  color: var(--ink);
+}
+
 .topbar-search input,
 .table-toolbar input,
+.auth-form input,
 .app-form input,
 .app-form select,
 .app-form textarea {
@@ -346,6 +419,7 @@ textarea {
 
 .topbar-search input::placeholder,
 .table-toolbar input::placeholder,
+.auth-form input::placeholder,
 .app-form input::placeholder,
 .app-form textarea::placeholder {
   color: rgba(103, 88, 68, 0.92);
@@ -354,6 +428,7 @@ textarea {
 
 .topbar-search input:focus,
 .table-toolbar input:focus,
+.auth-form input:focus,
 .app-form input:focus,
 .app-form select:focus,
 .app-form textarea:focus {
@@ -1134,6 +1209,12 @@ textarea {
 
   .topbar-search {
     width: 100%;
+    grid-column: 1 / -1;
+  }
+
+  .session-chip {
+    width: 100%;
+    justify-content: center;
     grid-column: 1 / -1;
   }
 

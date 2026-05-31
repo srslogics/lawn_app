@@ -16,6 +16,10 @@ let state = {
   dashboard: null
 };
 
+let authState = {
+  user: null
+};
+
 let uiState = {
   selectedBookingId: null,
   bookingFilter: "All",
@@ -104,12 +108,37 @@ function showToast(message) {
   }, 2500);
 }
 
+function setLoginMessage(message, type = "") {
+  const messageNode = document.getElementById("loginMessage");
+  if (!messageNode) return;
+  messageNode.textContent = message;
+  messageNode.classList.toggle("error", type === "error");
+}
+
+function showAuthScreen(message = "Use the owner login to continue into the workspace.") {
+  document.getElementById("authScreen")?.removeAttribute("hidden");
+  document.getElementById("appShell")?.setAttribute("hidden", "hidden");
+  document.getElementById("logoutBtn")?.setAttribute("hidden", "hidden");
+  document.getElementById("sessionChip")?.setAttribute("hidden", "hidden");
+  setLoginMessage(message);
+}
+
+function showAppShell() {
+  document.getElementById("authScreen")?.setAttribute("hidden", "hidden");
+  document.getElementById("appShell")?.removeAttribute("hidden");
+  document.getElementById("logoutBtn")?.removeAttribute("hidden");
+  document.getElementById("sessionChip")?.removeAttribute("hidden");
+  document.getElementById("sessionUserName").textContent =
+    authState.user?.displayName || authState.user?.username || "Owner";
+}
+
 async function api(path, options = {}) {
   const response = await fetch(`${API_BASE}${path}`, {
     headers: {
       "Content-Type": "application/json",
       ...(options.headers || {})
     },
+    credentials: "include",
     ...options
   });
 
@@ -121,7 +150,13 @@ async function api(path, options = {}) {
     } catch {
       // ignore parse failure
     }
-    throw new Error(message);
+    if (response.status === 401 && !options.skipAuthRedirect) {
+      authState.user = null;
+      showAuthScreen("Your session has ended. Sign in again to continue.");
+    }
+    const error = new Error(message);
+    error.status = response.status;
+    throw error;
   }
 
   const contentType = response.headers.get("content-type") || "";
@@ -1449,6 +1484,19 @@ async function refreshState() {
   renderAll();
 }
 
+async function restoreSession() {
+  const session = await api("/auth/session", { skipAuthRedirect: true });
+  if (!session.authenticated) {
+    authState.user = null;
+    showAuthScreen();
+    return false;
+  }
+
+  authState.user = session.user;
+  showAppShell();
+  return true;
+}
+
 function resetForms() {
   clearBookingForm();
   clearClientForm();
@@ -1707,21 +1755,73 @@ function bindUtilityActions() {
     showToast("Edit cancelled.");
   });
 
+  document.getElementById("logoutBtn")?.addEventListener("click", async () => {
+    try {
+      await api("/auth/logout", {
+        method: "POST",
+        skipAuthRedirect: true
+      });
+    } catch {
+      // Even if logout API fails, return the user to login locally.
+    }
+    authState.user = null;
+    showAuthScreen("You have signed out.");
+  });
+}
+
+function bindAuth() {
+  document.getElementById("loginForm")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const submitButton = document.getElementById("loginSubmitBtn");
+
+    submitButton.disabled = true;
+    setLoginMessage("Signing you in...");
+
+    try {
+      const result = await api("/auth/login", {
+        method: "POST",
+        body: JSON.stringify({
+          username: formData.get("username"),
+          password: formData.get("password")
+        }),
+        skipAuthRedirect: true
+      });
+
+      authState.user = result.user;
+      event.currentTarget.reset();
+      showAppShell();
+      await refreshState();
+      showToast("Welcome back.");
+    } catch (error) {
+      setLoginMessage(error.message || "Login failed.", "error");
+    } finally {
+      submitButton.disabled = false;
+    }
+  });
+}
+
+async function initApp() {
+  setView("dashboard");
+  await refreshState();
 }
 
 async function init() {
+  bindNavigation();
+  bindFilters();
+  bindForms();
+  bindUtilityActions();
+  bindAuth();
+  syncMobileNav();
+
   try {
-    bindNavigation();
-    bindFilters();
-    bindForms();
-    bindUtilityActions();
-    syncMobileNav();
-    setView("dashboard");
-    await refreshState();
+    const authenticated = await restoreSession();
+    if (authenticated) {
+      await initApp();
+    }
   } catch (error) {
+    showAuthScreen("The console could not reach the server. Please reload and try again.");
     showToast(`Startup failed: ${error.message}`);
-    document.getElementById("todayList").innerHTML =
-      `<div class="empty-state">The app could not reach the backend. Start the server on 127.0.0.1:4173 and reload.</div>`;
   }
 }
 

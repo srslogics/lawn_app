@@ -22,7 +22,35 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="app-shell">
+    <section class="auth-screen" id="authScreen">
+      <div class="auth-card">
+        <p class="eyebrow">Owner Login</p>
+        <h1>Welcome back to Royal Celebration Console</h1>
+        <p class="auth-copy">
+          Sign in to manage bookings, hotel stays, collections, enquiries, and daily venue operations.
+        </p>
+        <form class="auth-form" id="loginForm">
+          <label>
+            Username
+            <input name="username" autocomplete="username" required placeholder="Enter username" />
+          </label>
+          <label>
+            Password
+            <input
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              required
+              placeholder="Enter password"
+            />
+          </label>
+          <p class="auth-message" id="loginMessage">Use the owner login to continue into the workspace.</p>
+          <button class="primary-btn full-width" id="loginSubmitBtn" type="submit">Sign in</button>
+        </form>
+      </div>
+    </section>
+
+    <div class="app-shell" id="appShell" hidden>
       <aside class="sidebar">
         <div class="brand-block">
           <p class="eyebrow">Venue Management</p>
@@ -64,6 +92,10 @@
               <span class="sr-only">Global booking search</span>
               <input id="globalSearch" placeholder="Search bookings, guests, or clients" />
             </label>
+            <span class="session-chip" id="sessionChip" hidden>
+              Signed in as <strong id="sessionUserName">Owner</strong>
+            </span>
+            <button class="ghost-btn small-btn" id="logoutBtn" type="button" hidden>Sign out</button>
             <button class="primary-btn" id="quickAddBtn">New booking</button>
           </div>
         </header>
