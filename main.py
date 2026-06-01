@@ -82,10 +82,10 @@ SESSION_COOKIE_NAME = "royal_console_session"
 SESSION_SECRET = os.getenv("APP_SESSION_SECRET", "royal-celebration-console-secret")
 SESSION_MAX_AGE_SECONDS = int(os.getenv("APP_SESSION_MAX_AGE_SECONDS", "604800"))
 ROOM_INVENTORY = {
-    "Deluxe Room": 16,
-    "Premium Room": 12,
-    "Family Suite": 8,
-    "Executive Suite": 4,
+    "Non AC Standard": 14,
+    "Non AC Deluxe": 8,
+    "AC Standard": 12,
+    "AC Deluxe": 6,
 }
 
 
@@ -390,7 +390,7 @@ SEED = {
             "id": "H001",
             "guest_name": "Rhea Malhotra",
             "phone": "+91 9898981212",
-            "room_type": "Premium Room",
+            "room_type": "AC Standard",
             "check_in": "2026-05-09",
             "check_out": "2026-05-11",
             "rooms_count": 6,
@@ -405,7 +405,7 @@ SEED = {
             "id": "H002",
             "guest_name": "Khanna Family Stay",
             "phone": "+91 9811188811",
-            "room_type": "Family Suite",
+            "room_type": "AC Deluxe",
             "check_in": "2026-05-13",
             "check_out": "2026-05-15",
             "rooms_count": 8,
@@ -420,7 +420,7 @@ SEED = {
             "id": "H003",
             "guest_name": "Axis Buildcon Team",
             "phone": "+91 9877000022",
-            "room_type": "Deluxe Room",
+            "room_type": "Non AC Deluxe",
             "check_in": "2026-05-20",
             "check_out": "2026-05-21",
             "rooms_count": 4,
