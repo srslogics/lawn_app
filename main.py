@@ -14,7 +14,7 @@ from typing import Generator, Literal
 
 from fastapi import Depends, FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from sqlalchemy import Float, Integer, String, create_engine, inspect, select, text
@@ -1689,9 +1689,54 @@ def root() -> FileResponse:
     return FileResponse(ROOT_DIR / "index.html")
 
 
+@app.get("/home")
+def home_page() -> FileResponse:
+    return FileResponse(ROOT_DIR / "home.html")
+
+
+@app.get("/celebrations")
+def celebrations_page() -> FileResponse:
+    return FileResponse(ROOT_DIR / "celebrations.html")
+
+
+@app.get("/stays")
+def stays_page() -> FileResponse:
+    return FileResponse(ROOT_DIR / "stays.html")
+
+
+@app.get("/gallery")
+def gallery_page() -> FileResponse:
+    return FileResponse(ROOT_DIR / "gallery.html")
+
+
 @app.get("/enquiry")
 def enquiry_page() -> FileResponse:
     return FileResponse(ROOT_DIR / "enquiry.html")
+
+
+@app.get("/home.html")
+def home_page_redirect() -> RedirectResponse:
+    return RedirectResponse(url="/home", status_code=308)
+
+
+@app.get("/celebrations.html")
+def celebrations_page_redirect() -> RedirectResponse:
+    return RedirectResponse(url="/celebrations", status_code=308)
+
+
+@app.get("/stays.html")
+def stays_page_redirect() -> RedirectResponse:
+    return RedirectResponse(url="/stays", status_code=308)
+
+
+@app.get("/gallery.html")
+def gallery_page_redirect() -> RedirectResponse:
+    return RedirectResponse(url="/gallery", status_code=308)
+
+
+@app.get("/enquiry.html")
+def enquiry_page_redirect() -> RedirectResponse:
+    return RedirectResponse(url="/enquiry", status_code=308)
 
 
 @app.get("/favicon.ico")
