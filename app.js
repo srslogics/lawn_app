@@ -1782,7 +1782,8 @@ function bindUtilityActions() {
 function bindAuth() {
   document.getElementById("loginForm")?.addEventListener("submit", async (event) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
+    const form = event.currentTarget;
+    const formData = new FormData(form);
     const submitButton = document.getElementById("loginSubmitBtn");
 
     submitButton.disabled = true;
@@ -1799,7 +1800,7 @@ function bindAuth() {
       });
 
       authState.user = result.user;
-      event.currentTarget.reset();
+      form.reset();
       showAppShell();
       await refreshState();
       showToast("Welcome back.");
