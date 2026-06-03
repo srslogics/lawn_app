@@ -1686,12 +1686,27 @@ def reset(db: Session = Depends(get_db)) -> dict:
 
 @app.get("/")
 def root() -> FileResponse:
-    return FileResponse(ROOT_DIR / "index.html")
+    return FileResponse(ROOT_DIR / "home.html")
 
 
 @app.get("/home")
-def home_page() -> FileResponse:
-    return FileResponse(ROOT_DIR / "home.html")
+def home_page() -> RedirectResponse:
+    return RedirectResponse(url="/", status_code=308)
+
+
+@app.get("/console")
+def console_page() -> FileResponse:
+    return FileResponse(ROOT_DIR / "index.html")
+
+
+@app.get("/console/")
+def console_page_slash() -> RedirectResponse:
+    return RedirectResponse(url="/console", status_code=308)
+
+
+@app.get("/index.html")
+def index_page_redirect() -> RedirectResponse:
+    return RedirectResponse(url="/console", status_code=308)
 
 
 @app.get("/celebrations")
@@ -1716,7 +1731,7 @@ def enquiry_page() -> FileResponse:
 
 @app.get("/home.html")
 def home_page_redirect() -> RedirectResponse:
-    return RedirectResponse(url="/home", status_code=308)
+    return RedirectResponse(url="/", status_code=308)
 
 
 @app.get("/celebrations.html")

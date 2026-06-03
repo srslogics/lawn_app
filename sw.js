@@ -1,15 +1,8 @@
-const STATIC_CACHE = "royal-celebration-static-v2";
-const RUNTIME_CACHE = "royal-celebration-runtime-v2";
-const API_CACHE = "royal-celebration-api-v2";
+const STATIC_CACHE = "royal-celebration-static-v3";
+const RUNTIME_CACHE = "royal-celebration-runtime-v3";
+const API_CACHE = "royal-celebration-api-v3";
 
 const APP_SHELL = [
-  "/",
-  "/index.html",
-  "/home",
-  "/celebrations",
-  "/stays",
-  "/gallery",
-  "/enquiry",
   "/offline.html",
   "/styles.css",
   "/enquiry.css",
@@ -83,6 +76,7 @@ function cacheFirst(request, cacheName) {
 function shouldAlwaysRefresh(url) {
   return [
     "/",
+    "/console",
     "/index.html",
     "/home",
     "/celebrations",
