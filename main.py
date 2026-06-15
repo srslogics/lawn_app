@@ -86,6 +86,7 @@ ROOM_INVENTORY = {
     "Non AC Deluxe": 8,
     "AC Standard": 12,
     "AC Deluxe": 6,
+    "Dormitory": 20,
 }
 
 
