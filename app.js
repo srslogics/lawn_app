@@ -989,7 +989,13 @@ function renderEnquiriesTable() {
             <td data-label="Date">${enquiry.eventDate}</td>
             <td data-label="Guests">${enquiry.guestCount}</td>
             <td data-label="Budget">${money(Number(enquiry.budget))}</td>
-            <td data-label="Stay">${enquiry.stayRequired === "Yes" ? `${enquiry.roomsNeeded || 0} room(s)` : "No stay"}</td>
+            <td data-label="Stay">${
+              enquiry.stayRequired === "Yes"
+                ? `${enquiry.roomsNeeded || 0} room(s)`
+                : enquiry.stayRequired === "Maybe"
+                  ? "Maybe"
+                  : "No stay"
+            }</td>
             <td data-label="Status"><span class="status-pill status-${safeStatusClass(enquiry.status)}">${enquiry.status}</span></td>
             <td data-label="Actions">
               <div class="inline-actions">

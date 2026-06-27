@@ -70,6 +70,7 @@ function applyEnquiryPreset(button) {
 function syncRoomsField() {
   const stayRequired = document.getElementById("stayRequired");
   const roomsNeeded = document.getElementById("roomsNeeded");
+  const roomTypePreference = document.querySelector('[name="roomTypePreference"]');
 
   if (!stayRequired || !roomsNeeded) {
     return;
@@ -78,9 +79,15 @@ function syncRoomsField() {
   const disabled = stayRequired.value === "No";
   roomsNeeded.disabled = disabled;
   roomsNeeded.required = stayRequired.value === "Yes";
+  if (roomTypePreference) {
+    roomTypePreference.disabled = disabled;
+  }
 
   if (disabled) {
     roomsNeeded.value = "";
+    if (roomTypePreference) {
+      roomTypePreference.value = "";
+    }
   }
 }
 
@@ -155,6 +162,11 @@ document.getElementById("enquiryForm")?.addEventListener("submit", async (event)
     }
 
     const roomsNeededValue = formData.get("roomsNeeded");
+    const roomTypePreference = String(formData.get("roomTypePreference") || "").trim();
+    const messageValue = String(formData.get("message") || "").trim();
+    const composedMessage = roomTypePreference
+      ? `Preferred room type: ${roomTypePreference}${messageValue ? `\n${messageValue}` : ""}`
+      : messageValue;
     await api("/enquiries", {
       method: "POST",
       body: JSON.stringify({
@@ -167,7 +179,7 @@ document.getElementById("enquiryForm")?.addEventListener("submit", async (event)
         budget: Number(formData.get("budget")),
         stayRequired: formData.get("stayRequired"),
         roomsNeeded: roomsNeededValue ? Number(roomsNeededValue) : null,
-        message: formData.get("message")
+        message: composedMessage
       })
     });
 

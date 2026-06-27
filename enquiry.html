@@ -171,7 +171,7 @@
             </article>
             <article>
               <span>Guest stay</span>
-              <strong>AC and Non AC rooms with Standard and Deluxe options</strong>
+              <strong>AC, Non AC, Standard, Deluxe, and dormitory stay options</strong>
             </article>
           </div>
           <div class="hero-panel__promise">
@@ -323,6 +323,25 @@
               </div>
             </div>
           </article>
+
+          <article class="info-card process-card">
+            <p class="eyebrow">Approximate planning range</p>
+            <h2>Useful starting direction before the first venue call.</h2>
+            <div class="process-list">
+              <div>
+                <strong>Wedding and reception bookings</strong>
+                <p>Venue bookings usually begin from approximately ₹1.50 lakh and move higher based on event scale, decor, and hospitality needs.</p>
+              </div>
+              <div>
+                <strong>Haldi, mehendi, sangeet, and related functions</strong>
+                <p>Pre-wedding events usually start lower and vary by guest count, event timing, setup style, and whether multiple functions are planned.</p>
+              </div>
+              <div>
+                <strong>Room charges</strong>
+                <p>Room rates depend on AC or Non AC preference, Standard or Deluxe category, dormitory requirement, season, and room-block size.</p>
+              </div>
+            </div>
+          </article>
         </div>
 
         <article class="form-card">
@@ -388,6 +407,18 @@
               </select>
             </label>
             <label>
+              Preferred room type
+              <select name="roomTypePreference">
+                <option value="">Select room type</option>
+                <option value="Non AC Standard">Non AC Standard</option>
+                <option value="Non AC Deluxe">Non AC Deluxe</option>
+                <option value="AC Standard">AC Standard</option>
+                <option value="AC Deluxe">AC Deluxe</option>
+                <option value="Dormitory">Dormitory</option>
+                <option value="Mixed">Mixed room types</option>
+              </select>
+            </label>
+            <label>
               Approximate rooms needed
               <input name="roomsNeeded" id="roomsNeeded" type="number" min="0" placeholder="18" />
             </label>
@@ -412,6 +443,7 @@
               <li>Whether room stays are needed for family or outstation guests</li>
               <li>Budget comfort range for celebration and stay planning</li>
               <li>Preferred room category such as AC or Non AC and Standard or Deluxe option</li>
+              <li>Whether you want AC hall or Non AC hall preference for the event</li>
               <li>Important setup, hospitality, or decor notes</li>
             </ul>
           </div>
@@ -454,36 +486,41 @@
 
       <section class="trust-section reveal">
         <article class="testimonial-card">
-          <p class="eyebrow">Sample Testimonials</p>
-          <h2>Temporary social proof shaped around destination weddings.</h2>
-          <div class="testimonial-list">
-            <blockquote>
-              “We wanted a destination-style wedding where our close family could stay together and the venue could handle the wedding day beautifully. This property felt practical and elegant.”
-              <cite>Priya & Karan, Wedding Weekend</cite>
-            </blockquote>
-            <blockquote>
-              “The best part was having our celebration functions and room stays planned together. It made guest arrivals, family coordination, and reception-night flow feel much smoother.”
-              <cite>Sharma Family, Destination Reception</cite>
-            </blockquote>
-            <blockquote>
-              “For outstation guests, the hotel rooms made a real difference. We could think about haldi, sangeet, and wedding day as one hosted experience instead of separate bookings.”
-              <cite>Malhotra Family, Family Wedding Celebration</cite>
-            </blockquote>
+          <p class="eyebrow">Before you enquire</p>
+          <h2>What most families want clarity on first.</h2>
+          <div class="timeline-list">
+            <article class="timeline-card">
+              <strong>Date availability</strong>
+              <p>Families usually start with preferred dates, guest count, and whether multiple functions are planned.</p>
+            </article>
+            <article class="timeline-card">
+              <strong>Room requirement</strong>
+              <p>Outstation guests and close family stay planning often affects the venue decision from the beginning.</p>
+            </article>
+            <article class="timeline-card">
+              <strong>Budget direction</strong>
+              <p>Venue range, function style, and stay requirement help the team suggest a more useful next conversation.</p>
+            </article>
           </div>
         </article>
 
         <article class="location-card">
-          <p class="eyebrow">Sample Address</p>
+          <p class="eyebrow">Venue address</p>
           <h2>Venue location and reach</h2>
           <p>
             Royal Celebration, Chakki, Khapa Road, Godhani Road, Godhani (Railway), Maharashtra 441123
           </p>
           <div class="location-map">
             <span>Venue map</span>
-            <strong>Families can use the venue address to locate Royal Celebration in Nagpur and plan a walkthrough.</strong>
+            <iframe
+              title="Royal Celebration map"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              src="https://www.google.com/maps?q=Royal+Celebration+Nagpur&output=embed"
+            ></iframe>
           </div>
           <div class="location-actions">
-            <a href="#">Get directions</a>
+            <a href="https://www.google.com/maps/dir//Royal+Celebration,+Chakki,+Khapa+Road,+Godhani+Road,+Godhani+(Railway),+Maharashtra+441123/@21.2030614,79.075803,15z/data=!4m8!4m7!1m0!1m5!1m1!1s0x3bd4c23230b073eb:0xeb5e84f1f5f2939f!2m2!1d79.0598125!2d21.2278125?entry=ttu&g_ep=EgoyMDI2MDUwNi4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noreferrer">Get directions</a>
             <a href="https://www.instagram.com/royal.celebrations_ngp/" target="_blank" rel="noreferrer">Open Instagram</a>
           </div>
         </article>
@@ -539,6 +576,16 @@
       </div>
       <button type="button" class="floating-enquiry-bar__button" data-scroll="#enquiry-form-section">Make enquiry</button>
     </div>
+
+    <a
+      class="floating-whatsapp"
+      href="https://wa.me/919422112355?text=Hello%20Royal%20Celebration%2C%20I%20want%20to%20check%20availability%20for%20a%20wedding%20or%20event."
+      target="_blank"
+      rel="noreferrer"
+      aria-label="Chat on WhatsApp"
+    >
+      WhatsApp
+    </a>
 
     <div class="toast" id="toast" aria-live="polite"></div>
     <script src="pwa.js"></script>

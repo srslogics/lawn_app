@@ -1529,6 +1529,160 @@ video {
   margin-top: 26px;
 }
 
+.availability-section {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 24px;
+  align-items: start;
+  margin-top: 26px;
+}
+
+.availability-section__copy {
+  padding: 12px 6px 0;
+}
+
+.availability-section__copy h2 {
+  margin: 0 0 14px;
+  font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+  font-size: clamp(2.1rem, 3.4vw, 3.2rem);
+  line-height: 0.98;
+  letter-spacing: -0.05em;
+}
+
+.availability-section__copy p {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.availability-panel {
+  display: grid;
+  gap: 16px;
+}
+
+.availability-summary,
+.availability-month,
+.availability-empty {
+  border: 1px solid var(--line);
+  border-radius: 30px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.availability-summary,
+.availability-month {
+  padding: 24px;
+}
+
+.availability-summary strong,
+.availability-month strong {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.availability-summary p,
+.availability-empty {
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.availability-months {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.availability-days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.availability-day {
+  min-height: 62px;
+  display: grid;
+  place-items: center;
+  padding: 8px 4px;
+  border-radius: 16px;
+  border: 1px solid rgba(118, 84, 35, 0.08);
+  background: rgba(255, 255, 255, 0.76);
+  text-align: center;
+}
+
+.availability-day span {
+  font-size: 0.7rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.availability-day strong {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.availability-day--open {
+  background: rgba(37, 211, 102, 0.12);
+  border-color: rgba(37, 211, 102, 0.24);
+}
+
+.availability-day--limited {
+  background: rgba(217, 160, 82, 0.16);
+  border-color: rgba(217, 160, 82, 0.34);
+}
+
+.availability-day--booked {
+  background: rgba(207, 97, 78, 0.14);
+  border-color: rgba(207, 97, 78, 0.34);
+}
+
+.availability-day--past {
+  opacity: 0.42;
+  background: rgba(255, 255, 255, 0.42);
+}
+
+.availability-legend,
+.availability-highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.availability-legend span,
+.availability-highlights span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(118, 84, 35, 0.08);
+  background: rgba(255, 255, 255, 0.7);
+  font-weight: 700;
+}
+
+.availability-legend i {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.availability-legend .is-open {
+  background: #25d366;
+}
+
+.availability-legend .is-limited {
+  background: #d9a052;
+}
+
+.availability-legend .is-booked {
+  background: #cf614e;
+}
+
+.availability-empty {
+  padding: 24px;
+}
+
 .split-section__copy {
   padding: 12px 6px 0;
 }
@@ -2254,6 +2408,14 @@ video {
   text-transform: uppercase;
 }
 
+.location-map iframe {
+  width: 100%;
+  min-height: 260px;
+  border: 0;
+  border-radius: 18px;
+  background: #efe5d7;
+}
+
 .location-actions {
   display: flex;
   flex-wrap: wrap;
@@ -2401,6 +2563,28 @@ body.js-enhanced .reveal.is-visible {
   pointer-events: none;
 }
 
+.floating-whatsapp {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 30;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
+  padding: 0 20px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #25d366 0%, #148a45 100%);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 800;
+  box-shadow: 0 18px 34px rgba(20, 138, 69, 0.28);
+}
+
+.floating-whatsapp:hover {
+  filter: brightness(1.04);
+}
+
 .toast.visible {
   opacity: 1;
   transform: translateY(0);
@@ -2488,6 +2672,7 @@ body.js-enhanced .reveal.is-visible {
   .showcase-section,
   .trust-section,
   .split-section,
+  .availability-section,
   .contact-grid,
   .benefit-grid,
   .enquiry-form,
@@ -2505,7 +2690,8 @@ body.js-enhanced .reveal.is-visible {
   .home-story__cards,
   .editorial-showcase__grid,
   .home-hero__visual,
-  .media-showcase__grid--rooms {
+  .media-showcase__grid--rooms,
+  .availability-months {
     grid-template-columns: 1fr;
   }
 
@@ -2574,6 +2760,7 @@ body.js-enhanced .reveal.is-visible {
   .showcase-section,
   .trust-section,
   .split-section,
+  .availability-section,
   .visual-grid,
   .media-showcase,
   .page-hero {
@@ -2756,7 +2943,9 @@ body.js-enhanced .reveal.is-visible {
   .credibility-card,
   .testimonial-card,
   .location-card,
-  .journey-bar {
+  .journey-bar,
+  .availability-month,
+  .availability-summary {
     padding: 20px;
     border-radius: 22px;
   }
@@ -2818,6 +3007,7 @@ body.js-enhanced .reveal.is-visible {
   .moment-editorial__intro h2,
   .hosting-story__lead h2,
   .experience-film__copy h2,
+  .availability-section__copy h2,
   .gallery-copy h2,
   .split-section__copy h2,
   .media-showcase__lead h2,
@@ -2840,6 +3030,8 @@ body.js-enhanced .reveal.is-visible {
   .room-card,
   .map-panel,
   .timeline-card,
+  .availability-month,
+  .availability-summary,
   .cta-banner {
     padding: 22px;
   }
@@ -2849,7 +3041,9 @@ body.js-enhanced .reveal.is-visible {
   .trust-strip,
   .benefit-grid,
   .timeline-list,
-  .process-list {
+  .process-list,
+  .availability-legend,
+  .availability-highlights {
     gap: 12px;
   }
 
@@ -2911,6 +3105,8 @@ body.js-enhanced .reveal.is-visible {
   .cta-banner,
   .page-hero__panel,
   .hero-panel__card,
+  .availability-month,
+  .availability-summary,
   .visual-card,
   .gallery-card,
   .detail-card,
@@ -2943,6 +3139,7 @@ body.js-enhanced .reveal.is-visible {
   }
 
   .page-hero__copy h1,
+  .availability-section__copy h2,
   .gallery-copy h2,
   .split-section__copy h2,
   .showcase-copy h2,
@@ -3048,6 +3245,11 @@ body.js-enhanced .reveal.is-visible {
     padding: 14px 16px;
   }
 
+  .availability-day {
+    min-height: 56px;
+    padding: 10px 6px;
+  }
+
   .journey-bar__meta strong {
     font-size: 1.04rem;
     line-height: 1.35;
@@ -3088,6 +3290,13 @@ body.js-enhanced .reveal.is-visible {
 
   .floating-enquiry-bar__button {
     min-height: 44px;
+  }
+
+  .floating-whatsapp {
+    right: 10px;
+    bottom: 84px;
+    min-height: 46px;
+    padding: 0 16px;
   }
 
   .toast {

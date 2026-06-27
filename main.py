@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import base64
+from calendar import month_name, monthrange
 import hashlib
 import hmac
 import json
@@ -8,7 +9,7 @@ import os
 import secrets
 import time
 from contextlib import asynccontextmanager
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Generator, Literal
 
@@ -600,6 +601,8 @@ def is_public_api_request(request: Request) -> bool:
         return True
     if path in {"/api/auth/login", "/api/auth/logout", "/api/auth/session"}:
         return True
+    if path == "/api/public-availability":
+        return True
     if path == "/api/enquiries" and request.method == "POST":
         return True
     return False
@@ -995,6 +998,98 @@ def dashboard_summary(db: Session) -> dict:
         "reminders": reminders,
         "activity": activity_messages(db)[:8],
         "tasks": [serialize_task(row) for row in tasks],
+    }
+
+
+def add_months(source: date, months: int) -> date:
+    year = source.year + ((source.month - 1 + months) // 12)
+    month = ((source.month - 1 + months) % 12) + 1
+    return date(year, month, 1)
+
+
+def build_public_availability(db: Session) -> dict:
+    today = date.today()
+    window_end = today + timedelta(days=120)
+    tracked_statuses = {"Inquiry", "Upcoming", "Confirmed"}
+    booking_rows = db.scalars(select(Booking).order_by(Booking.event_date.asc())).all()
+    status_by_date: dict[str, str] = {}
+    event_count_by_date: dict[str, int] = {}
+
+    for row in booking_rows:
+        if row.status not in tracked_statuses:
+            continue
+        try:
+            event_day = date.fromisoformat(row.event_date)
+        except ValueError:
+            continue
+        if event_day > window_end:
+            continue
+
+        iso_key = event_day.isoformat()
+        event_count_by_date[iso_key] = event_count_by_date.get(iso_key, 0) + 1
+
+        if row.status in {"Confirmed", "Upcoming"}:
+            status_by_date[iso_key] = "booked"
+        elif status_by_date.get(iso_key) != "booked":
+            status_by_date[iso_key] = "limited"
+
+    months: list[dict] = []
+    month_start = date(today.year, today.month, 1)
+    for offset in range(3):
+        current_month = add_months(month_start, offset)
+        days_in_month = monthrange(current_month.year, current_month.month)[1]
+        month_days: list[dict] = []
+
+        for day_number in range(1, days_in_month + 1):
+            current_day = date(current_month.year, current_month.month, day_number)
+            iso_key = current_day.isoformat()
+            if current_day < today:
+                status = "past"
+            else:
+                status = status_by_date.get(iso_key, "open")
+
+            note = ""
+            if status == "booked":
+                note = "Booked"
+            elif status == "limited":
+                note = "High interest"
+            elif status == "open" and current_day >= today:
+                note = "Open"
+
+            month_days.append(
+                {
+                    "iso": iso_key,
+                    "day": day_number,
+                    "weekday": current_day.strftime("%a"),
+                    "status": status,
+                    "note": note,
+                    "eventsCount": event_count_by_date.get(iso_key, 0),
+                }
+            )
+
+        months.append(
+            {
+                "label": f"{month_name[current_month.month]} {current_month.year}",
+                "year": current_month.year,
+                "month": current_month.month,
+                "days": month_days,
+            }
+        )
+
+    next_busy_dates = [
+        {
+            "date": iso_key,
+            "status": status_by_date[iso_key],
+            "eventsCount": event_count_by_date.get(iso_key, 0),
+        }
+        for iso_key in sorted(status_by_date.keys())
+        if iso_key >= today.isoformat()
+    ][:8]
+
+    return {
+        "today": today.isoformat(),
+        "months": months,
+        "nextBusyDates": next_busy_dates,
     }
 
 
@@ -1592,12 +1687,17 @@ def list_enquiries(db: Session = Depends(get_db)) -> list[dict]:
     return [serialize_enquiry(row) for row in rows]
 
 
+@app.get("/api/public-availability")
+def public_availability(db: Session = Depends(get_db)) -> dict:
+    return build_public_availability(db)
+
+
 @app.post("/api/enquiries", status_code=201)
 def create_enquiry(payload: EnquiryCreate, db: Session = Depends(get_db)) -> dict:
     event_date = parse_iso_date(payload.eventDate, "Event date")
     stay_required = normalize_text(payload.stayRequired) or "No"
-    if stay_required not in {"Yes", "No"}:
-        raise HTTPException(status_code=422, detail="Stay requirement must be either Yes or No.")
+    if stay_required not in {"Yes", "No", "Maybe"}:
+        raise HTTPException(status_code=422, detail="Stay requirement must be Yes, No, or Maybe.")
 
     rooms_needed = payload.roomsNeeded
     if stay_required == "Yes" and (rooms_needed is None or rooms_needed < 1):
