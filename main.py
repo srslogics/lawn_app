@@ -91,6 +91,13 @@ ROOM_INVENTORY = {
 }
 
 
+def html_file_response(path: Path) -> FileResponse:
+    response = FileResponse(path)
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    return response
+
+
 class Base(DeclarativeBase):
     pass
 
@@ -1787,7 +1794,7 @@ def reset(db: Session = Depends(get_db)) -> dict:
 
 @app.get("/")
 def root() -> FileResponse:
-    return FileResponse(ROOT_DIR / "home.html")
+    return html_file_response(ROOT_DIR / "home.html")
 
 
 @app.get("/home")
@@ -1797,7 +1804,7 @@ def home_page() -> RedirectResponse:
 
 @app.get("/console")
 def console_page() -> FileResponse:
-    return FileResponse(ROOT_DIR / "index.html")
+    return html_file_response(ROOT_DIR / "index.html")
 
 
 @app.get("/console/")
@@ -1812,22 +1819,22 @@ def index_page_redirect() -> RedirectResponse:
 
 @app.get("/celebrations")
 def celebrations_page() -> FileResponse:
-    return FileResponse(ROOT_DIR / "celebrations.html")
+    return html_file_response(ROOT_DIR / "celebrations.html")
 
 
 @app.get("/stays")
 def stays_page() -> FileResponse:
-    return FileResponse(ROOT_DIR / "stays.html")
+    return html_file_response(ROOT_DIR / "stays.html")
 
 
 @app.get("/gallery")
 def gallery_page() -> FileResponse:
-    return FileResponse(ROOT_DIR / "gallery.html")
+    return html_file_response(ROOT_DIR / "gallery.html")
 
 
 @app.get("/enquiry")
 def enquiry_page() -> FileResponse:
-    return FileResponse(ROOT_DIR / "enquiry.html")
+    return html_file_response(ROOT_DIR / "enquiry.html")
 
 
 @app.get("/home.html")

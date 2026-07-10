@@ -1788,11 +1788,13 @@ function bindUtilityActions() {
 function bindAuth() {
   document.getElementById("loginForm")?.addEventListener("submit", async (event) => {
     event.preventDefault();
-    const form = event.currentTarget;
+    const form = document.getElementById("loginForm");
     const formData = new FormData(form);
     const submitButton = document.getElementById("loginSubmitBtn");
 
-    submitButton.disabled = true;
+    if (submitButton) {
+      submitButton.disabled = true;
+    }
     setLoginMessage("Signing you in...");
 
     try {
@@ -1806,14 +1808,18 @@ function bindAuth() {
       });
 
       authState.user = result.user;
-      form.reset();
       showAppShell();
+      if (form && typeof form.reset === "function") {
+        form.reset();
+      }
       await refreshState();
       showToast("Welcome back.");
     } catch (error) {
       setLoginMessage(error.message || "Login failed.", "error");
     } finally {
-      submitButton.disabled = false;
+      if (submitButton) {
+        submitButton.disabled = false;
+      }
     }
   });
 }

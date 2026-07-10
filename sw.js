@@ -1,6 +1,6 @@
-const STATIC_CACHE = "royal-celebration-static-v3";
-const RUNTIME_CACHE = "royal-celebration-runtime-v3";
-const API_CACHE = "royal-celebration-api-v3";
+const STATIC_CACHE = "royal-celebration-static-v4";
+const RUNTIME_CACHE = "royal-celebration-runtime-v4";
+const API_CACHE = "royal-celebration-api-v4";
 
 const APP_SHELL = [
   "/offline.html",
@@ -60,6 +60,15 @@ function networkFirst(request, cacheName, fallbackUrl) {
     });
 }
 
+function networkOnlyWithOffline(request, fallbackUrl) {
+  return fetch(request).catch(async () => {
+    const cached = await caches.match(request);
+    if (cached) return cached;
+    if (fallbackUrl) return caches.match(fallbackUrl);
+    throw new Error("Network unavailable");
+  });
+}
+
 function cacheFirst(request, cacheName) {
   return caches.match(request).then((cached) => {
     if (cached) return cached;
@@ -108,7 +117,7 @@ self.addEventListener("fetch", (event) => {
   }
 
   if (isHtmlNavigation(request)) {
-    event.respondWith(networkFirst(request, RUNTIME_CACHE, "/offline.html"));
+    event.respondWith(networkOnlyWithOffline(request, "/offline.html"));
     return;
   }
 
