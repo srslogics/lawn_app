@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" role="img" aria-labelledby="title">
+  <title id="title">Royal Celebration</title>
+  <rect width="192" height="192" rx="48" fill="#4c1720"/>
+  <circle cx="96" cy="96" r="62" fill="none" stroke="#d9b675" stroke-width="3"/>
+  <path d="M55 72l16 11 25-30 25 30 16-11-8 39H63z" fill="#d9b675"/>
+  <text x="96" y="138" fill="#fff8ea" font-family="Georgia,serif" font-size="32" text-anchor="middle">RC</text>
+</svg>

@@ -1,6 +1,6 @@
 const API_BASE =
   window.location.protocol === "file:"
-    ? "http://127.0.0.1:4173/api"
+    ? "http://127.0.0.1:8000/api"
     : `${window.location.origin}/api`;
 
 document.body.classList.add("js-enhanced");
@@ -91,62 +91,12 @@ function syncRoomsField() {
   }
 }
 
-function setupRevealAnimations() {
-  const reveals = document.querySelectorAll(".reveal");
-
-  if (!reveals.length) {
-    return;
-  }
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("is-visible");
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    {
-      threshold: 0.14
-    }
-  );
-
-  reveals.forEach((element) => observer.observe(element));
-}
-
-document.querySelectorAll("[data-scroll]").forEach((button) => {
-  button.addEventListener("click", () => {
-    const selector = button.dataset.scroll;
-    if (!selector) {
-      return;
-    }
-
-    applyEnquiryPreset(button);
-    scrollToTarget(selector);
-  });
-});
-
-document.querySelectorAll(".faq-toggle").forEach((button) => {
-  button.addEventListener("click", () => {
-    const answer = button.nextElementSibling;
-    const isExpanded = button.getAttribute("aria-expanded") === "true";
-
-    document.querySelectorAll(".faq-toggle").forEach((otherButton) => {
-      otherButton.setAttribute("aria-expanded", "false");
-      otherButton.nextElementSibling?.classList.remove("is-open");
-    });
-
-    if (!isExpanded) {
-      button.setAttribute("aria-expanded", "true");
-      answer?.classList.add("is-open");
-    }
-  });
+document.querySelectorAll(".quick-pick").forEach((button) => {
+  button.addEventListener("click", () => applyEnquiryPreset(button));
 });
 
 document.getElementById("stayRequired")?.addEventListener("change", syncRoomsField);
 syncRoomsField();
-setupRevealAnimations();
 
 document.getElementById("enquiryForm")?.addEventListener("submit", async (event) => {
   event.preventDefault();

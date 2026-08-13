@@ -1864,7 +1864,7 @@ def enquiry_page_redirect() -> RedirectResponse:
 
 @app.get("/favicon.ico")
 def favicon() -> FileResponse:
-    return FileResponse(ROOT_DIR / "assets" / "SrSLogicsLogo.png")
+    return FileResponse(ROOT_DIR / "assets" / "royal-mark.svg", media_type="image/svg+xml")
 
 
 app.mount("/", StaticFiles(directory=ROOT_DIR, html=True), name="static")
