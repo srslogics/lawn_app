@@ -91,12 +91,26 @@ function syncRoomsField() {
   }
 }
 
+function setMinimumEventDate() {
+  const eventDate = document.querySelector('[name="eventDate"]');
+  if (!eventDate) {
+    return;
+  }
+
+  const today = new Date();
+  const localToday = new Date(today.getTime() - today.getTimezoneOffset() * 60000)
+    .toISOString()
+    .slice(0, 10);
+  eventDate.min = localToday;
+}
+
 document.querySelectorAll(".quick-pick").forEach((button) => {
   button.addEventListener("click", () => applyEnquiryPreset(button));
 });
 
 document.getElementById("stayRequired")?.addEventListener("change", syncRoomsField);
 syncRoomsField();
+setMinimumEventDate();
 
 document.getElementById("enquiryForm")?.addEventListener("submit", async (event) => {
   event.preventDefault();

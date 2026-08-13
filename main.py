@@ -1702,6 +1702,8 @@ def public_availability(db: Session = Depends(get_db)) -> dict:
 @app.post("/api/enquiries", status_code=201)
 def create_enquiry(payload: EnquiryCreate, db: Session = Depends(get_db)) -> dict:
     event_date = parse_iso_date(payload.eventDate, "Event date")
+    if event_date < date.today():
+        raise HTTPException(status_code=422, detail="Event date cannot be in the past.")
     stay_required = normalize_text(payload.stayRequired) or "No"
     if stay_required not in {"Yes", "No", "Maybe"}:
         raise HTTPException(status_code=422, detail="Stay requirement must be Yes, No, or Maybe.")

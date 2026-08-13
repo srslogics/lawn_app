@@ -1,4 +1,4 @@
-# Celebration Lawn Command
+# Royal Celebration
 
 A real client-server application foundation for a celebration lawn business.
 
@@ -7,7 +7,7 @@ A real client-server application foundation for a celebration lawn business.
 - Python `FastAPI` backend
 - PostgreSQL persistence via `SQLAlchemy`
 - Static asset serving from the same app
-- PWA support with manifest, service worker, and offline fallback
+- PWA support for the owner console with a scoped service worker and offline fallback
 - Booking, client, vendor, payment, task, enquiry, dashboard, and reset endpoints
 - Frontend wired to live API instead of `localStorage`
 - Public enquiry page for customer leads
@@ -25,7 +25,11 @@ A real client-server application foundation for a celebration lawn business.
 uvicorn main:app --host 127.0.0.1 --port 4173
 ```
 
-Then open [http://127.0.0.1:4173](http://127.0.0.1:4173).
+Then open [http://127.0.0.1:4173](http://127.0.0.1:4173) for the public website.
+
+Owner console:
+
+- [http://127.0.0.1:4173/console](http://127.0.0.1:4173/console)
 
 Public enquiry page:
 
@@ -37,7 +41,8 @@ The backend will automatically read database settings from `.env` and connect to
 
 - `manifest.webmanifest` defines the installable app metadata
 - `sw.js` caches the main shell and provides an offline fallback page
-- `pwa.js` registers the service worker on the admin app and public website pages
+- `pwa.js` registers the service worker only for the owner console
+- Public pages remove any obsolete root-scoped worker so stale offline screens cannot replace the website
 
 Important:
 
@@ -56,6 +61,7 @@ Important:
 - `GET|POST /api/payments`
 - `GET|POST /api/tasks`
 - `GET|POST /api/enquiries`
+- `GET /api/public-availability`
 - `POST /api/reset`
 
 `GET /api/health` now reports both the configured database and the currently active database, so it is easy to see whether PostgreSQL is live or whether the app fell back to local SQLite.
