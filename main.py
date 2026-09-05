@@ -236,8 +236,8 @@ REQUIREMENTS = [
         "description": "Wedding, reception, birthday, and corporate packages with seasonal pricing and add-on rules.",
     },
     {
-        "title": "Lawn areas and capacity",
-        "description": "Main lawn, deck, garden court, guest capacity, setup buffers, and event-use restrictions.",
+        "title": "Venue spaces and capacity",
+        "description": "Lawns, indoor halls, garden court, guest capacity, setup buffers, and event-use restrictions.",
     },
     {
         "title": "Vendor preferences",

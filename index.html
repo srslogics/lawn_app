@@ -13,75 +13,94 @@
     <meta name="robots" content="noindex, nofollow, noarchive" />
     <meta property="og:image" content="assets/SrSLogicsLogo.png" />
     <meta property="og:type" content="website" />
-    <meta name="theme-color" content="#2c6b5e" />
+    <meta name="theme-color" content="#7a2638" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="Royal Celebration" />
     <link rel="manifest" href="manifest.webmanifest?v=20260710-console-scope" />
     <link rel="apple-touch-icon" href="assets/SrSLogicsLogo.png" />
-    <link rel="stylesheet" href="styles.css?v=20260710-cachefix" />
+    <link rel="stylesheet" href="styles.css?v=20260905-premium-console-final" />
   </head>
   <body>
     <section class="auth-screen" id="authScreen">
-      <div class="auth-card">
-        <p class="eyebrow">Owner Login</p>
-        <h1>Welcome back to Royal Celebration Console</h1>
-        <p class="auth-copy">
-          Sign in to manage bookings, hotel stays, collections, enquiries, and daily venue operations.
-        </p>
-        <form class="auth-form" id="loginForm">
-          <label>
-            Username
-            <input name="username" autocomplete="username" required placeholder="Enter username" />
-          </label>
-          <label>
-            Password
-            <input
-              name="password"
-              type="password"
-              autocomplete="current-password"
-              required
-              placeholder="Enter password"
-            />
-          </label>
-          <p class="auth-message" id="loginMessage">Use the owner login to continue into the workspace.</p>
-          <button class="primary-btn full-width" id="loginSubmitBtn" type="submit">Sign in</button>
-        </form>
+      <div class="auth-layout">
+        <aside class="auth-showcase" aria-label="Royal Celebration venue">
+          <div class="auth-showcase__brand"><span>RC</span> Royal Celebration</div>
+          <div class="auth-showcase__copy">
+            <p class="eyebrow">Private owner workspace</p>
+            <h2>Every celebration.<br />One clear command centre.</h2>
+            <p>Bookings, guest stays, collections, enquiries, and event readiness working together.</p>
+          </div>
+          <div class="auth-showcase__footer"><span>Venue operations</span><span>Godhani, Nagpur</span></div>
+        </aside>
+        <div class="auth-card">
+          <div class="auth-card__mark" aria-hidden="true">RC</div>
+          <p class="eyebrow">Owner access</p>
+          <h1>Welcome back.</h1>
+          <p class="auth-copy">Sign in to continue to the Royal Celebration Console.</p>
+          <form class="auth-form" id="loginForm">
+            <label>
+              Username
+              <input name="username" autocomplete="username" required placeholder="Enter username" />
+            </label>
+            <label>
+              Password
+              <input
+                name="password"
+                type="password"
+                autocomplete="current-password"
+                required
+                placeholder="Enter password"
+              />
+            </label>
+            <p class="auth-message" id="loginMessage">Secure access for authorised venue staff.</p>
+            <button class="primary-btn full-width" id="loginSubmitBtn" type="submit">Enter console</button>
+          </form>
+        </div>
       </div>
     </section>
 
     <div class="app-shell" id="appShell" hidden>
       <aside class="sidebar">
         <div class="brand-block">
-          <p class="eyebrow">Venue Management</p>
-          <h1>Royal Celebration <span>Console</span></h1>
-          <p class="sidebar-copy">
-            Venue bookings, hotel stays, event flow, vendors, collections, and daily readiness in one place.
-          </p>
-          <div class="brand-line"></div>
+          <div class="brand-lockup"><span class="brand-seal" aria-hidden="true">RC</span><div><p class="eyebrow">Royal Celebration</p><h1>Owner Console</h1></div></div>
+          <p class="sidebar-copy">Your venue, stays, people, and collections in one workspace.</p>
         </div>
 
         <nav class="nav-list" id="primaryNav" aria-label="Primary navigation">
-          <button class="nav-link active" data-view="dashboard">Dashboard</button>
-          <button class="nav-link" data-view="bookings">Bookings</button>
-          <button class="nav-link" data-view="hotel">Hotel</button>
-          <button class="nav-link" data-view="calendar">Calendar</button>
-          <button class="nav-link" data-view="enquiries">Enquiries</button>
-          <button class="nav-link" data-view="clients">Clients</button>
-          <button class="nav-link" data-view="vendors">Vendors</button>
-          <button class="nav-link" data-view="finance">Finance</button>
-          <button class="nav-link" data-view="analytics">Analytics</button>
-          <button class="nav-link" data-view="settings">Venue setup</button>
+          <span class="nav-group-label">Overview</span>
+          <button class="nav-link active" data-index="01" data-view="dashboard">Dashboard</button>
+          <span class="nav-group-label">Operations</span>
+          <button class="nav-link" data-index="02" data-view="bookings">Bookings</button>
+          <button class="nav-link" data-index="03" data-view="hotel">Hotel</button>
+          <button class="nav-link" data-index="04" data-view="calendar">Calendar</button>
+          <button class="nav-link" data-index="05" data-view="enquiries">Enquiries</button>
+          <span class="nav-group-label">Relationships</span>
+          <button class="nav-link" data-index="06" data-view="clients">Clients</button>
+          <button class="nav-link" data-index="07" data-view="vendors">Vendors</button>
+          <span class="nav-group-label">Business</span>
+          <button class="nav-link" data-index="08" data-view="finance">Finance</button>
+          <button class="nav-link" data-index="09" data-view="analytics">Analytics</button>
+          <button class="nav-link" data-index="10" data-view="settings">Venue setup</button>
         </nav>
 
         <div class="sidebar-card" id="sidebarCard"></div>
+        <div class="sidebar-account">
+          <span class="sidebar-account__avatar" aria-hidden="true">RC</span>
+          <span class="sidebar-account__identity">
+            <small>Signed in</small>
+            <strong id="sidebarSessionUserName">Owner</strong>
+          </span>
+          <button class="sidebar-account__logout" id="sidebarLogoutBtn" type="button">Sign out</button>
+        </div>
       </aside>
+      <button class="nav-backdrop" id="navBackdrop" type="button" aria-label="Close navigation" tabindex="-1"></button>
 
       <main class="main-content">
         <header class="topbar">
           <div class="topbar-intro">
-            <p class="eyebrow">Live Workspace</p>
+            <div class="workspace-status"><span class="workspace-status__dot"></span><span id="workspaceDate">Live workspace</span></div>
             <h2 id="viewTitle">Dashboard</h2>
             <p class="topbar-copy">Bookings, website enquiries, hotel stays, vendors, payments, and daily readiness with a cleaner operational view.</p>
           </div>
@@ -104,16 +123,14 @@
         <section class="view active" data-view-panel="dashboard">
           <div class="summary-grid">
             <article class="hero-card">
-              <p class="eyebrow">Executive View</p>
-              <h3>Operate the venue like a serious events business.</h3>
-              <p class="hero-lead">A quieter, tighter workspace for high-value bookings and reliable event execution.</p>
-              <p>
-                Stay on top of sales pipeline, upcoming ceremonies, client commitments, vendor
-                readiness, operational tasks, and money collection without losing context.
-              </p>
-              <div class="hero-actions">
-                <button class="primary-btn" id="heroBookingBtn">Create booking</button>
-                <button class="ghost-btn" data-goto="hotel">Open hotel stays</button>
+              <div class="hero-card__content">
+                <p class="eyebrow">Today at Royal</p>
+                <h3>Everything important, in one clear view.</h3>
+                <p class="hero-lead">Stay ahead of bookings, arrivals, collections, and event readiness.</p>
+                <div class="hero-actions">
+                  <button class="primary-btn" id="heroBookingBtn">Create booking</button>
+                  <button class="ghost-btn" data-goto="hotel">Manage stays</button>
+                </div>
               </div>
             </article>
 
@@ -126,6 +143,13 @@
               </div>
               <div class="stats-grid" id="statsGrid"></div>
             </article>
+          </div>
+
+          <div class="command-strip" aria-label="Quick actions">
+            <button type="button" data-goto="enquiries"><span>New leads</span><strong>Review enquiries</strong></button>
+            <button type="button" data-goto="calendar"><span>Schedule</span><strong>Open calendar</strong></button>
+            <button type="button" data-goto="finance"><span>Collections</span><strong>Track payments</strong></button>
+            <button type="button" data-goto="analytics"><span>Owner view</span><strong>See analytics</strong></button>
           </div>
 
           <div class="content-grid">
@@ -280,7 +304,7 @@
                     </select>
                   </label>
                   <label>
-                    Lawn area
+                    Venue area
                     <select name="lawnArea" required>
                       <option value="Main Lawn">Main Lawn</option>
                       <option value="Sunset Deck">Sunset Deck</option>
@@ -751,8 +775,8 @@
             <article class="panel">
               <div class="section-heading compact-heading">
                 <div>
-                  <p class="eyebrow">Lawn Performance</p>
-                  <h3>Lawn area utilization</h3>
+                  <p class="eyebrow">Space Performance</p>
+                  <h3>Venue area utilisation</h3>
                 </div>
               </div>
               <div id="analyticsLawnMix"></div>
@@ -828,7 +852,7 @@
 
     <div class="toast" id="toast" aria-live="polite"></div>
 
-    <script src="pwa.js?v=20260710-console-scope"></script>
-    <script src="app.js?v=20260710-console-scope"></script>
+    <script src="pwa.js?v=20260905-premium-console-final"></script>
+    <script src="app.js?v=20260905-premium-console-final"></script>
   </body>
 </html>

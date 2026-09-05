@@ -115,7 +115,7 @@ function setLoginMessage(message, type = "") {
   messageNode.classList.toggle("error", type === "error");
 }
 
-function showAuthScreen(message = "Use the owner login to continue into the workspace.") {
+function showAuthScreen(message = "Secure access for authorised venue staff.") {
   document.getElementById("authScreen")?.removeAttribute("hidden");
   document.getElementById("appShell")?.setAttribute("hidden", "hidden");
   document.getElementById("logoutBtn")?.setAttribute("hidden", "hidden");
@@ -128,8 +128,11 @@ function showAppShell() {
   document.getElementById("appShell")?.removeAttribute("hidden");
   document.getElementById("logoutBtn")?.removeAttribute("hidden");
   document.getElementById("sessionChip")?.removeAttribute("hidden");
-  document.getElementById("sessionUserName").textContent =
-    authState.user?.displayName || authState.user?.username || "Owner";
+  const displayName = authState.user?.displayName || authState.user?.username || "Owner";
+  const sessionUserName = document.getElementById("sessionUserName");
+  const sidebarSessionUserName = document.getElementById("sidebarSessionUserName");
+  if (sessionUserName) sessionUserName.textContent = displayName;
+  if (sidebarSessionUserName) sidebarSessionUserName.textContent = displayName;
 }
 
 async function api(path, options = {}) {
@@ -177,7 +180,13 @@ async function loadBootstrap() {
 function setView(view) {
   uiState.currentView = view;
   document.querySelectorAll(".nav-link").forEach((button) => {
-    button.classList.toggle("active", button.dataset.view === view);
+    const isActive = button.dataset.view === view;
+    button.classList.toggle("active", isActive);
+    if (isActive) {
+      button.setAttribute("aria-current", "page");
+    } else {
+      button.removeAttribute("aria-current");
+    }
   });
 
   document.querySelectorAll(".view").forEach((panel) => {
@@ -189,7 +198,7 @@ function setView(view) {
   document.querySelector(".topbar-copy").textContent = meta.copy;
   document.getElementById("quickAddBtn").textContent = meta.actionLabel;
 
-  if (window.innerWidth <= 760) {
+  if (window.innerWidth <= 960) {
     uiState.mobileNavOpen = false;
     syncMobileNav();
     window.requestAnimationFrame(() => {
@@ -204,14 +213,27 @@ function setView(view) {
 function syncMobileNav() {
   const sidebar = document.querySelector(".sidebar");
   const toggle = document.getElementById("mobileNavToggle");
+  const backdrop = document.getElementById("navBackdrop");
   if (!sidebar || !toggle) return;
 
-  const isDesktop = window.innerWidth > 760;
+  const isDesktop = window.innerWidth > 960;
   const isOpen = isDesktop || uiState.mobileNavOpen;
 
   sidebar.classList.toggle("is-open", isOpen);
-  toggle.setAttribute("aria-expanded", String(isOpen));
-  toggle.querySelector(".mobile-nav-toggle__label").textContent = isOpen ? "Close" : "Sections";
+  document.body.classList.toggle("nav-open", !isDesktop && isOpen);
+  backdrop?.classList.toggle("is-visible", !isDesktop && isOpen);
+  toggle.setAttribute("aria-expanded", String(!isDesktop && isOpen));
+  toggle.querySelector(".mobile-nav-toggle__label").textContent = !isDesktop && isOpen ? "Close" : "Sections";
+}
+
+function renderWorkspaceDate() {
+  const dateNode = document.getElementById("workspaceDate");
+  if (!dateNode) return;
+  dateNode.textContent = new Intl.DateTimeFormat("en-IN", {
+    weekday: "long",
+    day: "numeric",
+    month: "long"
+  }).format(new Date());
 }
 
 function matchGlobalSearch(text) {
@@ -1264,7 +1286,7 @@ function renderAnalytics() {
   document.getElementById("analyticsLawnMix").innerHTML = buildBarChart(
     countBy(bookings, (booking) => booking.lawnArea),
     (value) => `${value} event${value === 1 ? "" : "s"}`,
-    "No lawn utilization data yet."
+    "No venue area data yet."
   );
 
   document.getElementById("analyticsPackageMix").innerHTML = buildBarChart(
@@ -1535,6 +1557,19 @@ function bindNavigation() {
     syncMobileNav();
   });
 
+  document.getElementById("navBackdrop")?.addEventListener("click", () => {
+    uiState.mobileNavOpen = false;
+    syncMobileNav();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && uiState.mobileNavOpen) {
+      uiState.mobileNavOpen = false;
+      syncMobileNav();
+      document.getElementById("mobileNavToggle")?.focus();
+    }
+  });
+
   window.addEventListener("resize", syncMobileNav);
 }
 
@@ -1771,7 +1806,7 @@ function bindUtilityActions() {
     showToast("Edit cancelled.");
   });
 
-  document.getElementById("logoutBtn")?.addEventListener("click", async () => {
+  const signOut = async () => {
     try {
       await api("/auth/logout", {
         method: "POST",
@@ -1782,7 +1817,10 @@ function bindUtilityActions() {
     }
     authState.user = null;
     showAuthScreen("You have signed out.");
-  });
+  };
+
+  document.getElementById("logoutBtn")?.addEventListener("click", signOut);
+  document.getElementById("sidebarLogoutBtn")?.addEventListener("click", signOut);
 }
 
 function bindAuth() {
@@ -1830,6 +1868,7 @@ async function initApp() {
 }
 
 async function init() {
+  renderWorkspaceDate();
   bindNavigation();
   bindFilters();
   bindForms();

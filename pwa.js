@@ -1,5 +1,5 @@
 (() => {
-  const SW_VERSION = "20260710-console-scope";
+  const SW_VERSION = "20260905-premium-console-final";
   const CONSOLE_PATHS = new Set(["/console", "/console/", "/index.html"]);
 
   if (window.location.protocol === "file:" || !("serviceWorker" in navigator)) {

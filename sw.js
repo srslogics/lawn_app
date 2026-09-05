@@ -1,6 +1,6 @@
-const STATIC_CACHE = "royal-celebration-static-v5";
-const RUNTIME_CACHE = "royal-celebration-runtime-v5";
-const API_CACHE = "royal-celebration-api-v5";
+const STATIC_CACHE = "royal-celebration-static-v8";
+const RUNTIME_CACHE = "royal-celebration-runtime-v8";
+const API_CACHE = "royal-celebration-api-v8";
 
 const APP_SHELL = [
   "/offline.html",
@@ -16,7 +16,8 @@ const APP_SHELL = [
   "/assets/media/pic_lawn.jpeg",
   "/assets/media/room.jpeg",
   "/assets/media/room1.jpeg",
-  "/assets/media/video_frames/entrance-frame.jpg"
+  "/assets/media/video_frames/entrance-frame.jpg",
+  "/assets/media/instagram-july/stage-night.jpeg"
 ];
 
 self.addEventListener("install", (event) => {
